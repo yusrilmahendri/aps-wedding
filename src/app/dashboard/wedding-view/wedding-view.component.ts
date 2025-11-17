@@ -68,7 +68,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ContentView = ContentView;
   guestName: string = "Nama Tamu"; // default
-  isPlaying: boolean = true;
+  isPlaying: boolean = false;
   isMuted: boolean = false;
   sideIconsVisible: boolean = false;
   invitationOpened: boolean = false;
@@ -693,40 +693,56 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupAudioEventListeners(): void {
     if (!this.audioElement) return;
 
-    // Audio loaded and ready to play
+    // Loop audio terus
+    this.audioElement.loop = true;
+
+    // Flag untuk error agar tidak spam
+    let hasAudioError = false;
+
+    // Debounce untuk menyimpan state
+    const saveAudioStateDebounced = debounce(() => this.saveStateToLocalStorage(), 200);
+
+    // ------------------------
+    // Event listeners
+    // ------------------------
+
+    // Audio siap dimainkan
     this.audioElement.addEventListener('canplay', () => {
       console.log('Audio can start playing');
       this.isAudioLoading = false;
       this.audioError = null;
     });
 
-    // Audio is playing
+    // Audio mulai dimainkan
     this.audioElement.addEventListener('play', () => {
       console.log('Audio started playing');
       this.isPlaying = true;
-      this.saveStateToLocalStorage();
+      saveAudioStateDebounced();
     });
 
-    // Audio is paused
+    // Audio di-pause
     this.audioElement.addEventListener('pause', () => {
       console.log('Audio paused');
       this.isPlaying = false;
-      this.saveStateToLocalStorage();
+      saveAudioStateDebounced();
     });
 
-    // Audio loading started
+    // Mulai loading audio
     this.audioElement.addEventListener('loadstart', () => {
       console.log('Audio loading started');
       this.isAudioLoading = true;
     });
 
-    // Audio metadata loaded
+    // Metadata audio selesai dimuat
     this.audioElement.addEventListener('loadedmetadata', () => {
       console.log('Audio metadata loaded, duration:', this.audioElement?.duration);
     });
 
-    // Audio loading error
-    this.audioElement.addEventListener('error', (event) => {
+    // Audio error
+    this.audioElement.addEventListener('error', () => {
+      if (hasAudioError) return;
+      hasAudioError = true;
+
       const error = this.audioElement?.error;
       console.error('Audio loading error:', error);
 
@@ -751,40 +767,63 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.audioError = errorMessage;
       this.isAudioLoading = false;
       this.isPlaying = false;
+
+      // Coba reload audio setelah 1 detik
+      setTimeout(() => {
+        hasAudioError = false; // reset flag
+        console.log('Retrying audio load...');
+        this.audioElement?.load();
+        this.audioElement?.play().catch(err => console.error('Retry failed:', err));
+      }, 1000);
     });
 
-    // Audio volume changed
+    // Volume berubah
     this.audioElement.addEventListener('volumechange', () => {
       if (this.audioElement) {
         this.currentVolume = this.audioElement.volume;
         this.isMuted = this.audioElement.muted;
-        this.saveStateToLocalStorage();
+        saveAudioStateDebounced();
       }
     });
 
-    // Audio ended (shouldn't happen with loop=true)
+    // Audio selesai dimainkan (tidak akan terjadi karena loop)
     this.audioElement.addEventListener('ended', () => {
       console.log('Audio ended');
       this.isPlaying = false;
-      this.saveStateToLocalStorage();
+      saveAudioStateDebounced();
     });
 
     // Audio stalled
     this.audioElement.addEventListener('stalled', () => {
-      console.warn('Audio loading stalled');
+      console.warn('Audio loading stalled, retrying...');
+      setTimeout(() => {
+        this.audioElement?.load();
+        this.audioElement?.play().catch(err => console.error(err));
+      }, 1000);
     });
 
-    // Audio waiting for data
+    // Audio menunggu data
     this.audioElement.addEventListener('waiting', () => {
       console.log('Audio waiting for data');
       this.isAudioLoading = true;
     });
 
-    // Audio can play through
+    // Audio bisa diputar sepenuhnya
     this.audioElement.addEventListener('canplaythrough', () => {
       console.log('Audio can play through');
       this.isAudioLoading = false;
     });
+
+    // ------------------------
+    // Debounce helper
+    // ------------------------
+    function debounce(func: Function, wait: number) {
+      let timeout: any;
+      return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(), wait);
+      };
+    }
   }
 
   /**
