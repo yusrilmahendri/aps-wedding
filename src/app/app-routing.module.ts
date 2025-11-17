@@ -37,6 +37,7 @@ import { WeddingViewComponent } from './dashboard/wedding-view/wedding-view.comp
 import { ProfileComponent } from './dashboard/profile/profile.component';
 import { BillUserComponent } from './dashboard/bill-user/bill-user.component';
 import { ProfileAdminComponent } from './dashboard-admin/pengaturan/profile-admin/profile-admin.component';
+import { GuestGeneratorComponentsComponent } from './guest-generator-components/guest-generator-components.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -54,6 +55,7 @@ const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'bill', component: BillUserComponent },
       { path: 'overview', component: OverviewComponent },
+      { path: 'bagikan-undangan', component: GuestGeneratorComponentsComponent },
       {
         path: 'website',
         component: WebsiteUserComponent,

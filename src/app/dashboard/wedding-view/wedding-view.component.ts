@@ -67,7 +67,7 @@ enum ContentView {
 export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ContentView = ContentView;
-
+  guestName: string = "Nama Tamu"; // default
   isPlaying: boolean = false;
   isMuted: boolean = false;
   sideIconsVisible: boolean = false;
@@ -120,6 +120,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.injectRippleStyles();
     this.loadStateFromLocalStorage();
     this.initializeWeddingData();
+    this.loadGuestName();
   }
 
   ngAfterViewInit() {
@@ -140,6 +141,15 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.qrModalRef.hide();
     }
   }
+
+  loadGuestName(): void {
+  this.route.queryParams.subscribe(params => {
+    const guest = params['guest'];
+    console.log('Guest name from query params:', guest);
+    this.guestName = guest ? guest : "Nama Tamu";
+    console.log('Set guestName to:', this.guestName);
+  });
+}
 
   /**
    * Load component state from localStorage

@@ -1,0 +1,12 @@
+table td,
+table th {
+  vertical-align: middle !important;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}

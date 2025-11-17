@@ -3,9 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 import { Environment } from './environment.interface';
-
+  
 export const environment: Environment = {
-  production: false,
+  production: true,
   apiBaseUrl: 'http://127.0.0.1:8000/api'
 };
 
