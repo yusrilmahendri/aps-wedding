@@ -312,11 +312,11 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     const routeSubscription = this.route.params.subscribe(params => {
       const routeDomain = params['coupleName'] || params['domain'] || null; // Support both old and new param names
 
-      console.log('Route params:', {
-        coupleName: params['coupleName'],
-        domain: params['domain'],
-        routeDomain
-      });
+      // console.log('Route params:', {
+      //   coupleName: params['coupleName'],
+      //   domain: params['domain'],
+      //   routeDomain
+      // });
 
       // Priority: route domain > localStorage domain > get from settings
       if (routeDomain) {
@@ -1138,56 +1138,56 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
    * Check if messages page should be visible based on filter_undangan.halaman_ucapan
    */
   isMessagesVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_ucapan === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_ucapan) === 1;
   }
 
   /**
    * Check if calendar page should be visible based on filter_undangan.halaman_acara
    */
   isCalendarVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_acara === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_acara) === 1;
   }
 
   /**
    * Check if birthday/events page should be visible based on filter_undangan.halaman_acara
    */
   isBirthdayVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_acara === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_acara) === 1;
   }
 
   /**
    * Check if chat/stories page should be visible based on filter_undangan.halaman_cerita
    */
   isChatVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_cerita === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_cerita) === 1;
   }
 
   /**
    * Check if gallery page should be visible based on filter_undangan.halaman_galery
    */
   isGalleryVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_galery === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_galery) === 1;
   }
 
   /**
    * Check if profile/location page should be visible based on filter_undangan.halaman_lokasi
    */
   isProfileVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_lokasi === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_lokasi) === 1;
   }
 
   /**
    * Check if gifts page should be visible based on filter_undangan.halaman_send_gift
    */
   isGiftsVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_send_gift === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_send_gift) === 1;
   }
 
   /**
    * Check if favorite button should be visible (always visible when invitation is opened)
    */
   isFavoriteVisible(): boolean {
-    return this.weddingData?.filter_undangan?.halaman_sampul === 1;
+    return Number(this.weddingData?.filter_undangan?.halaman_sampul) === 1;
   }
 
   private initializeBootstrapTooltips(): void {
