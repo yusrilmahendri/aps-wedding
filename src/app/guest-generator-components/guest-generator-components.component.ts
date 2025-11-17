@@ -38,14 +38,11 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     this.guests = [];
 
     lines.forEach((line: string) => {
-      const subNames: string[] = line.split('&').map((n: string) => n.trim());
-
-      subNames.forEach((name: string) => {
-        this.guests.push({
-          name,
-          link: `${base}?guest=${encodeURIComponent(name)}`,
-          message: this.buildMessage(name, base)
-        });
+      // Setiap line dianggap satu tamu, termasuk pasangan
+      this.guests.push({
+        name: line, // contoh: "yusril&nova"
+        link: `${base}?guest=${encodeURIComponent(line)}`,
+        message: this.buildMessage(line, base)
       });
     });
   }
