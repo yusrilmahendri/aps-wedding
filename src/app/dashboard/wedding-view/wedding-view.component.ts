@@ -68,7 +68,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ContentView = ContentView;
   guestName: string = "Nama Tamu"; // default
-  isPlaying: boolean = false;
+  isPlaying: boolean = true;
   isMuted: boolean = false;
   sideIconsVisible: boolean = false;
   invitationOpened: boolean = false;
