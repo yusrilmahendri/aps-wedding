@@ -6,12 +6,12 @@
   background-image: url("../../../../assets/bg-wd-gl.png");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
+  background-position: center;
   font-family: "Georgia", "Times New Roman", serif;
   overflow-x: hidden;
 }
 
+/* Container grid */
 .gallery-container {
   display: flex;
   justify-content: center;
@@ -22,227 +22,37 @@
 }
 
 .container-custom {
-  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 kolom desktop */
+  gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
 }
 
-/* Base image styles */
-.img-1, .img-2, .img-3, .img-4 {
-  max-width: 100%;
+/* Gambar */
+.gallery-item {
+  width: 100%;
   height: auto;
   border-radius: 0.5rem;
   object-fit: cover;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
   filter: brightness(1.02) contrast(1.05);
-}
-
-.img-1:hover, .img-2:hover, .img-3:hover, .img-4:hover {
-  transform: scale(1.03) translateY(-4px);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
-  filter: brightness(1.08) contrast(1.1);
-}
-
-/* Desktop Layout (1200px and up) */
-@media (min-width: 1200px) {
-  .container-custom {
-    max-width: 1000px;
-    min-height: 850px;
-  }
-  
-  .img-1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: clamp(500px, 45%, 600px);
-    height: clamp(300px, 35vh, 400px);
-  }
-  
-  .img-2 {
-    position: absolute;
-    top: 15%;
-    left: 40%;
-    width: clamp(500px, 45%, 600px);
-    height: clamp(250px, 30vh, 350px);
-  }
-  
-  .img-3 {
-    position: absolute;
-    top: 55%;
-    left: 0;
-    width: clamp(400px, 38%, 500px);
-    height: clamp(250px, 30vh, 350px);
-  }
-  
-  .img-4 {
-    position: absolute;
-    top: 65%;
-    left: 40%;
-    width: clamp(500px, 45%, 600px);
-    height: clamp(250px, 30vh, 350px);
-  }
-}
-
-/* Large Desktop (992px to 1199px) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  .container-custom {
-    max-width: 900px;
-    min-height: 750px;
-  }
-  
-  .img-1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: clamp(450px, 48%, 550px);
-    height: clamp(280px, 32vh, 350px);
-  }
-  
-  .img-2 {
-    position: absolute;
-    top: 18%;
-    left: 42%;
-    width: clamp(450px, 48%, 550px);
-    height: clamp(240px, 28vh, 300px);
-  }
-  
-  .img-3 {
-    position: absolute;
-    top: 58%;
-    left: 0;
-    width: clamp(350px, 40%, 450px);
-    height: clamp(240px, 28vh, 300px);
-  }
-  
-  .img-4 {
-    position: absolute;
-    top: 68%;
-    left: 42%;
-    width: clamp(450px, 48%, 550px);
-    height: clamp(240px, 28vh, 300px);
-  }
-}
-
-/* Tablet Layout (768px to 991px) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .container-custom {
-    max-width: 750px;
-    min-height: 650px;
-  }
-  
-  .img-1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: clamp(320px, 50%, 450px);
-    height: clamp(200px, 25vh, 280px);
-  }
-  
-  .img-2 {
-    position: absolute;
-    top: 22%;
-    left: 45%;
-    width: clamp(320px, 50%, 450px);
-    height: clamp(180px, 22vh, 250px);
-  }
-  
-  .img-3 {
-    position: absolute;
-    top: 62%;
-    left: 0;
-    width: clamp(280px, 42%, 380px);
-    height: clamp(180px, 22vh, 250px);
-  }
-  
-  .img-4 {
-    position: absolute;
-    top: 72%;
-    left: 45%;
-    width: clamp(320px, 50%, 450px);
-    height: clamp(180px, 22vh, 250px);
-  }
-}
-
-/* Mobile Layout (767px and below) */
-@media (max-width: 767.98px) {
-  .gallery-container {
-    padding: 1rem 0.5rem;
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-  
-  .container-custom {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    min-height: auto;
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .img-1, .img-2, .img-3, .img-4 {
-    position: static !important;
-    width: 100% !important;
-    height: auto !important;
-    max-width: 100%;
-    border-radius: 0.75rem;
-  }
-}
-
-/* Small Mobile (576px and below) */
-@media (max-width: 576px) {
-  .gallery-container {
-    padding: 1rem 0.25rem;
-  }
-  
-  .container-custom {
-    gap: 1rem;
-    max-width: 100%;
-  }
-  
-  .img-1, .img-2, .img-3, .img-4 {
-    border-radius: 0.5rem;
-  }
-}
-
-/* Background responsive adjustments */
-@media (max-width: 768px) {
-  :host {
-    background-size: 120vw 120vh;
-    background-attachment: scroll;
-  }
-}
-
-@media (max-width: 576px) {
-  :host {
-    background-size: 140vw 140vh;
-  }
-}
-
-@media (max-width: 480px) {
-  :host {
-    background-size: 160vw 160vh;
-  }
-}
-
-/* Loading animation */
-.img-1, .img-2, .img-3, .img-4 {
-  animation: fadeInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fadeInScale 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
   opacity: 0;
   transform: scale(0.95) translateY(20px);
 }
 
-.img-1 { animation-delay: 0.1s; }
-.img-2 { animation-delay: 0.2s; }
-.img-3 { animation-delay: 0.3s; }
-.img-4 { animation-delay: 0.4s; }
+.gallery-item:nth-child(1) { animation-delay: 0.1s; }
+.gallery-item:nth-child(2) { animation-delay: 0.2s; }
+.gallery-item:nth-child(3) { animation-delay: 0.3s; }
+.gallery-item:nth-child(4) { animation-delay: 0.4s; }
+
+.gallery-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  filter: brightness(1.08) contrast(1.1);
+}
 
 @keyframes fadeInScale {
   to {
@@ -251,13 +61,44 @@
   }
 }
 
+/* Tablet: 2 kolom */
+@media (max-width: 991.98px) {
+  .container-custom {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile: 1 kolom */
+@media (max-width: 767.98px) {
+  .container-custom {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Background responsive */
+@media (max-width: 768px) {
+  :host {
+    background-size: 120vw 120vh;
+    background-attachment: scroll;
+  }
+}
+@media (max-width: 576px) {
+  :host {
+    background-size: 140vw 140vh;
+  }
+}
+@media (max-width: 480px) {
+  :host {
+    background-size: 160vw 160vh;
+  }
+}
+
 /* Print styles */
 @media print {
   :host {
     background: white !important;
   }
-  
-  .img-1, .img-2, .img-3, .img-4 {
+  .gallery-item {
     box-shadow: none !important;
     filter: none !important;
   }

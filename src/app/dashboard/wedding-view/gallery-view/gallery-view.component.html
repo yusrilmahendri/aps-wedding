@@ -4,37 +4,17 @@
       *ngFor="let item of getGalleryImages(); let i = index; trackBy: trackByGalleryId"
       [src]="getImageUrl(item)"
       [alt]="getImageAlt(item, i)"
-      [class]="'img-' + (i + 1)"
+      class="gallery-item"
       loading="lazy"
     />
   </div>
 
   <ng-template #noGalleryTemplate>
     <div class="container-custom">
-      <img
-        src="assets/default-gallery.jpg"
-        alt="Default gallery image 1"
-        class="img-1"
-        loading="lazy"
-      />
-      <img
-        src="assets/default-gallery.jpg"
-        alt="Default gallery image 2"
-        class="img-2"
-        loading="lazy"
-      />
-      <img
-        src="assets/default-gallery.jpg"
-        alt="Default gallery image 3"
-        class="img-3"
-        loading="lazy"
-      />
-      <img
-        src="assets/default-gallery.jpg"
-        alt="Default gallery image 4"
-        class="img-4"
-        loading="lazy"
-      />
+      <img src="assets/default-gallery.jpg" alt="Default gallery image 1" class="gallery-item" loading="lazy"/>
+      <img src="assets/default-gallery.jpg" alt="Default gallery image 2" class="gallery-item" loading="lazy"/>
+      <img src="assets/default-gallery.jpg" alt="Default gallery image 3" class="gallery-item" loading="lazy"/>
+      <img src="assets/default-gallery.jpg" alt="Default gallery image 4" class="gallery-item" loading="lazy"/>
     </div>
   </ng-template>
 </div>
