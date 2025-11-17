@@ -26,7 +26,7 @@ export class CoupleViewComponent implements OnInit {
   getGroomParents(): string {
     const pria = this.weddingData?.mempelai?.pria;
     if (pria?.ayah && pria?.ibu) {
-      return `Putra dari Bapak ${pria.ayah} dan Ibu ${pria.ibu}`;
+      return `Putra pertama dari Bapak ${pria.ayah} dan Ibu ${pria.ibu}`;
     }
     return 'Putra dari Bapak [Ayah] dan Ibu [Ibu]';
   }
@@ -34,7 +34,7 @@ export class CoupleViewComponent implements OnInit {
   getBrideParents(): string {
     const wanita = this.weddingData?.mempelai?.wanita;
     if (wanita?.ayah && wanita?.ibu) {
-      return `Putri dari Bapak ${wanita.ayah} dan Ibu ${wanita.ibu}`;
+      return `Putri pertama dari Bapak ${wanita.ayah} dan Ibu ${wanita.ibu}`;
     }
     return 'Putri dari Bapak [Ayah] dan Ibu [Ibu]';
   }
