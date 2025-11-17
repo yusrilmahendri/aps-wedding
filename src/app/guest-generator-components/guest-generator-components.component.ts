@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
-interface Guest {
-  name: string;
-  link: string;
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'wc-guest-generator-components',
@@ -12,7 +8,7 @@ interface Guest {
   styleUrls: ['./guest-generator-components.component.scss']
 })
 export class GuestGeneratorComponentsComponent implements OnInit {
- form!: FormGroup;
+  form!: FormGroup;
   guests: any[] = [];
 
   constructor(private fb: FormBuilder) {}
@@ -28,7 +24,10 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     const base: string = this.form.value.baseUrl?.trim();
     const rawNames: string = this.form.value.names?.trim();
 
-    if (!base || !rawNames) return;
+    if (!base || !rawNames) {
+      Swal.fire('Oops', 'URL dasar atau nama tamu tidak boleh kosong', 'warning');
+      return;
+    }
 
     const lines: string[] = rawNames
       .split('\n')
@@ -38,51 +37,77 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     this.guests = [];
 
     lines.forEach((line: string) => {
-      // Setiap line dianggap satu tamu, termasuk pasangan
       this.guests.push({
-        name: line, // contoh: "yusril&nova"
+        name: line,
         link: `${base}?guest=${encodeURIComponent(line)}`,
         message: this.buildMessage(line, base)
       });
     });
+
+    Swal.fire('Berhasil', 'Daftar tamu berhasil ditambahkan!', 'success');
   }
 
   buildMessage(name: string, baseUrl: string) {
     const link = `${baseUrl}?guest=${encodeURIComponent(name)}`;
+    return `Kepada Yth.
+Bapak/Ibu/Saudara/i ${name}
+─────────
 
-    return (
-  `Kepada Yth.
-  Bapak/Ibu/Saudara/i
-  ${name}
-  ─────────
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.
 
-  Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.
+Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :
 
-  Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :
+${link}
 
-  ${link}
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
 
-  Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+Terima Kasih
 
-  Terima Kasih
-
-  Hormat kami,
-  Nova & Yusril
-  ─────────`
-    );
+Hormat kami,
+Nova & Yusril
+─────────`;
   }
 
-  copy(text: string) {
-    navigator.clipboard.writeText(text);
-    alert('Copied!');
+  copy(text: string, isMessage: boolean = true) {
+    navigator.clipboard.writeText(text).then(() => {
+      if (isMessage) {
+        Swal.fire('Berhasil', 'Pesan berhasil dicopy!', 'success');
+      } else {
+        Swal.fire('Berhasil', 'Link berhasil dicopy!', 'success');
+      }
+    });
   }
 
   deleteGuest(index: number) {
-    this.guests.splice(index, 1);
+    Swal.fire({
+      title: 'Yakin?',
+      text: `Apakah Anda yakin ingin menghapus tamu "${this.guests[index].name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus',
+      cancelButtonText: 'Batal'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.guests.splice(index, 1);
+        Swal.fire('Terhapus!', 'Tamu berhasil dihapus.', 'success');
+      }
+    });
   }
 
   deleteAll() {
-    this.guests = [];
+    Swal.fire({
+      title: 'Yakin?',
+      text: 'Apakah Anda yakin ingin menghapus semua daftar tamu?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus semua',
+      cancelButtonText: 'Batal'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.guests = [];
+        Swal.fire('Terhapus!', 'Semua daftar tamu berhasil dihapus.', 'success');
+      }
+    });
   }
 
   whatsapp(link: string, text: string) {
