@@ -25,23 +25,29 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   }
 
   generateGuests() {
-    const base = this.form.value.baseUrl?.trim();
-    const rawNames = this.form.value.names?.trim();
-    console.log('Generating guests with base URL:', base);
-    console.log('Raw names input:', rawNames);
+    const base: string = this.form.value.baseUrl?.trim();
+    const rawNames: string = this.form.value.names?.trim();
 
     if (!base || !rawNames) return;
 
-    const lines = rawNames
+    const lines: string[] = rawNames
       .split('\n')
       .map((v: string) => v.trim())
       .filter((v: string) => v !== '');
 
-    this.guests = lines.map((name: string) => ({
-      name,
-      link: `${base}?guest=${encodeURIComponent(name)}`,
-      message: this.buildMessage(name, base)
-    }));
+    this.guests = [];
+
+    lines.forEach((line: string) => {
+      const subNames: string[] = line.split('&').map((n: string) => n.trim());
+
+      subNames.forEach((name: string) => {
+        this.guests.push({
+          name,
+          link: `${base}?guest=${encodeURIComponent(name)}`,
+          message: this.buildMessage(name, base)
+        });
+      });
+    });
   }
 
   buildMessage(name: string, baseUrl: string) {
