@@ -21,11 +21,15 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   }
 
   generateGuests() {
-    const base: string = this.form.value.baseUrl?.trim();
+    // 🔥 Base URL otomatis jika kosong
+    const base: string =
+      this.form.value.baseUrl?.trim() ||
+      'https://pio-wedding.pioneersolve.id/wedding/Nova&Yusril';
+
     const rawNames: string = this.form.value.names?.trim();
 
-    if (!base || !rawNames) {
-      Swal.fire('Oops', 'URL dasar atau nama tamu tidak boleh kosong', 'warning');
+    if (!rawNames) {
+      Swal.fire('Oops', 'Nama tamu tidak boleh kosong', 'warning');
       return;
     }
 
@@ -50,22 +54,22 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   buildMessage(name: string, baseUrl: string) {
     const link = `${baseUrl}?guest=${encodeURIComponent(name)}`;
     return `Kepada Yth.
-Bapak/Ibu/Saudara/i ${name}
-─────────
+      Bapak/Ibu/Saudara/i ${name}
+      ─────────
 
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.
+      Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.
 
-Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :
+      Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :
 
-${link}
+      ${link}
 
-Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+      Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
 
-Terima Kasih
+      Terima Kasih
 
-Hormat kami,
-Nova & Yusril
-─────────`;
+      Hormat kami,
+      Nova & Yusril
+      ─────────`;
   }
 
   copy(text: string, isMessage: boolean = true) {
