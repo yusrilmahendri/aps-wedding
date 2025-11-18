@@ -2,7 +2,8 @@
   display: block;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
+  // background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
+  background: transparent !important;
   background-image: url("../../../../assets/bg-wd-gl.png");
   background-repeat: no-repeat;
   background-size: cover;

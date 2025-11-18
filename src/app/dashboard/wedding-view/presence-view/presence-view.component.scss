@@ -4,6 +4,7 @@
   display: block;
   width: 100%;
   min-height: 100vh;
+  background: transparent !important;
   font-family: "Open Sans", sans-serif;
   position: relative;
   overflow-x: hidden;
@@ -24,8 +25,8 @@
 }
 
 .form-container {
-    background: linear-gradient(135deg, #E0DADE 0%, #E0DADE 100%);
-
+    // background: linear-gradient(135deg, #E0DADE 0%, #E0DADE 100%);
+  background: transparent !important;
   border-radius: 20px;
   padding: 40px 35px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
@@ -162,22 +163,18 @@
 
 .submit-button {
   width: 100%;
-  background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
-  color: white;
-  border: none;
+   background-color: transparent;        /* transparan */
+  color: #666;;                        /* warna teks */
+  border: 2px solid #666;;             /* border agar terlihat */
+  padding: 12px 34px;
   border-radius: 12px;
-  padding: 16px 30px;
-  font-size: clamp(16px, 3.5vw, 18px);
-  font-weight: 600;
-  font-family: "Open Sans", sans-serif;
+  font-size: 1.1rem;
+  font-family: "Georgia", serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(199, 119, 119, 0.3);
-  letter-spacing: 0.5px;
-  margin-top: 15px;
-  position: relative;
-  overflow: hidden;
-
+  box-shadow: none;           
+  // background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
+    
   // Entry animation - final fade in with subtle scale
   opacity: 0;
   animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -199,7 +196,7 @@
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
-  background: linear-gradient(135deg, #a0a0a0 0%, #888888 100%);
+  // background: linear-gradient(135deg, #a0a0a0 0%, #888888 100%);
 }
 
 /* Mobile Optimizations (768px and below) */
