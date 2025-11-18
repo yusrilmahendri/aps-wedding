@@ -11,13 +11,13 @@
   background-repeat: no-repeat;
   background-size: 100vw 100vh;
   // background-position: center center;
-  background-attachment: scroll;
+  // background-attachment: scroll;
 }
 
 .wedding-container {
-  position: relative;
-  // width: 100%;
-  // min-height: 100vh;
+  max-height: 80vh; /* atau tinggi sesuai kebutuhan */
+  overflow-y: auto;  /* memungkinkan scroll vertikal */
+  scroll-behavior: smooth; /* untuk smooth scroll otomatis */
 }
 
 /* Side icons container */
@@ -192,6 +192,7 @@
   flex-direction: column;
   position: relative;
   z-index: 1;
+  overflow-y: scroll;
 }
 
 .title {
@@ -655,3 +656,15 @@
     opacity: 1;
   }
 }
+.full-section {
+  opacity: 0;
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
+.full-section:nth-child(1) { animation-delay: 0.1s; }
+.full-section:nth-child(2) { animation-delay: 0.2s; }
+.full-section:nth-child(3) { animation-delay: 0.3s; }
+.full-section:nth-child(4) { animation-delay: 0.4s; }
+.full-section:nth-child(5) { animation-delay: 0.5s; }
+.full-section:nth-child(6) { animation-delay: 0.6s; }
+.full-section:nth-child(7) { animation-delay: 0.7s; }

@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
 import { WeddingDataService, WeddingData } from '../../services/wedding-data.service';
 import { QRCodeModalComponent } from '../../shared/modal/qr-code-modal/qr-code-modal.component';
+import { ChangeDetectorRef } from '@angular/core';
 
 // Attendance interface for type safety
 interface AttendanceRequest {
@@ -65,6 +66,7 @@ enum ContentView {
   styleUrls: ['./wedding-view.component.scss']
 })
 export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('weddingContainer') weddingContainer!: ElementRef;
 
   ContentView = ContentView;
   guestName: string = "Nama Tamu"; // default
@@ -113,7 +115,8 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private dashboardService: DashboardService,
     private weddingDataService: WeddingDataService,
-    private modalService: BsModalService
+    private modalService: BsModalService, 
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -128,6 +131,12 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addClickFunctionality();
     this.addTouchSupport();
     this.addSideIconClickFunctionality();
+    // Jika invitationOpened awalnya true, langsung scroll
+    if (this.invitationOpened) {
+      setTimeout(() => {
+        this.scrollToSideIcons();
+      }, 100);
+  }
   }
 
   ngOnDestroy() {
@@ -997,13 +1006,33 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   openInvitation(): void {
     this.invitationOpened = true;
     this.setCurrentView(ContentView.COUPLE);
-
-    // Track invitation view via attendance API
     this.submitAttendanceView();
-
-    // Save state immediately after opening invitation
+    this.cdr.detectChanges();
     this.saveStateToLocalStorage();
+
+    // 🔥 WAJIB: putar audio langsung dari klik user
+    try {
+      this.audioElement?.play();
+      this.isPlaying = true;
+      this.isMuted = false;
+    } catch (err) {
+      console.warn("Browser blocked autoplay", err);
+    }
+
+    // Scroll setelah view berubah
+    setTimeout(() => {
+      const firstSection = document.getElementById("section-1");
+      firstSection?.scrollIntoView({ behavior: "smooth" });
+    }, 300);
   }
+
+
+  private scrollToSideIcons(): void {
+  const sideIcons = document.querySelector('.side-icons-container') as HTMLElement;
+  if (sideIcons) {
+    sideIcons.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
 
   /**
    * Submit attendance record for view tracking

@@ -103,3 +103,23 @@
     filter: none !important;
   }
 }
+/* Mobile: 2 kolom (tetap berdampingan) + animasi tetap rapi */
+@media (max-width: 767.98px) {
+  .container-custom {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .gallery-item {
+    border-radius: 0.4rem;
+    animation-duration: 0.7s; /* Lebih cepat untuk HP */
+    transform: scale(0.95) translateY(15px);
+  }
+}
+.gallery-item:nth-child(1) { animation-delay: 0.1s; }
+.gallery-item:nth-child(2) { animation-delay: 0.2s; }
+.gallery-item:nth-child(3) { animation-delay: 0.3s; }
+.gallery-item:nth-child(4) { animation-delay: 0.4s; }
+.gallery-item:nth-child(5) { animation-delay: 0.5s; }
+.gallery-item:nth-child(6) { animation-delay: 0.6s; }
+/* dan seterusnya jika perlu */
