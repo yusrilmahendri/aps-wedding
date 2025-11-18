@@ -163,7 +163,7 @@
 
 .submit-button {
   width: 100%;
-   background-color: transparent;        /* transparan */
+   background-color: transparent !important;        /* transparan */
   color: #666;;                        /* warna teks */
   border: 2px solid #666;;             /* border agar terlihat */
   padding: 12px 34px;
