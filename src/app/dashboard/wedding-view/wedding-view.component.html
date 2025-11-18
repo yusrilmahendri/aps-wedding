@@ -39,7 +39,7 @@
         <button class="open-invitation-btn" (click)="openInvitation()">Buka Undangan</button>
       </div>
     
-        <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content">
+        <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
           <section class="full-section" id="section-1">
             <wc-couple-view
             [weddingData]="weddingData">

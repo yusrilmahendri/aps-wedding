@@ -46,6 +46,7 @@ const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'buat-undangan', component: GenerateUndanganComponent },
+  { path: 'bagikan-undangan', component: GuestGeneratorComponentsComponent },
   {
     path: 'dashboard',
     component: DashboardUserComponent,
