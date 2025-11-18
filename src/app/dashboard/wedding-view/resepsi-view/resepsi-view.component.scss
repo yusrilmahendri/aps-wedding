@@ -222,7 +222,6 @@
 
 .location-button {
   // background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
-  color: white;
   border: none;
   border-radius: 30px;
   padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 35px);
@@ -233,9 +232,9 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(199, 119, 119, 0.3);
   letter-spacing: 0.5px;
-     background-color: transparent;        /* transparan */
-  color: #666;;                        /* warna teks */
-  border: 2px solid #666;;             /* border agar terlihat */
+  background-color: transparent;        /* transparan */
+  color: white;                      /* warna teks */
+  border: 2px solid #fbf6f6;;             /* border agar terlihat */
   padding: 12px 34px;
   border-radius: 12px;
   font-size: 1.1rem;

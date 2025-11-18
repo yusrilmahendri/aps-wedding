@@ -149,7 +149,7 @@
 
 .location-button {
   // background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
-  color: white;
+
   border: none;
   border-radius: 30px;
   padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 35px);
@@ -161,7 +161,7 @@
   box-shadow: 0 4px 15px rgba(199, 119, 119, 0.3);
   letter-spacing: 0.5px;
      background-color: transparent;        /* transparan */
-  color: #666;;                        /* warna teks */
+  color: white;                   /* warna teks */
   border: 2px solid #666;;             /* border agar terlihat */
   padding: 12px 34px;
   border-radius: 12px;
