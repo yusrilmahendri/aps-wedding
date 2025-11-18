@@ -1,18 +1,3 @@
-// :host {
-//   display: block;
-//   margin: 0;
-//   padding: 0;
-//   background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
-//   background-image: url('../../../assets/DIKS9260.JPG');
-//   min-height: 100vh;
-//   font-family: "Georgia", "Times New Roman", serif;
-//   // padding-bottom: 120px;
-//   position: relative;
-//   background-repeat: no-repeat;
-//   background-size: 100vw 100vh;
-//   // background-position: center center;
-//   // background-attachment: scroll;
-// }
 
 :host {
   display: block;
@@ -57,6 +42,17 @@
 .bg-slideshow img:nth-child(3) {
   animation-delay: 12s;
 }
+/* Gambar keempat */
+.bg-slideshow img:nth-child(4) {
+  animation-delay: 18s;
+}
+
+/* Gambar kelima */
+.bg-slideshow img:nth-child(5) {
+  animation-delay: 24s;
+}
+
+
 
 @keyframes fadeBg {
   0% { opacity: 0; }
@@ -271,6 +267,7 @@
   margin-bottom: 15px;
   font-weight: 400;
   letter-spacing: 2px;
+  margin-top: -100px;
 }
 
 .couple-names {
@@ -288,6 +285,14 @@
   color: #666;
   margin-bottom: 5px;
   font-weight: 300;
+  margin-top: 300px !important;
+}
+
+.card-weedings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .formal-address {
@@ -306,16 +311,25 @@
 }
 
 .open-invitation-btn {
-  background-color: #D06A6A;
-  color: white;
-  border: none;
-  padding: 15px 40px;
+  background-color: transparent;        /* transparan */
+  color: #D06A6A;                        /* warna teks */
+  border: 2px solid #D06A6A;             /* border agar terlihat */
+  padding: 12px 34px;
   border-radius: 12px;
   font-size: 1.1rem;
   font-family: "Georgia", serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  box-shadow: none;                      /* hilangkan shadow */
+}
+
+.open-invitation-btn:hover {
+  background-color: rgba(208, 106, 106, 0.1);  /* efek hover tipis */
+  transform: translateY(-2px);
+}
+
+.open-invitation-btn:active {
+  transform: translateY(0);
 }
 
 .open-invitation-btn:hover {

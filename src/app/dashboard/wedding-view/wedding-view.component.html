@@ -35,60 +35,62 @@
   <div *ngIf="hasWeddingData() && !isLoading && !errorMessage">
     <div class="floral-bg"></div>
 
-    <!-- Main content - hidden when gallery is active -->
-    <div  class="content">
-      <div class="wrap mt-5" *ngIf="isCurrentView(ContentView.MAIN)">
-        <p class="wedding-header">The Wedding Of</p>
-        <h1 class="couple-names">{{ getCoupleDisplayName() }}</h1>
-        <p class="greeting">Kepada Yth.</p>
-        <p class="formal-address">Bapak/Ibu/Saudara/i</p>
-        <p class="guest-name">{{ guestName }}</p>
-        <button class="open-invitation-btn" (click)="openInvitation()">Buka Undangan</button>
-      </div>
-    
-        <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
-          <section class="full-section" id="section-1">
-            <wc-couple-view
-            [weddingData]="weddingData">
-          </wc-couple-view>
-        </section>
-        
-        <section class="full-section" id="section-2">
-          <wc-akad-view
-            [events]="weddingData?.events">
-          </wc-akad-view>
-        </section>
-
-        <section class="full-section" id="section-3">
-          <wc-resepsi-view
-          [events]="weddingData?.events">
-        </wc-resepsi-view>
-        </section>
-
-        <section class="full-section" id="section-4">
-          <wc-story-view
-            [stories]="weddingData?.stories">
-          </wc-story-view>
-        </section>
-
-        <section class="full-section" id="section-5">
-          <wc-gallery-view
-            [galleryItems]="weddingData?.gallery">
-          </wc-gallery-view>
-        </section>
-
-        <section class="full-section" id="section-6">
-          <wc-gift-view
-            [weddingData]="weddingData || undefined">
-          </wc-gift-view>
-        </section>
-
-        <section class="full-section mt-3" id="section-7">
-          <wc-presence-view
-          [weddingData]="weddingData || undefined">
-        </wc-presence-view>
-        </section>
+      <!-- Main content - hidden when gallery is active -->
+      <div  class="content">
+        <div class="wrap mt-5" *ngIf="isCurrentView(ContentView.MAIN)">
+          <p class="wedding-header">The Wedding Of</p>
+          <h1 class="couple-names">{{ getCoupleDisplayName() }}</h1>
+          <div class="card-weedings">
+            <p class="greeting">Kepada Yth.</p>
+            <p class="formal-address">Bapak/Ibu/Saudara/i</p>
+            <p class="guest-name">{{ guestName }}</p>
+            <button class="open-invitation-btn" (click)="openInvitation()">Buka Undangan</button>
+          </div>
         </div>
+      
+          <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
+            <section class="full-section" id="section-1">
+              <wc-couple-view
+              [weddingData]="weddingData">
+            </wc-couple-view>
+          </section>
+          
+          <section class="full-section" id="section-2">
+            <wc-akad-view
+              [events]="weddingData?.events">
+            </wc-akad-view>
+          </section>
+
+          <section class="full-section" id="section-3">
+            <wc-resepsi-view
+            [events]="weddingData?.events">
+          </wc-resepsi-view>
+          </section>
+
+          <section class="full-section" id="section-4">
+            <wc-story-view
+              [stories]="weddingData?.stories">
+            </wc-story-view>
+          </section>
+
+          <section class="full-section" id="section-5">
+            <wc-gallery-view
+              [galleryItems]="weddingData?.gallery">
+            </wc-gallery-view>
+          </section>
+
+          <section class="full-section" id="section-6">
+            <wc-gift-view
+              [weddingData]="weddingData || undefined">
+            </wc-gift-view>
+          </section>
+
+          <section class="full-section mt-3" id="section-7">
+            <wc-presence-view
+            [weddingData]="weddingData || undefined">
+          </wc-presence-view>
+          </section>
+          </div>
       </div>
         <!-- Side icons - collapsible group (hidden until invitation opened) -->
     <div
