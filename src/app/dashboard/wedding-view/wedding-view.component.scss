@@ -1,17 +1,69 @@
+// :host {
+//   display: block;
+//   margin: 0;
+//   padding: 0;
+//   background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
+//   background-image: url('../../../assets/DIKS9260.JPG');
+//   min-height: 100vh;
+//   font-family: "Georgia", "Times New Roman", serif;
+//   // padding-bottom: 120px;
+//   position: relative;
+//   background-repeat: no-repeat;
+//   background-size: 100vw 100vh;
+//   // background-position: center center;
+//   // background-attachment: scroll;
+// }
+
 :host {
   display: block;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
-  background-image: url('../../../assets/bg-wd.jpeg');
   min-height: 100vh;
   font-family: "Georgia", "Times New Roman", serif;
-  // padding-bottom: 120px;
   position: relative;
-  background-repeat: no-repeat;
-  background-size: 100vw 100vh;
-  // background-position: center center;
-  // background-attachment: scroll;
+  overflow: hidden; // penting
+}
+
+/* wrapper untuk background animasi */
+.bg-slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; 
+}
+
+.bg-slideshow img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: fadeBg 18s infinite;
+}
+
+/* Gambar pertama */
+.bg-slideshow img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+/* Gambar kedua */
+.bg-slideshow img:nth-child(2) {
+  animation-delay: 6s;
+}
+
+/* Gambar ketiga */
+.bg-slideshow img:nth-child(3) {
+  animation-delay: 12s;
+}
+
+@keyframes fadeBg {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  33% { opacity: 1; }
+  41% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 .wedding-container {
