@@ -220,8 +220,9 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           const parsedWeddingData = JSON.parse(savedWeddingData);
           this.weddingData = parsedWeddingData;
-          this.weddingDataService.setWeddingData(parsedWeddingData);
-          console.log('Restored wedding data from localStorage');
+            if (parsedWeddingData) {
+              this.weddingDataService.setWeddingData(parsedWeddingData as WeddingData);
+            }
         } catch (parseError) {
           console.error('Failed to parse saved wedding data:', parseError);
           localStorage.removeItem(this.STORAGE_KEYS.WEDDING_DATA);
@@ -428,7 +429,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('Wedding Data from API:', JSON.stringify(response.data, null, 2));
 
           this.weddingData = response.data;
-          this.weddingDataService.setWeddingData(response.data);
+          this.weddingDataService.setWeddingData(response.data as WeddingData);
 
           this.updateWeddingContent(response.data);
 

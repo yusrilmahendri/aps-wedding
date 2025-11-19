@@ -3,11 +3,19 @@
   display: block;
   margin: 0;
   padding: 0;
+  background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
+  background-image: url('../../../assets/bg-wd.jpeg?v=${Date.now()');
   min-height: 100vh;
   font-family: "Georgia", "Times New Roman", serif;
+  // padding-bottom: 120px;
   position: relative;
-  overflow: hidden; // penting
+  background-repeat: no-repeat;
+  background-size: 100vw 100vh;
+  // background-position: center center;
+  background-attachment: scroll;
+  overflow: hidden;
 }
+
 
 /* wrapper untuk background animasi */
 .bg-slideshow {
