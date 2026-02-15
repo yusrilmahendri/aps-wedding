@@ -136,9 +136,6 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadStateFromLocalStorage();
     this.initializeWeddingData();
     this.loadGuestName();
-    this.setResepsiDate();
-    this.startCountdown();
-    this.initSlider();
   }
 
   ngAfterViewInit() {
@@ -1114,6 +1111,9 @@ setResepsiDate() {
     this.submitAttendanceView();
     this.cdr.detectChanges();
     this.saveStateToLocalStorage();
+    this.setResepsiDate();
+    this.startCountdown();
+    this.initSlider();
 
     // 🔥 WAJIB: putar audio langsung dari klik user
     try {
