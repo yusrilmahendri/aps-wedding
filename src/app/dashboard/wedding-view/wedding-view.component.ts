@@ -136,6 +136,9 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadStateFromLocalStorage();
     this.initializeWeddingData();
     this.loadGuestName();
+    this.setResepsiDate();
+    this.startCountdown();
+    this.initSlider();
   }
 
   ngAfterViewInit() {
