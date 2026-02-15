@@ -1,5 +1,5 @@
 <div class="wedding-container">
- 
+
   <!-- Loading State -->
   <div class="wedding-loading" *ngIf="isLoading">
     <div class="loading-spinner">
@@ -41,14 +41,65 @@
             <button class="open-invitation-btn" (click)="openInvitation()">Buka Undangan</button>
           </div>
         </div>
-      
+
           <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
+            <div class="mini-hero-section">
+
+            <!-- SLIDER BACKGROUND -->
+            <div class="slider">
+              <div
+                class="slides"
+                [style.transform]="'translateX(-' + currentSlide * 100 + '%)'"
+              >
+                <img *ngFor="let img of sliderImages" [src]="img" />
+              </div>
+            </div>
+
+            <!-- OVERLAY -->
+            <div class="overlay"></div>
+
+            <!-- CONTENT -->
+            <div class="mini-hero-content">
+              <p class="mini-hero-title">The Wedding Of</p>
+              <h2 class="mini-hero-names">{{ getCoupleDisplayName() }}</h2>
+              <p class="mini-hero-date">
+                {{ resepsiDate | date: 'd MMMM yyyy' }}
+              </p>
+
+              <div class="countdown">
+                <div class="time-box">
+                  <h2>{{ days }}</h2>
+                  <p>Days</p>
+                </div>
+                <div class="time-box">
+                  <h2>{{ hours }}</h2>
+                  <p>Hours</p>
+                </div>
+                <div class="time-box">
+                  <h2>{{ minutes }}</h2>
+                  <p>Minutes</p>
+                </div>
+                <div class="time-box">
+                  <h2>{{ seconds }}</h2>
+                  <p>Seconds</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- SCROLL DOWN ICON -->
+            <div class="scroll-down">
+              ↓
+            </div>
+
+            </div>
+
+
             <section class="full-section" id="section-1">
               <wc-couple-view
               [weddingData]="weddingData">
             </wc-couple-view>
           </section>
-          
+
           <section class="full-section" id="section-2">
             <wc-akad-view
               [events]="weddingData?.events">

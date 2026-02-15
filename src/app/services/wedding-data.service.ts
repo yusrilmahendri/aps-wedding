@@ -180,7 +180,7 @@ export class WeddingDataService {
   setWeddingData(weddingData: WeddingData): void {
     try {
       this.weddingDataSubject.next(weddingData);
-      console.log('Wedding data set in service successfully');
+      // console.log('Wedding data set in service successfully');
     } catch (error) {
       console.error('Error setting wedding data:', error);
     }

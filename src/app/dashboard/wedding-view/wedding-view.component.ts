@@ -77,6 +77,18 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentView: ContentView = ContentView.MAIN;
 
+  resepsiDate: Date | null = null;
+  intervalId: any;
+
+  days = 0;
+  hours = 0;
+  minutes = 0;
+  seconds = 0;
+
+  sliderImages: string[] = [];
+  currentSlide = 0;
+  sliderInterval: any;
+
   // Wedding data properties
   weddingData: WeddingData | null = null;
   domain: string | null = null; // Changed from coupleName to domain
@@ -115,7 +127,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private dashboardService: DashboardService,
     private weddingDataService: WeddingDataService,
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -124,6 +136,9 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadStateFromLocalStorage();
     this.initializeWeddingData();
     this.loadGuestName();
+    this.setResepsiDate();
+    this.startCountdown();
+    this.initSlider();
   }
 
   ngAfterViewInit() {
@@ -149,6 +164,10 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.qrModalRef) {
       this.qrModalRef.hide();
     }
+     if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+
   }
 
   loadGuestName(): void {
@@ -160,6 +179,73 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 }
 
+scrollToContent() {
+  window.scrollTo({
+    top: window.innerHeight,
+    behavior: 'smooth'
+  });
+}
+
+setResepsiDate() {
+    if (!this.weddingData?.events) return;
+
+    const resepsiEvent = this.weddingData.events.find((event: any) =>
+      event.nama_acara?.toLowerCase().includes('resepsi')
+    );
+
+    if (!resepsiEvent) return;
+
+    const date = new Date(resepsiEvent.tanggal_acara);
+    const [hours, minutes] = resepsiEvent.start_acara.split(':');
+
+    date.setHours(+hours);
+    date.setMinutes(+minutes);
+    date.setSeconds(0);
+
+    this.resepsiDate = date;
+  }
+
+  startCountdown() {
+    if (!this.resepsiDate) return;
+
+    this.intervalId = setInterval(() => {
+
+      const now = new Date().getTime();
+      const target = this.resepsiDate!.getTime();
+      const distance = target - now;
+
+      if (distance <= 0) {
+        this.days = 0;
+        this.hours = 0;
+        this.minutes = 0;
+        this.seconds = 0;
+        clearInterval(this.intervalId);
+        return;
+      }
+
+      this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      this.hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      this.minutes = Math.floor((distance / (1000 * 60)) % 60);
+      this.seconds = Math.floor((distance / 1000) % 60);
+
+    }, 1000);
+  }
+
+  initSlider() {
+    if (!this.weddingData?.gallery) return;
+
+    // ambil 3 gambar pertama
+    this.sliderImages = this.weddingData.gallery
+      .slice(0, 3)
+      .map((item: any) => item.photo);
+
+    if (this.sliderImages.length <= 1) return;
+
+    this.sliderInterval = setInterval(() => {
+      this.currentSlide =
+        (this.currentSlide + 1) % this.sliderImages.length;
+    }, 3000); // ganti slide tiap 3 detik
+  }
   /**
    * Load component state from localStorage
    */
@@ -609,6 +695,24 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${groom} & ${bride}`;
   }
 
+  getTimeOut(): Date | null {
+    if (!this.weddingData?.events) return null;
+
+    const resepsiEvent = this.weddingData.events.find((event: any) =>
+      event.nama_acara?.toLowerCase().includes('resepsi')
+    );
+
+    if (!resepsiEvent) return null;
+
+    const date = new Date(resepsiEvent.tanggal_acara);
+    const [hours, minutes] = resepsiEvent.start_acara.split(':');
+
+    date.setHours(+hours);
+    date.setMinutes(+minutes);
+    date.setSeconds(0);
+
+    return date;
+  }
   /**
    * Get wedding URL for sharing using domain
    * @returns string - Wedding URL with domain

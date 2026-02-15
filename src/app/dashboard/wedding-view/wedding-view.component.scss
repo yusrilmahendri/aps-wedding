@@ -1,3 +1,62 @@
+/* MINI HERO SECTION STYLES */
+.mini-hero-section {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+.mini-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/assets/bg-wd.jpeg') center center/cover no-repeat;
+  filter: brightness(0.92) blur(1px);
+  z-index: 1;
+  border-radius: 1.2rem;
+}
+.mini-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  background: rgba(0,0,0,0.13);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mini-hero-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+  color: #fff;
+  opacity: 0.93;
+}
+.mini-hero-names {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 2.1rem;
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.13);
+}
+.mini-hero-date {
+  font-size: 1rem;
+  color: #fff;
+  opacity: 0.88;
+}
 
 :host {
   display: block;
@@ -24,7 +83,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1; 
+  z-index: -1;
 }
 
 .bg-slideshow img {
@@ -71,7 +130,7 @@
 }
 
 .wedding-container {
-  max-height: 80vh; /* atau tinggi sesuai kebutuhan */
+  max-height: 100vh; /* atau tinggi sesuai kebutuhan */
   overflow-y: auto;  /* memungkinkan scroll vertikal */
   scroll-behavior: smooth; /* untuk smooth scroll otomatis */
 }
@@ -712,6 +771,152 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+.mini-hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== SLIDER ===== */
+.slider {
+  position: absolute;
+  inset: 0;
+}
+
+.slides {
+  display: flex;
+  height: 100%;
+  transition: transform 1s ease-in-out;
+}
+
+.slides img {
+  width: 100vw;       /* 🔥 paksa full viewport */
+  height: 100vh;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ===== OVERLAY SOFT GRADIENT ===== */
+.overlay::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255,255,255,0.5) 0%,
+    rgba(255,255,255,0.2) 40%,
+    transparent 70%
+  );
+  animation: lightMove 10s linear infinite;
+}
+@keyframes lightMove {
+  0% {
+    transform: translate(-25%, -25%);
+  }
+  50% {
+    transform: translate(0%, 0%);
+  }
+  100% {
+    transform: translate(-25%, -25%);
+  }
+}
+/* ===== CONTENT CENTER PERFECT ===== */
+.mini-hero-content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+.mini-hero-title {
+  letter-spacing: 2px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.mini-hero-names {
+  font-size: 42px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.mini-hero-date {
+  margin-top: 10px;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* ===== COUNTDOWN ===== */
+.countdown {
+  display: flex;
+  gap: 35px;
+  margin-top: 40px;
+}
+
+.time-box {
+  text-align: center;
+}
+
+.time-box h2 {
+  font-size: 28px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.time-box p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+/* ===== SCROLL DOUBLE CHEVRON ===== */
+.scroll-down {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  color: white;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translate(-50%, 0);
+  }
+  40% {
+    transform: translate(-50%, -10px);
+  }
+  60% {
+    transform: translate(-50%, -5px);
+  }
+}
+
+/* ===== MOBILE TUNING ===== */
+@media (max-width: 768px) {
+  .mini-hero-names {
+    font-size: 30px;
+  }
+
+  .countdown {
+    gap: 20px;
+  }
+
+  .time-box h2 {
+    font-size: 22px;
   }
 }
 
