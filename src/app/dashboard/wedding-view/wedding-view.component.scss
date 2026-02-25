@@ -23,7 +23,6 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 520px;
   margin: 0 auto;
   padding: 1.5rem 2rem;
   background: rgba(0,0,0,0.13);
@@ -63,7 +62,7 @@
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
-  background-image: url('../../../assets/bg-wd.jpeg?v=${Date.now()');
+  // background-image: url('../../../assets/bg-wd.jpeg?v=${Date.now()');
   min-height: 100vh;
   font-family: "Georgia", "Times New Roman", serif;
   // padding-bottom: 120px;
@@ -73,6 +72,8 @@
   // background-position: center center;
   background-attachment: scroll;
   overflow: hidden;
+  display: block;
+  overflow-x: hidden;
 }
 
 
@@ -308,6 +309,10 @@
   position: relative;
   z-index: 1;
   overflow-y: scroll;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .title {
@@ -778,6 +783,7 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  margin-bottom: 0 !important;
 }
 
 /* ===== SLIDER ===== */
@@ -893,6 +899,210 @@
   cursor: pointer;
 }
 
+/* =========================================
+   PREMIUM RESPONSIVE UPGRADE LAYER
+   (Tanpa ubah struktur & penamaan)
+========================================= */
+/* =========================================
+   HERO SECTION CINEMATIC
+========================================= */
+
+.mini-hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.mini-hero-bg img,
+.slider img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  filter: brightness(0.75);
+  transition: transform 8s ease-in-out;
+}
+
+/* Slow cinematic zoom */
+.mini-hero-section:hover img {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.6)
+  );
+  z-index: 2;
+}
+
+/* ===== HERO TYPOGRAPHY UPGRADE ===== */
+
+.mini-hero-title {
+  font-size: clamp(14px, 2vw, 20px);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.mini-hero-names {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(28px, 5vw, 70px);
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+.mini-hero-date {
+  font-size: clamp(14px, 2vw, 22px);
+}
+
+/* =========================================
+   SLIDER PREMIUM UPGRADE
+========================================= */
+
+.slider-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.slider-track {
+  display: flex;
+  gap: 20px;
+  animation: smoothScroll 35s linear infinite;
+}
+
+.image-card {
+  flex: 0 0 auto;
+  width: 300px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  transition: transform 0.4s ease;
+}
+
+.image-card:hover {
+  transform: translateY(-10px);
+}
+
+.image-card img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.image-card:hover img {
+  transform: scale(1.08);
+}
+
+@keyframes smoothScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* =========================================
+   LOVE SECTION UPGRADE
+========================================= */
+
+.love-section {
+  padding: 120px 20px;
+  background: linear-gradient(
+    180deg,
+    #fdfaf8 0%,
+    #f5f0ed 100%
+  );
+  text-align: center;
+}
+
+.love-title {
+  font-size: clamp(30px, 4vw, 55px);
+  margin-bottom: 60px;
+  color: #2c5530;
+}
+
+/* =========================================
+   QUOTE CARD PREMIUM
+========================================= */
+
+.love-quote {
+  max-width: 800px;
+  margin: 50px auto;
+  border-radius: 25px;
+  transition: all 0.4s ease;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.love-quote:hover {
+  transform: translateY(-8px);
+  outline: none !important;
+}
+
+.quote-text {
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.8;
+  font-style: italic;
+  color: #444;
+}
+
+.quote-source {
+  margin-top: 20px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #777;
+}
+
+/* =========================================
+   RESPONSIVE PERFECT
+========================================= */
+
+@media (max-width: 1024px) {
+  .image-card {
+    width: 240px;
+  }
+
+  .image-card img {
+    height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .mini-hero-section {
+    min-height: 100vh;
+  }
+
+  .image-card {
+    width: 200px;
+  }
+
+  .image-card img {
+    height: 280px;
+  }
+
+  .love-quote {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .mini-hero-names {
+    font-size: 32px;
+  }
+
+  .image-card {
+    width: 160px;
+  }
+
+  .image-card img {
+    height: 220px;
+  }
+}
 
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {

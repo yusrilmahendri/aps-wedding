@@ -67,6 +67,8 @@ enum ContentView {
 })
 export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('weddingContainer') weddingContainer!: ElementRef;
+  @ViewChild('sectionRef') sectionRef!: ElementRef;
+
 
   ContentView = ContentView;
   guestName: string = "Nama Tamu"; // default
@@ -88,6 +90,10 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   sliderImages: string[] = [];
   currentSlide = 0;
   sliderInterval: any;
+
+  quoteName: any | null = null;
+  quoteText: any | null = null;
+  galleryImages: string[] = [];
 
   // Wedding data properties
   weddingData: WeddingData | null = null;
@@ -139,6 +145,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setResepsiDate();
     this.startCountdown();
     this.initSlider();
+    this.doGetQoute();
   }
 
   ngAfterViewInit() {
@@ -146,6 +153,8 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addClickFunctionality();
     this.addTouchSupport();
     this.addSideIconClickFunctionality();
+    this.initIntersection();
+    this.initParallax();
     // Jika invitationOpened awalnya true, langsung scroll
     if (this.invitationOpened) {
       setTimeout(() => {
@@ -246,6 +255,44 @@ setResepsiDate() {
         (this.currentSlide + 1) % this.sliderImages.length;
     }, 3000); // ganti slide tiap 3 detik
   }
+
+  doGetQoute(): void {
+
+    if (!this.weddingData?.gallery || !this.weddingData?.quotes) return;
+
+    this.galleryImages = this.weddingData.gallery
+      .slice(3, 8)
+      .map((item: any) => item?.photo)
+      .filter(Boolean);
+    console.log(this.galleryImages, 'gl');
+
+
+    const [firstQuote] = this.weddingData.quotes;
+
+    this.quoteName = firstQuote?.name ?? '';
+    this.quoteText = firstQuote?.qoute ?? '';
+  }
+   private initIntersection(): void {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(this.sectionRef.nativeElement);
+  }
+
+  private initParallax(): void {
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
+      const section = this.sectionRef.nativeElement;
+
+      section.style.backgroundPositionY = `${scrollPosition * 0.4}px`;
+    });
+  }
+
   /**
    * Load component state from localStorage
    */
@@ -1117,6 +1164,7 @@ setResepsiDate() {
     this.setResepsiDate();
     this.startCountdown();
     this.initSlider();
+    this.doGetQoute();
 
     // 🔥 WAJIB: putar audio langsung dari klik user
     try {

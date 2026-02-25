@@ -90,6 +90,7 @@ import { GiftViewComponent } from './dashboard/wedding-view/gift-view/gift-view.
 import { BillUserComponent } from './dashboard/bill-user/bill-user.component';
 import { ProfileAdminComponent } from './dashboard-admin/pengaturan/profile-admin/profile-admin.component';
 import { GuestGeneratorComponentsComponent } from './guest-generator-components/guest-generator-components.component';
+
 @NgModule({
   declarations: [
     AppComponent,
