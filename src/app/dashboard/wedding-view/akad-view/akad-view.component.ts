@@ -9,13 +9,27 @@ import { WeddingEvent } from '../../../services/wedding-data.service';
 export class AkadViewComponent implements OnInit {
   @Input() events: WeddingEvent[] | undefined = [];
   @Input() eventType: string = 'akad';
+  @Input() weddingData: any;
+
+  galleryImages: string[] = [];
+  currentSlide = 0;
 
   constructor() { }
 
   ngOnInit(): void {
     // Component initialization
     console.log('AkadViewComponent initialized with events:', this.events);
+    console.log('Wedding data received:', this.weddingData);
+  this.galleryImages = this.weddingData.gallery;
+  this.startAutoSlide();
   }
+
+  startAutoSlide() {
+  setInterval(() => {
+    this.currentSlide =
+      (this.currentSlide + 1) % this.galleryImages.length;
+  }, 4000);
+}
 
   getEventData(): WeddingEvent | null {
     if (!this.events || this.events.length === 0) {

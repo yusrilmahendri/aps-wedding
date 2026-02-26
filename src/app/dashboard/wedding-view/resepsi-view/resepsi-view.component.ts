@@ -9,12 +9,24 @@ import { WeddingEvent } from '../../../services/wedding-data.service';
 export class ResepsiViewComponent implements OnInit {
   @Input() events: WeddingEvent[] | undefined = [];
   @Input() eventType: string = 'resepsi';
+  @Input() weddingData: any;
+
+  galleryImages: string[] = [];
+  currentSlide = 0;
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log('ResepsiViewComponent initialized with events:', this.events);
+    this.galleryImages = this.weddingData.gallery;
+    this.startAutoSlide();
   }
+
+  startAutoSlide() {
+  setInterval(() => {
+    this.currentSlide =
+      (this.currentSlide + 1) % this.galleryImages.length;
+  }, 4000);
+}
 
   getEventData(): WeddingEvent | null {
     if (!this.events || this.events.length === 0) {

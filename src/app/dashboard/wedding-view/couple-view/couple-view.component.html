@@ -1,17 +1,38 @@
 <div class="invitation-container">
+
   <div class="opening-text" [innerHTML]="getOpeningText()"></div>
 
   <div class="dots">.....</div>
 
-  <div class="groom-name">{{ getGroomName() }}</div>
-  <div class="groom-parents">
-    {{ getGroomParents() }}
+  <div class="couple-wrapper">
+
+    <!-- Groom -->
+    <div class="person groom">
+      <div class="photo-frame">
+        <img [src]="getGroomPhoto()" alt="Groom Photo">
+      </div>
+
+      <div class="groom-name">{{ getGroomName() }}</div>
+      <div class="groom-parents">
+        {{ getGroomParents() }}
+      </div>
+    </div>
+
+    <!-- Ampersand -->
+    <div class="ampersand luxury">&</div>
+
+    <!-- Bride -->
+    <div class="person bride">
+      <div class="photo-frame">
+        <img [src]="getBridePhoto()" alt="Bride Photo">
+      </div>
+
+      <div class="bride-name">{{ getBrideName() }}</div>
+      <div class="bride-parents">
+        {{ getBrideParents() }}
+      </div>
+    </div>
+
   </div>
 
-  <div class="ampersand">&</div>
-
-  <div class="bride-name">{{ getBrideName() }}</div>
-  <div class="bride-parents">
-    {{ getBrideParents() }}
-  </div>
 </div>

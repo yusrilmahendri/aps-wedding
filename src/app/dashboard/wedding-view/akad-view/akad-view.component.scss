@@ -1,279 +1,149 @@
-// Akad ceremony component with elegant entry animations
-:host {
-  // background: linear-gradient(135deg, #f0eef2 0%, #e8e4ea 50%, #ddd7dd 100%);
-  font-family: "Open Sans", sans-serif;
-  display: block;
+/* ==============================
+   ✨ PREMIUM AKAD SECTION
+============================== */
+
+.akad-section {
+  position: relative;
   width: 100%;
-  box-sizing: border-box;
-  padding: clamp(40px, 8vw, 60px) clamp(15px, 4vw, 20px);
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #fdf8f2, #f5eee6);
+  overflow: hidden;
+}
+
+.akad-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(198,165,92,0.15), transparent 60%);
+  pointer-events: none;
 }
 
 .akad-container {
-  max-width: 500px;
-  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ==============================
+   CARD CONTENT
+============================== */
+
+.akad-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  padding: 50px 40px;
+  border-radius: 24px;
   text-align: center;
-  padding: clamp(30px, 8vw, 50px) clamp(20px, 6vw, 30px);
-  margin: 0 auto;
-  box-sizing: border-box;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  animation: fadeUp 1s ease;
 }
 
 .akad-title {
-  font-family: "Dancing Script", cursive;
-  font-size: clamp(52px, 12vw, 80px);
+  font-size: 3rem;
   font-weight: 600;
-  color: #2c5530;
-  margin-bottom: clamp(30px, 6vw, 40px);
-  line-height: 1;
-  letter-spacing: 2px;
-
-  // Entry animation - fade in with subtle scale
-  opacity: 0;
-  animation: fadeInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0s;
-}
-
-.event-details {
-  font-size: clamp(15px, 3.5vw, 18px);
-  color: #5a5a5a;
-  font-weight: 400;
-  line-height: 1.6;
-  margin-bottom: clamp(40px, 8vw, 60px);
-
-  // Entry animation - fade in
-  opacity: 0;
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0.3s;
-}
-
-.date {
-  margin-bottom: 8px;
-
-  // Staggered animation for date
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-  animation-delay: 0.5s;
-}
-
-.time {
-  margin-bottom: 8px;
-
-  // Staggered animation for time
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-  animation-delay: 0.7s;
-}
-
-.location {
-  margin-bottom: 0;
-
-  // Staggered animation for location
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-  animation-delay: 0.9s;
-}
-
-.wedding-rings {
-  width: clamp(70px, 15vw, 80px);
-  height: clamp(50px, 12vw, 60px);
-  margin: 0 auto clamp(40px, 8vw, 50px);
+  color: #a67c2d;
+  margin-bottom: 30px;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  // Entry animation - gentle scale and fade
-  opacity: 0;
-  animation: fadeInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 1.1s;
-
-  img {
-    // max-width: 100%;
-    height: auto;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-  }
 }
 
-.ring {
-  width: 35px;
-  height: 35px;
-  border: 4px solid #d4af37;
-  border-radius: 50%;
-  position: absolute;
-  background: transparent;
+.title-line {
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, #c6a55c, #e8d8a8);
+  margin: 15px auto 0;
+  border-radius: 2px;
 }
 
-.ring.left {
-  left: 5px;
-  transform: rotate(-15deg);
-}
-
-.ring.right {
-  right: 5px;
-  transform: rotate(15deg);
-}
-
-.flower {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, #e8a4b8 0%, #d4779b 70%);
-  border-radius: 50%;
-}
-
-.flower::before,
-.flower::after {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, #e8a4b8 0%, #d4779b 70%);
-  border-radius: 50%;
-}
-
-.flower::before {
-  top: -6px;
-  left: -3px;
-}
-
-.flower::after {
-  top: -3px;
-  right: -6px;
+.akad-details {
+  font-size: 1.2rem;
+  color: #444;
+  line-height: 2;
+  margin-bottom: 30px;
 }
 
 .location-button {
-  // background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
-
+  padding: 14px 30px;
   border: none;
   border-radius: 30px;
-  padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 35px);
-  font-size: clamp(15px, 3.5vw, 18px);
-  font-weight: 500;
-  font-family: "Open Sans", sans-serif;
+  background: linear-gradient(135deg, #c6a55c, #a67c2d);
+  color: white;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(199, 119, 119, 0.3);
-  letter-spacing: 0.5px;
-     background-color: transparent;        /* transparan */
-  color: white;                   /* warna teks */
-  border: 2px solid #f9f6f6;;             /* border agar terlihat */
-  padding: 12px 34px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-family: "Georgia", serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none;           
-
-  // Entry animation - final fade in with subtle scale
-  opacity: 0;
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 1.4s;
-
-  &:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(199, 119, 119, 0.4);
-    background: linear-gradient(135deg, #d18888 0%, #c96d6d 100%);
-  }
-
-  &:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 3px 10px rgba(199, 119, 119, 0.3);
-  }
+  transition: 0.3s ease;
 }
 
-// Animation keyframes - simplified to prevent layout shifts
-@keyframes fadeIn {
-  0% {
+.location-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(166,124,45,0.3);
+}
+
+/* ==============================
+   SLIDER
+============================== */
+
+.akad-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.slider-track {
+  display: flex;
+  transition: transform 0.8s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+
+.slide img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+}
+
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent 60%);
+}
+
+/* ==============================
+   ANIMATION
+============================== */
+
+@keyframes fadeUp {
+  from {
     opacity: 0;
+    transform: translateY(40px);
   }
-  100% {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* ==============================
+   RESPONSIVE
+============================== */
 
-// Responsive optimizations
 @media (max-width: 768px) {
-  :host {
-    padding: clamp(30px, 6vw, 40px) clamp(10px, 3vw, 15px);
-  }
-
-  .akad-container {
-    padding: clamp(25px, 6vw, 40px) clamp(15px, 4vw, 25px);
-  }
-
-  .wedding-rings {
-    width: clamp(60px, 12vw, 70px);
-    height: clamp(45px, 10vw, 50px);
-    margin-bottom: clamp(30px, 6vw, 40px);
-  }
-
-  .ring {
-    width: 30px;
-    height: 30px;
-    border-width: 3px;
-  }
-
-  .flower {
-    width: 16px;
-    height: 16px;
-  }
-
-  .flower::before,
-  .flower::after {
-    width: 10px;
-    height: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .akad-container {
-    padding: clamp(20px, 5vw, 30px) clamp(12px, 3vw, 20px);
-  }
-
   .akad-title {
-    margin-bottom: clamp(25px, 5vw, 30px);
+    font-size: 2.2rem;
   }
 
-  .event-details {
-    margin-bottom: clamp(30px, 6vw, 40px);
+  .slide img {
+    height: 350px;
   }
-}
 
-@media (max-width: 320px) {
-  .akad-title {
-    letter-spacing: 1px;
-  }
-}
-
-// Reduced motion accessibility
-@media (prefers-reduced-motion: reduce) {
-  .akad-title,
-  .event-details,
-  .date,
-  .time,
-  .location,
-  .wedding-rings,
-  .location-button {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .akad-card {
+    padding: 40px 25px;
   }
 }

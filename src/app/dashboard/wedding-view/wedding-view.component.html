@@ -92,10 +92,8 @@
             </div>
             </div>
 
-            <section #sectionRef class="love-section">
-
+          <section #sectionRef class="love-section">
             <h1 class="love-title fade-item">We Found Love</h1>
-
             <!-- CINEMATIC SLIDER -->
             <div class="slider-wrapper fade-item">
               <div class="slider-track">
@@ -109,7 +107,6 @@
                 </div>
               </div>
             </div>
-
             <!-- QUOTE -->
             <div class="love-quote fade-item">
               <p class="quote-text">
@@ -119,7 +116,6 @@
                 - {{ quoteName }} -
               </p>
             </div>
-
           </section>
 
           <section class="full-section" id="section-2">
@@ -130,13 +126,15 @@
 
           <section class="full-section" id="section-3">
             <wc-akad-view
-              [events]="weddingData?.events">
+              [events]="weddingData?.events"
+              [weddingData]="weddingData">
             </wc-akad-view>
           </section>
 
           <section class="full-section" id="section-4">
             <wc-resepsi-view
-            [events]="weddingData?.events">
+            [events]="weddingData?.events"
+            [weddingData]="weddingData">
           </wc-resepsi-view>
           </section>
 

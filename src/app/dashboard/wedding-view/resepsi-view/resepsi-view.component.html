@@ -1,25 +1,56 @@
-<div class="resepsi-container">
-  <h1 class="resepsi-title">{{ eventType === 'resepsi' ? 'Resepsi' : 'Akad' }}</h1>
+<section class="resepsi-section">
 
-  <div class="event-details" *ngIf="hasValidEvent(); else noEventTemplate">
-    <div class="date">{{ getFormattedDate() }}</div>
-    <div class="time">{{ getFormattedTime() }}</div>
-    <div class="location">di {{ getLocation() }}</div>
-  </div>
+  <div class="resepsi-container">
 
-  <ng-template #noEventTemplate>
-    <div class="event-details">
-      <div class="date">Tanggal akan diumumkan</div>
-      <div class="time">Waktu akan diumumkan</div>
-      <div class="location">Lokasi akan diumumkan</div>
+    <!-- LEFT IMAGE SLIDER -->
+    <div class="resepsi-media" *ngIf="galleryImages?.length">
+
+      <div class="slider-track"
+           [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+
+        <div class="slide" *ngFor="let img of galleryImages">
+          <img [src]="img" alt="Resepsi Image">
+          <div class="image-overlay"></div>
+        </div>
+
+      </div>
+
     </div>
-  </ng-template>
 
-  <div class="flower-bouquet">
-    <img src="assets/flower.png" alt="Flower bouquet" style="width: 130px;">
+    <!-- RIGHT CONTENT -->
+    <div class="resepsi-content">
+
+      <div class="resepsi-card">
+
+        <h1 class="resepsi-title">
+          Resepsi
+          <span class="title-accent"></span>
+        </h1>
+
+        <div class="resepsi-details" *ngIf="hasValidEvent(); else noResepsi">
+          <div class="date">{{ getFormattedDate() }}</div>
+          <div class="time">{{ getFormattedTime() }}</div>
+          <div class="location">di {{ getLocation() }}</div>
+        </div>
+
+        <ng-template #noResepsi>
+          <div class="resepsi-details">
+            <div>Tanggal akan diumumkan</div>
+            <div>Waktu akan diumumkan</div>
+            <div>Lokasi akan diumumkan</div>
+          </div>
+        </ng-template>
+
+        <button class="location-button"
+                *ngIf="getMapsLink()"
+                (click)="openMapsLocation()">
+          Petunjuk Lokasi
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <button class="location-button" *ngIf="getMapsLink()" (click)="openMapsLocation()">
-    Petunjuk Lokasi
-  </button>
-</div>
+</section>

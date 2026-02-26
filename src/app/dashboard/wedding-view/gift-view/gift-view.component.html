@@ -1,55 +1,76 @@
-<div class="invitation">
-  <p class="main-text">
-    Merupakan suatu kehormatan bagi kami, apabila<br>
-    Bapak/Ibu/Saudara/i berkenan hadir secara langsung<br>
-    untuk memberikan kami doa dan restu.
-  </p>
+<section class="invitation-section">
 
-  <h1 class="couple-names">{{ getCoupleNames() }}</h1>
+  <div class="invitation-overlay"></div>
 
-  <p class="gift-text">Hadiah dapat dikirimkan melalui:</p>
+  <div class="invitation-container">
 
-  <div *ngIf="hasBankAccounts(); else noBankTemplate" class="banks-container">
-    <div
-      class="single-bank-card"
-      *ngFor="let bank of getBankAccounts(); trackBy: trackByBankId"
-    >
-      <div class="bank-header">
-        <span class="bank-name">{{ bank.nama_bank }}</span>
-      </div>
+    <p class="main-text">
+      Merupakan suatu kehormatan bagi kami, apabila<br>
+      Bapak/Ibu/Saudara/i berkenan hadir secara langsung<br>
+      untuk memberikan kami doa dan restu.
+    </p>
 
-      <div class="bank-details">
-        <div class="account-row">
-          <span class="account-number">{{ bank.nomor_rekening }}</span>
-          <button class="copy-button" (click)="copyToClipboard(bank.nomor_rekening)" title="Copy account number">
-            <span class="copy-icon">📋</span>
-          </button>
-        </div>
+    <h1 class="couple-names">
+      {{ getCoupleNames() }}
+      <span class="title-line"></span>
+    </h1>
 
-        <div class="account-holder">
-          <span>a/n {{ bank.nama_pemilik }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+    <p class="gift-text">Hadiah dapat dikirimkan melalui:</p>
 
-  <ng-template #noBankTemplate>
-    <div class="banks-container mt-3">
-      <div class="single-bank-card">
+    <div *ngIf="hasBankAccounts(); else noBankTemplate"
+         class="banks-container">
+
+      <div class="single-bank-card"
+           *ngFor="let bank of getBankAccounts(); trackBy: trackByBankId">
+
         <div class="bank-header">
-          <span class="bank-name">Bank</span>
+          <span class="bank-name">{{ bank.nama_bank }}</span>
         </div>
 
         <div class="bank-details">
+
           <div class="account-row">
-            <span class="account-number">Nomor rekening akan diumumkan</span>
+            <span class="account-number">
+              {{ bank.nomor_rekening }}
+            </span>
+
+            <button class="copy-button"
+                    (click)="copyToClipboard(bank.nomor_rekening)"
+                    title="Copy account number">
+              📋
+            </button>
           </div>
 
           <div class="account-holder">
-            <span>a/n Penerima</span>
+            a/n {{ bank.nama_pemilik }}
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <ng-template #noBankTemplate>
+      <div class="banks-container">
+        <div class="single-bank-card">
+          <div class="bank-header">
+            <span class="bank-name">Bank</span>
+          </div>
+          <div class="bank-details">
+            <div class="account-row">
+              <span class="account-number">
+                Nomor rekening akan diumumkan
+              </span>
+            </div>
+            <div class="account-holder">
+              a/n Penerima
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-template>
-</div>
+    </ng-template>
+
+  </div>
+
+</section>

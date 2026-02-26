@@ -1,177 +1,139 @@
-// Wedding invitation component with elegant entry animations
+/* ===============================
+   LUXURY COUPLE REDESIGN
+================================ */
+/* ==============================
+   LUXURY BOX WRAPPER
+================================ */
+
+/* Tambah jarak atas */
 :host {
-  font-family: "Open Sans", sans-serif;
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  padding: clamp(40px, 8vw, 60px) clamp(15px, 4vw, 20px);
+  padding-top: clamp(80px, 12vw, 140px);
 }
 
+/* Box utama */
 .invitation-container {
-  max-width: 600px;
-  width: 100%;
+  background: #fdfcf9; /* soft ivory */
+  border-radius: none !important; /* hilangkan border-radius */
+  padding: clamp(50px, 8vw, 80px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 5px 20px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft inner glow */
+.invitation-container::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+  top: -150px;
+  right: -150px;
+  z-index: 0;
+}
+
+.invitation-container > * {
+  position: relative;
+  z-index: 1;
+}
+.couple-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(30px, 6vw, 80px);
+  flex-wrap: wrap;
+  margin-top: 40px;
+  position: relative;
+}
+
+/* Person Block */
+.person {
+  max-width: 260px;
   text-align: center;
-  padding: clamp(25px, 6vw, 40px) clamp(15px, 4vw, 30px);
-  line-height: 1.6;
-  box-sizing: border-box;
-  margin: 0 auto;
+  position: relative;
 }
 
-.opening-text {
-  font-size: clamp(15px, 3.5vw, 18px);
-  color: #5a5a5a;
-  font-weight: 400;
-  margin-bottom: clamp(25px, 6vw, 40px);
-  line-height: 1.5;
-  letter-spacing: 0.3px;
-
-  // Entry animation - fade in only (no transform)
-  opacity: 0;
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0s;
+/* Photo Frame Luxury */
+.photo-frame {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 25px;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(135deg, #d4af37, #f5e6b3, #c5a100);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInScale 0.8s ease forwards;
 }
 
-.dots {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #666;
-  margin-bottom: clamp(20px, 5vw, 30px);
-  letter-spacing: clamp(6px, 1.5vw, 8px);
-
-  // Entry animation - subtle scale only
-  opacity: 0;
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0.3s;
-}
-
-.groom-name {
-  font-family: "Dancing Script", cursive;
-  font-size: clamp(42px, 10vw, 72px);
-  font-weight: 600;
-  color: #2c5530;
-  margin-bottom: 15px;
-  line-height: 1;
-  letter-spacing: 2px;
-
-  // Entry animation - fade in only
-  opacity: 0;
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0.6s;
-}
-
-.groom-parents {
-  font-size: clamp(14px, 3vw, 16px);
-  color: #5a5a5a;
-  font-weight: 400;
-  margin-bottom: clamp(35px, 8vw, 50px);
-  line-height: 1.4;
-
-  // Entry animation - fade in
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-  animation-delay: 0.9s;
-}
-
-.ampersand {
-  font-family: "Dancing Script", cursive;
-  font-size: clamp(32px, 7vw, 48px);
-  font-weight: 500;
-  color: #2c5530;
-  margin: clamp(15px, 4vw, 20px) 0;
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
   display: block;
-
-  // Entry animation - subtle scale fade in
-  opacity: 0;
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 1.2s;
 }
 
-.bride-name {
+/* Soft Glow Effect */
+.photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.3);
+}
+
+/* Luxury Ampersand */
+.ampersand.luxury {
+  font-size: clamp(48px, 8vw, 70px);
   font-family: "Dancing Script", cursive;
-  font-size: clamp(42px, 10vw, 72px);
-  font-weight: 600;
-  color: #2c5530;
-  margin-bottom: 15px;
-  line-height: 1;
-  letter-spacing: 2px;
-
-  // Entry animation - fade in only
-  opacity: 0;
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 1.5s;
+  background: linear-gradient(135deg, #d4af37, #b8960a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  margin: 0 20px;
 }
 
-.bride-parents {
-  font-size: clamp(14px, 3vw, 16px);
-  color: #5a5a5a;
-  font-weight: 400;
-  line-height: 1.4;
-
-  // Entry animation - final fade in
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-  animation-delay: 1.8s;
+/* Decorative line */
+.ampersand.luxury::before,
+.ampersand.luxury::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  top: 50%;
 }
 
-// Animation keyframes - simplified to prevent layout shifts
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.ampersand.luxury::before {
+  right: 100%;
+  margin-right: 15px;
 }
 
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+.ampersand.luxury::after {
+  left: 100%;
+  margin-left: 15px;
 }
 
-// Responsive optimizations
+/* Upgrade Name Style */
+.groom-name,
+.bride-name {
+  background: linear-gradient(135deg, #2c5530, #3e7b46);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  :host {
-    padding: clamp(30px, 6vw, 40px) clamp(10px, 3vw, 15px);
+  .couple-wrapper {
+    flex-direction: column;
   }
 
-  .invitation-container {
-    padding: clamp(20px, 5vw, 30px) clamp(12px, 3vw, 20px);
-  }
-}
-
-@media (max-width: 480px) {
-  .groom-name,
-  .bride-name {
-    letter-spacing: 1px;
-  }
-
-  .ampersand {
-    margin: clamp(12px, 3vw, 15px) 0;
-  }
-}
-
-@media (max-width: 320px) {
-  .opening-text {
-    line-height: 1.4;
-  }
-}
-
-// Reduced motion accessibility
-@media (prefers-reduced-motion: reduce) {
-  .opening-text,
-  .dots,
-  .groom-name,
-  .groom-parents,
-  .ampersand,
-  .bride-name,
-  .bride-parents {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .ampersand.luxury::before,
+  .ampersand.luxury::after {
+    display: none;
   }
 }

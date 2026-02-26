@@ -1,25 +1,55 @@
-<div class="akad-container">
-  <h1 class="akad-title">{{ eventType === 'akad' ? 'Akad' : 'Resepsi' }}</h1>
+<section class="akad-section">
 
-  <div class="event-details" *ngIf="hasValidEvent(); else noEventTemplate">
-    <div class="date">{{ getFormattedDate() }}</div>
-    <div class="time">{{ getFormattedTime() }}</div>
-    <div class="location">di {{ getLocation() }}</div>
-  </div>
+  <!-- BACKGROUND OVERLAY -->
+  <div class="akad-overlay"></div>
 
-  <ng-template #noEventTemplate>
-    <div class="event-details">
-      <div class="date">Tanggal akan diumumkan</div>
-      <div class="time">Waktu akan diumumkan</div>
-      <div class="location">Lokasi akan diumumkan</div>
+  <div class="akad-container">
+
+    <!-- CONTENT CARD -->
+    <div class="akad-card">
+
+      <h1 class="akad-title">
+        Akad Nikah
+        <span class="title-line"></span>
+      </h1>
+
+      <div class="akad-details" *ngIf="hasValidEvent(); else noAkad">
+        <div class="date">{{ getFormattedDate() }}</div>
+        <div class="time">{{ getFormattedTime() }}</div>
+        <div class="location">di {{ getLocation() }}</div>
+      </div>
+
+      <ng-template #noAkad>
+        <div class="akad-details">
+          <div>Tanggal akan diumumkan</div>
+          <div>Waktu akan diumumkan</div>
+          <div>Lokasi akan diumumkan</div>
+        </div>
+      </ng-template>
+
+      <button class="location-button"
+              *ngIf="getMapsLink()"
+              (click)="openMapsLocation()">
+        Petunjuk Lokasi
+      </button>
+
     </div>
-  </ng-template>
 
-  <div class="wedding-rings">
-    <img src="assets/ring.png" alt="Wedding Rings" style="width: 130px;">
+    <!-- SLIDER -->
+    <div class="akad-slider" *ngIf="galleryImages?.length">
+
+      <div class="slider-track"
+           [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+
+        <div class="slide" *ngFor="let img of galleryImages">
+          <img [src]="img" alt="Akad Image">
+          <div class="slide-overlay"></div>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <button class="location-button" *ngIf="getMapsLink()" (click)="openMapsLocation()">
-    Petunjuk Lokasi
-  </button>
-</div>
+</section>

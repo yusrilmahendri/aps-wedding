@@ -43,4 +43,12 @@ export class CoupleViewComponent implements OnInit {
     return this.weddingData?.settings?.salam_atas ||
            'Tanpa mengurangi rasa hormat, kami mengundang<br>Bapak/Ibu/Saudara/I pada acara pernikahan:';
   }
+
+  getGroomPhoto() {
+
+  }
+
+  getBridePhoto(){
+
+  }
 }
