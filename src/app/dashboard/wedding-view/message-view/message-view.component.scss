@@ -1,223 +1,155 @@
+/* ===============================
+   💎 MESSAGE SECTION
+================================ */
+
 .message-container {
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 120px; // Space for bottom navbar
+  padding: 140px 20px;
+  background: linear-gradient(135deg, #f8f4ef, #efe6dc);
+  text-align: center;
 }
+
+/* ===============================
+   ✨ TITLE
+================================ */
 
 .message-title {
-  text-align: center;
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  flex-shrink: 0;
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: #b07d32;
+  margin-bottom: 70px;
+  position: relative;
 }
 
-.messages-scroll-container {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
-  margin-right: -4px;
-
-  // Custom scrollbar styling
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-  }
-
-  // Firefox scrollbar
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+.message-title::after {
+  content: "";
+  width: 90px;
+  height: 3px;
+  background: linear-gradient(to right, #c6a55c, #e8d8a8);
+  display: block;
+  margin: 15px auto 0;
+  border-radius: 2px;
 }
+
+/* ===============================
+   📜 MESSAGE LIST
+================================ */
 
 .messages-list {
-  position: relative;
-  padding: 1rem 0;
-}
-
-.message-wrapper {
+  max-width: 750px;
+  margin: 0 auto;
   display: flex;
-  margin-bottom: 2rem;
-  width: 100%;
-
-  &.message-left {
-    justify-content: flex-start;
-
-    .message-card {
-      margin-right: auto;
-      margin-left: 0;
-    }
-  }
-
-  &.message-right {
-    justify-content: flex-end;
-
-    .message-card {
-      margin-left: auto;
-      margin-right: 0;
-    }
-  }
+  flex-direction: column;
+  gap: 35px;
 }
+
+/* ===============================
+   🏆 MESSAGE CARD
+================================ */
 
 .message-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 450px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  padding: 40px 35px;
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(31, 46, 43, 0.12);
+  text-align: left;
+  transition: all 0.4s ease;
   position: relative;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  }
 }
+
+.message-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 35px 80px rgba(31, 46, 43, 0.18);
+}
+
+/* subtle gold accent */
+.message-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(to bottom, #c6a55c, #e8d8a8);
+  border-top-left-radius: 28px;
+  border-bottom-left-radius: 28px;
+}
+
+/* ===============================
+   👤 HEADER
+================================ */
 
 .message-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  margin-bottom: 15px;
 }
 
 .guest-name {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2f3e3c;
 }
 
 .message-date {
   font-size: 0.85rem;
-  color: #7f8c8d;
+  color: #888;
 }
+
+/* ===============================
+   🎉 ATTENDANCE BADGE
+================================ */
 
 .attendance-status {
-  background: rgba(52, 152, 219, 0.2);
-  color: #2980b9;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
   display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 20px;
 }
+
+/* Warna lebih soft dan elegan */
+
+.attendance-status.ya {
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+}
+
+.attendance-status.tidak {
+  background: rgba(183, 28, 28, 0.1);
+  color: #b71c1c;
+}
+
+.attendance-status.belum_pasti {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ef6c00;
+}
+
+/* ===============================
+   💬 MESSAGE CONTENT
+================================ */
 
 .message-content {
-  line-height: 1.6;
-  color: #34495e;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+  white-space: pre-line;
 }
 
-.no-messages {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #7f8c8d;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+/* ===============================
+   📱 RESPONSIVE
+================================ */
 
-  p {
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-  }
-}
-
-// Responsive Design
 @media (max-width: 768px) {
-  .message-container {
-    padding: 0.5rem;
-    padding-bottom: 100px; // Adjusted for mobile navbar
-  }
 
   .message-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .message-wrapper {
-    &.message-left,
-    &.message-right {
-      justify-content: center;
-
-      .message-card {
-        margin: 0;
-        max-width: 100%;
-      }
-    }
+    font-size: 2rem;
   }
 
   .message-card {
-    padding: 1rem;
+    padding: 30px 25px;
   }
 
-  .message-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-  }
-
-  .guest-name {
-    font-size: 1rem;
-  }
-
-  .message-date {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .message-container {
-    padding: 0.25rem;
-    padding-bottom: 90px; // Adjusted for smaller mobile navbar
-  }
-
-  .message-title {
-    font-size: 1.25rem;
-  }
-
-  .message-card {
-    padding: 0.75rem;
-    border-radius: 12px;
-  }
-
-  .message-content {
-    font-size: 0.9rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .message-wrapper {
-    &.message-left .message-card {
-      margin-left: 5%;
-    }
-
-    &.message-right .message-card {
-      margin-right: 5%;
-    }
-  }
 }

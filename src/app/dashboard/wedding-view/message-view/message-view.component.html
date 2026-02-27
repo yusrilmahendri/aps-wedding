@@ -1,30 +1,28 @@
-<div class="message-container">
+<div class="message-container" *ngIf="hasMessages()">
   <h1 class="message-title">Ucapan & Doa</h1>
 
-  <div class="messages-scroll-container" *ngIf="hasMessages(); else noMessagesTemplate">
-    <div class="messages-list">
-      <div
-        class="message-wrapper"
-        *ngFor="let wish of getGuestWishes(); trackBy: trackByWishId; let i = index"
-        [class.message-left]="i % 2 === 0"
-        [class.message-right]="i % 2 === 1"
-      >
-        <div class="message-card">
-          <div class="message-header">
-            <div class="guest-name">{{ wish.nama }}</div>
-            <div class="message-date">{{ getFormattedDate(wish.created_at) }}</div>
-          </div>
-          <div class="attendance-status">{{ getAttendanceText(wish.kehadiran) }}</div>
-          <div class="message-content">{{ wish.pesan }}</div>
+  <div class="messages-list">
+    <div
+      class="message-card"
+      *ngFor="let wish of getGuestWishes(); trackBy: trackByWishId"
+    >
+      <div class="message-header">
+        <div class="guest-name">{{ wish.nama }}</div>
+        <div class="message-date">
+          {{ getFormattedDate(wish.created_at) }}
         </div>
+      </div>
+
+      <div
+      class="attendance-status"
+      [ngClass]="getAttendanceClass(wish.kehadiran)"
+    >
+      {{ getAttendanceText(wish.kehadiran || '') }}
+    </div>
+
+      <div class="message-content">
+        {{ wish.pesan }}
       </div>
     </div>
   </div>
-
-  <ng-template #noMessagesTemplate>
-    <div class="no-messages">
-      <p>Belum ada ucapan dari tamu undangan.</p>
-      <p>Jadilah yang pertama memberikan ucapan dan doa!</p>
-    </div>
-  </ng-template>
 </div>

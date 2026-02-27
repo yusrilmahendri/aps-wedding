@@ -1,149 +1,253 @@
-/* ==============================
-   ✨ PREMIUM AKAD SECTION
-============================== */
-
+/* ================= SECTION ================= */
+body {
+  overflow-x: hidden;
+}
 .akad-section {
-  position: relative;
   width: 100%;
-  padding: 100px 20px;
-  background: linear-gradient(135deg, #fdf8f2, #f5eee6);
-  overflow: hidden;
-}
-
-.akad-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(198,165,92,0.15), transparent 60%);
-  pointer-events: none;
-}
-
-.akad-container {
-  max-width: 1200px;
-  margin: auto;
+  padding: 60px 20px;
+  background: linear-gradient(180deg, #1f2e2b 0%, #243833 100%);
   display: flex;
-  flex-direction: column;
-  gap: 60px;
-  position: relative;
-  z-index: 2;
+  justify-content: center;
 }
 
-/* ==============================
-   CARD CONTENT
-============================== */
+.akad-wrapper {
+  width: 100%;
+  max-width: 430px;
+}
+
+/* ================= IMAGE ================= */
+
+.akad-image {
+  width: 100%;
+  height: 450px;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 6s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Soft overlay for luxury look */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.25));
+  }
+}
+
+/* ================= CARD ================= */
 
 .akad-card {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(10px);
-  padding: 50px 40px;
-  border-radius: 24px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  animation: fadeUp 1s ease;
-}
-
-.akad-title {
-  font-size: 3rem;
-  font-weight: 600;
-  color: #a67c2d;
-  margin-bottom: 30px;
-  position: relative;
-}
-
-.title-line {
-  display: block;
-  width: 80px;
-  height: 3px;
-  background: linear-gradient(to right, #c6a55c, #e8d8a8);
-  margin: 15px auto 0;
-  border-radius: 2px;
-}
-
-.akad-details {
-  font-size: 1.2rem;
-  color: #444;
-  line-height: 2;
-  margin-bottom: 30px;
-}
-
-.location-button {
-  padding: 14px 30px;
-  border: none;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #c6a55c, #a67c2d);
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.location-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(166,124,45,0.3);
-}
-
-/* ==============================
-   SLIDER
-============================== */
-
-.akad-slider {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.slider-track {
   display: flex;
-  transition: transform 0.8s ease-in-out;
+  background: #f8f6f2;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-.slide {
-  min-width: 100%;
+/* ================= LEFT SIDE ================= */
+
+.akad-left {
+  width: 80px;
+  background: #eae6df;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 22px;
+    letter-spacing: 3px;
+    font-family: 'Playfair Display', serif;
+    color: #2f2f2f;
+  }
+}
+
+/* ================= RIGHT SIDE ================= */
+
+.akad-right {
+  flex: 1;
+  padding: 40px 25px;
+  text-align: center;
+  color: #2f2f2f;
+}
+
+/* DAY */
+
+.akad-day {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  color: #555;
+}
+
+/* TIME / DATE STYLE */
+
+.akad-date-number {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Divider line for elegance */
+
+.akad-date-number::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: #bbb;
+  margin: 12px auto;
+}
+
+/* TIME */
+
+.akad-time {
+  font-size: 15px;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+/* LOCATION */
+
+.akad-location {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #444;
+
+  strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+}
+
+/* ================= BUTTON ================= */
+
+.maps-btn {
+  padding: 12px 22px;
+  border: 1px solid #2f2f2f;
+  background: transparent;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #2f2f2f;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablet */
+@media (max-width: 768px) {
+
+  .akad-image {
+    height: 380px;
+  }
+
+  .akad-left {
+    width: 65px;
+
+    span {
+      font-size: 18px;
+    }
+  }
+
+  .akad-right {
+    padding: 30px 20px;
+  }
+
+  .akad-date-number {
+    font-size: 26px;
+  }
+}
+/* ================= SECTION ================= */
+
+.akad-section {
+  width: 100%;
+  padding: 100px 20px;
+  background: linear-gradient(180deg, #1f2e2b 0%, #243833 100%);
+  display: flex;
+  justify-content: center;
+}
+
+.akad-wrapper {
+  width: 100%;
+  max-width: 900px;   /* 👈 diperbesar untuk desktop */
+}
+
+/* ================= IMAGE ================= */
+
+.akad-image {
+  width: 100%;
+  height: 550px;      /* 👈 lebih proporsional di desktop */
+  overflow: hidden;
+  border-radius: 24px 24px 0 0;
   position: relative;
 }
 
-.slide img {
+.akad-image img {
   width: 100%;
-  height: 500px;
+  height: 100%;
   object-fit: cover;
 }
 
-.slide-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent 60%);
+/* ================= CARD ================= */
+
+.akad-card {
+  display: flex;
+  background: #f8f6f2;
+  border-radius: 0 0 24px 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(138, 134, 134, 0.2);
 }
+/* Small mobile */
+@media (max-width: 480px) {
 
-/* ==============================
-   ANIMATION
-============================== */
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==============================
-   RESPONSIVE
-============================== */
-
-@media (max-width: 768px) {
-  .akad-title {
-    font-size: 2.2rem;
+  .akad-wrapper {
+    max-width: 100%;
   }
 
-  .slide img {
-    height: 350px;
+  .akad-image {
+    height: 330px;
   }
 
   .akad-card {
-    padding: 40px 25px;
+    flex-direction: column;
+  }
+
+  .akad-left {
+    width: 100%;
+    height: 60px;
+
+    span {
+      writing-mode: horizontal-tb;
+      transform: none;
+      font-size: 18px;
+    }
+  }
+
+  .akad-right {
+    padding: 25px 18px;
   }
 }

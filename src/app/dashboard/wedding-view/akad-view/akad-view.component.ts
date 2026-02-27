@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { WeddingEvent } from '../../../services/wedding-data.service';
 
 @Component({
@@ -6,37 +6,44 @@ import { WeddingEvent } from '../../../services/wedding-data.service';
   templateUrl: './akad-view.component.html',
   styleUrls: ['./akad-view.component.scss']
 })
-export class AkadViewComponent implements OnInit {
+export class AkadViewComponent implements OnInit, OnDestroy {
+
   @Input() events: WeddingEvent[] | undefined = [];
   @Input() eventType: string = 'akad';
   @Input() weddingData: any;
 
   galleryImages: string[] = [];
   currentSlide = 0;
+  private slideInterval: any;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-    // Component initialization
-    console.log('AkadViewComponent initialized with events:', this.events);
-    console.log('Wedding data received:', this.weddingData);
-  this.galleryImages = this.weddingData.gallery;
-  this.startAutoSlide();
+    this.galleryImages = this.weddingData?.gallery || [];
+
+    if (this.galleryImages.length > 1) {
+      this.startAutoSlide();
+    }
   }
 
-  startAutoSlide() {
-  setInterval(() => {
-    this.currentSlide =
-      (this.currentSlide + 1) % this.galleryImages.length;
-  }, 4000);
-}
+  ngOnDestroy(): void {
+    if (this.slideInterval) {
+      clearInterval(this.slideInterval);
+    }
+  }
+
+  startAutoSlide(): void {
+    this.slideInterval = setInterval(() => {
+      this.currentSlide =
+        (this.currentSlide + 1) % this.galleryImages.length;
+    }, 4000);
+  }
 
   getEventData(): WeddingEvent | null {
     if (!this.events || this.events.length === 0) {
       return null;
     }
 
-    // Find event by type (akad, resepsi) or return first event
     const targetEvent = this.events.find(event =>
       event.nama_acara.toLowerCase().includes(this.eventType.toLowerCase())
     );
@@ -56,7 +63,7 @@ export class AkadViewComponent implements OnInit {
         month: 'long',
         year: 'numeric'
       });
-    } catch (error) {
+    } catch {
       return event.tanggal_acara;
     }
   }
@@ -89,4 +96,6 @@ export class AkadViewComponent implements OnInit {
     const event = this.getEventData();
     return !!(event && event.tanggal_acara && event.start_acara && event.alamat);
   }
+
+
 }

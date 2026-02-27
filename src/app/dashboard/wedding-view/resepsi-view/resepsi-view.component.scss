@@ -126,17 +126,62 @@
    RESPONSIVE
 ============================== */
 
+/* ==============================
+   RESPONSIVE FIXED SIDE BY SIDE
+============================== */
+
 @media (max-width: 992px) {
+
   .resepsi-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr; /* tetap 2 kolom */
+    gap: 30px;
   }
 
   .slide img {
-    height: 400px;
+    height: 420px;
   }
 
   .resepsi-card {
-    text-align: center;
     padding: 40px 30px;
+  }
+
+  .resepsi-title {
+    font-size: 2.2rem;
+  }
+
+  .resepsi-details {
+    font-size: 1rem;
+  }
+}
+
+/* Extra small phone */
+
+@media (max-width: 576px) {
+
+  .resepsi-container {
+    grid-template-columns: 55% 45%; /* gambar sedikit lebih besar */
+    gap: 20px;
+  }
+
+  .slide img {
+    height: 350px;
+  }
+
+  .resepsi-card {
+    padding: 30px 20px;
+  }
+
+  .resepsi-title {
+    font-size: 1.8rem;
+  }
+
+  .resepsi-details {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .location-button {
+    padding: 12px 25px;
+    font-size: 0.9rem;
   }
 }

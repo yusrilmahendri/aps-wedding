@@ -1,4 +1,7 @@
 /* MINI HERO SECTION STYLES */
+html, body {
+  overflow-x: hidden;
+}
 .mini-hero-section {
   position: relative;
   width: 100%;
@@ -970,9 +973,10 @@
 
 .slider-track {
   display: flex;
-  width: max-content;
   gap: 20px;
+  flex-wrap: nowrap;
   animation: smoothScroll 35s linear infinite;
+  will-change: transform;
 }
 
 .image-card {
@@ -1000,8 +1004,12 @@
 }
 
 @keyframes smoothScroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 10px));
+  }
 }
 
 @keyframes slideLeft {

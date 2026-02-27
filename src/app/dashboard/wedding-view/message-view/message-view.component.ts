@@ -15,13 +15,21 @@ export class MessageViewComponent implements OnInit {
     console.log('MessageViewComponent initialized with guestWishes:', this.guestWishes);
   }
 
-  getGuestWishes(): GuestWish[] {
-    return this.guestWishes || [];
-  }
+getGuestWishes(): GuestWish[] {
+  return (this.guestWishes || []).filter(wish =>
+    wish.pesan &&
+    wish.pesan.trim().length > 0 &&
+    !wish.pesan.toLowerCase().includes('telah dilihat')
+  );
+}
 
   hasMessages(): boolean {
-    return !!(this.guestWishes && this.guestWishes.length > 0);
+    return this.getGuestWishes().length > 0;
   }
+
+  getAttendanceClass(kehadiran?: string): string {
+  return kehadiran ? kehadiran.toLowerCase() : '';
+}
 
   getFormattedDate(dateString: string): string {
     try {

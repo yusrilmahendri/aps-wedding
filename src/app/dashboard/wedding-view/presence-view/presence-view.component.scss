@@ -1,410 +1,156 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap");
-
-:host {
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  background: transparent !important;
-  font-family: "Open Sans", sans-serif;
-  position: relative;
-  overflow-x: hidden;
-}
+/* ===============================
+   🌿 PRESENCE SECTION
+================================ */
 
 .presence-container {
+  width: 100%;
+  padding: 120px 20px;
+  background: linear-gradient(135deg, #f8f4ef, #efe6dc);
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 120px); /* Account for bottom navbar */
-  padding: 2rem 1rem;
-  box-sizing: border-box;
-
-  /* Responsive padding to avoid side icons */
-  // padding-right: clamp(1rem, 8vw, 6rem);
-  padding-left: 1rem;
-  padding-bottom: clamp(6rem, 12vh, 8rem); /* Dynamic bottom padding */
 }
+
+/* ===============================
+   ✨ FORM CARD
+================================ */
 
 .form-container {
-    // background: linear-gradient(135deg, #E0DADE 0%, #E0DADE 100%);
-  background: transparent !important;
-  border-radius: 20px;
-  padding: 40px 35px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
   width: 100%;
-  max-width: 480px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 650px;
+  background: #ffffff;
+  padding: 70px 60px;
+  border-radius: 30px;
+  box-shadow: 0 40px 80px rgba(31, 46, 43, 0.12);
   position: relative;
-  z-index: 10;
-
-  /* Responsive max-width */
-  max-width: min(480px, calc(100vw - 140px)); /* Account for side icons */
-
-  // Entry animation - fade in with subtle scale
-  opacity: 0;
-  animation: fadeInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0s;
+  overflow: hidden;
 }
+
+/* Soft decorative accent */
+.form-container::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(198,165,92,0.15), transparent 70%);
+}
+
+/* ===============================
+   📝 TITLE
+================================ */
 
 .form-title {
-  font-size: clamp(24px, 5vw, 32px);
+  font-size: 2.5rem;
   font-weight: 600;
-  color: #2c5530;
   text-align: center;
-  margin-bottom: 35px;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
-
-  // Entry animation - fade in after container
-  opacity: 0;
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 0.2s;
+  color: #b07d32;
+  margin-bottom: 50px;
+  position: relative;
 }
 
-.confirmation-form {
-  width: 100%;
+.form-title::after {
+  content: "";
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, #c6a55c, #e8d8a8);
+  display: block;
+  margin: 15px auto 0;
+  border-radius: 2px;
 }
+
+/* ===============================
+   📦 FORM GROUP
+================================ */
 
 .form-group {
-  margin-bottom: 25px;
-  position: relative;
-  transition: transform 0.2s ease;
-
-  // Staggered entry animations for form groups
-  opacity: 0;
-  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-
-  &:nth-child(2) { // Name field
-    animation-delay: 0.4s;
-  }
-
-  &:nth-child(3) { // Attendance field
-    animation-delay: 0.6s;
-  }
-
-  &:nth-child(4) { // Message field
-    animation-delay: 0.8s;
-  }
-}
-
-.form-group:focus-within {
-  transform: translateY(-1px);
+  margin-bottom: 30px;
 }
 
 .form-label {
   display: block;
-  font-size: clamp(16px, 3.5vw, 18px);
-  font-weight: 500;
-  color: #5a5a5a;
   margin-bottom: 10px;
-  letter-spacing: 0.3px;
+  font-weight: 500;
+  color: #444;
+  font-size: 0.95rem;
 }
+
+/* ===============================
+   INPUT STYLE
+================================ */
 
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 14px 18px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.8);
-  font-size: clamp(14px, 3vw, 16px);
-  font-family: "Open Sans", sans-serif;
-  color: #333;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1px solid #e2ddd6;
+  background: #faf8f5;
+  font-size: 1rem;
   transition: all 0.3s ease;
   outline: none;
-  box-sizing: border-box;
+}
+
+.form-textarea {
+  min-height: 140px;
+  resize: none;
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15),
-    0 0 0 3px rgba(44, 85, 48, 0.1);
-  transform: translateY(-1px);
+  border-color: #c6a55c;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(198,165,92,0.15);
 }
 
-.form-input.invalid,
-.form-select.invalid {
-  box-shadow: inset 0 2px 8px rgba(220, 53, 69, 0.15),
-    0 0 0 2px rgba(220, 53, 69, 0.2);
+/* Invalid state */
+.invalid {
+  border-color: #d9534f !important;
+  background: #fff6f6;
 }
 
-.form-input::placeholder,
-.form-textarea::placeholder {
-  color: #999;
-  font-style: italic;
-}
-
-.form-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 18px center;
-  background-size: 16px;
-  padding-right: 45px;
-}
-
-.form-select option {
-  padding: 12px;
-  background: white;
-  color: #333;
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-  max-height: 180px;
-  line-height: 1.5;
-}
+/* ===============================
+   🚀 BUTTON
+================================ */
 
 .submit-button {
   width: 100%;
-   background-color: transparent !important;        /* transparan */
-  color: #f5f1f1;;                        /* warna teks */
-  border: 2px solid #f3ecec;;             /* border agar terlihat */
-  padding: 12px 34px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-family: "Georgia", serif;
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #c6a55c, #a67c2d);
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: none;           
-  // background: linear-gradient(135deg, #c77777 0%, #b85c5c 100%);
-    
-  // Entry animation - final fade in with subtle scale
-  opacity: 0;
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 1.0s;
 }
 
 .submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(199, 119, 119, 0.4);
-  background: linear-gradient(135deg, #d18888 0%, #c96d6d 100%);
-}
-
-.submit-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 6px 20px rgba(199, 119, 119, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(166,124,45,0.4);
 }
 
 .submit-button:disabled {
-  opacity: 0.7;
+  background: #ccc;
   cursor: not-allowed;
-  transform: none;
-  // background: linear-gradient(135deg, #a0a0a0 0%, #888888 100%);
 }
 
-/* Mobile Optimizations (768px and below) */
+/* ===============================
+   📱 RESPONSIVE
+================================ */
+
 @media (max-width: 768px) {
-  .presence-container {
-    padding: 1.5rem 0.75rem;
-    // padding-right: clamp(0.75rem, 12vw, 5rem); /* More space for side icons */
-    padding-bottom: clamp(5rem, 15vh, 7rem);
-    min-height: calc(100vh - 100px);
-  }
 
   .form-container {
-    padding: 35px 25px;
-    border-radius: 16px;
-    max-width: calc(100vw - 120px); /* Account for side icons on mobile */
+    padding: 50px 30px;
   }
 
   .form-title {
-    margin-bottom: 30px;
+    font-size: 2rem;
   }
 
-  .form-group {
-    margin-bottom: 22px;
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    padding: 13px 16px;
-    border-radius: 10px;
-  }
-
-  .form-textarea {
-    min-height: 90px;
-    max-height: 150px;
-  }
-
-  .submit-button {
-    padding: 15px 25px;
-    border-radius: 10px;
-  }
-}
-
-/* Tablet Specific (769px to 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .presence-container {
-    padding: 2rem 1.5rem;
-    // padding-right: clamp(1.5rem, 10vw, 7rem);
-    padding-bottom: clamp(6rem, 14vh, 8rem);
-  }
-
-  .form-container {
-    padding: 45px 40px;
-    max-width: min(500px, calc(100vw - 160px));
-  }
-
-  .form-title {
-    margin-bottom: 40px;
-  }
-}
-
-/* Small Mobile (480px and below) */
-@media (max-width: 480px) {
-  .presence-container {
-    padding: 1rem 0.5rem;
-    // padding-right: clamp(0.5rem, 15vw, 4rem);
-    padding-bottom: clamp(4rem, 18vh, 6rem);
-    min-height: calc(100vh - 80px);
-  }
-
-  .form-container {
-    padding: 30px 20px;
-    border-radius: 12px;
-    max-width: calc(100vw - 100px);
-  }
-
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    padding: 12px 15px;
-    border-radius: 8px;
-  }
-
-  .form-textarea {
-    min-height: 80px;
-    max-height: 120px;
-  }
-
-  .submit-button {
-    padding: 14px 20px;
-    border-radius: 8px;
-  }
-}
-
-/* Extra Small Mobile (360px and below) */
-@media (max-width: 360px) {
-  .presence-container {
-    padding: 0.75rem 0.25rem;
-    // padding-right: clamp(0.25rem, 18vw, 3rem);
-    padding-bottom: clamp(3rem, 20vh, 5rem);
-  }
-
-  .form-container {
-    padding: 25px 15px;
-    max-width: calc(100vw - 80px);
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    padding: 11px 14px;
-  }
-
-  .submit-button {
-    padding: 13px 18px;
-  }
-}
-
-/* Loading state animation */
-.submit-button:disabled::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  width: 16px;
-  height: 16px;
-  margin-top: -8px;
-  border: 2px solid transparent;
-  border-top: 2px solid rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// Animation keyframes for entry animations
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Form validation feedback */
-.form-input:valid,
-.form-select:valid {
-  border-left: 3px solid #28a745;
-}
-
-.form-input.invalid,
-.form-select.invalid {
-  border-left: 3px solid #dc3545;
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  .form-container,
-  .form-title,
-  .form-group,
-  .submit-button {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .form-group,
-  .form-input,
-  .form-select,
-  .form-textarea,
-  .submit-button {
-    transition: none;
-  }
-
-  .submit-button:disabled::after {
-    animation: none;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .form-container {
-    border: 2px solid #000;
-    background: rgba(255, 255, 255, 1);
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    border: 1px solid #333;
-  }
 }
