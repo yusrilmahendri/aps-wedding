@@ -24,7 +24,7 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     // 🔥 Base URL otomatis jika kosong
     const base: string =
       this.form.value.baseUrl?.trim() ||
-      'https://pio-wedding.pioneersolve.id/wedding/Nova&Yusril';
+      'https://pio-wedding.pioneersolve.id';
 
     const rawNames: string = this.form.value.names?.trim();
 
