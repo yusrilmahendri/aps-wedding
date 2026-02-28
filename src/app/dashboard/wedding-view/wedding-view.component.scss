@@ -79,6 +79,43 @@ html, body {
   overflow-x: hidden;
 }
 
+.slider-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.slider-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: autoSlide 20s ease-in-out infinite alternate;
+  flex-wrap: nowrap;
+  will-change: transform;
+}
+
+/* Ping-Pong Animation */
+@keyframes autoSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.image-card {
+  flex: 0 0 auto;
+  width: 280px;
+}
+
+.image-card img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
 
 /* wrapper untuk background animasi */
 .bg-slideshow {
@@ -964,21 +1001,6 @@ html, body {
 /* =========================================
    SLIDER PREMIUM UPGRADE
 ========================================= */
-
-.slider-wrapper {
-  overflow: hidden;
-  width: 100%;
-  position: relative;
-}
-
-.slider-track {
-  display: flex;
-  gap: 20px;
-  flex-wrap: nowrap;
-  animation: smoothScroll 35s linear infinite;
-  will-change: transform;
-}
-
 .image-card {
   flex: 0 0 auto;
   width: 300px;
