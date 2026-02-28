@@ -1,139 +1,131 @@
-/* ===============================
-   LUXURY COUPLE REDESIGN
-================================ */
-/* ==============================
-   LUXURY BOX WRAPPER
-================================ */
-
-/* Tambah jarak atas */
-:host {
-  padding-top: clamp(80px, 12vw, 140px);
+/* ===== GLOBAL ===== */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Box utama */
-.invitation-container {
-  background: #fdfcf9; /* soft ivory */
-  border-radius: none !important; /* hilangkan border-radius */
-  padding: clamp(50px, 8vw, 80px);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.08),
-    0 5px 20px rgba(0, 0, 0, 0.04);
+body {
+  margin: 0;
+  scroll-snap-type: y mandatory;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
   position: relative;
-  overflow: hidden;
-}
-
-/* Soft inner glow */
-.invitation-container::before {
-  content: "";
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
-  top: -150px;
-  right: -150px;
-  z-index: 0;
-}
-
-.invitation-container > * {
-  position: relative;
-  z-index: 1;
-}
-.couple-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(30px, 6vw, 80px);
-  flex-wrap: wrap;
-  margin-top: 40px;
-  position: relative;
-}
-
-/* Person Block */
-.person {
-  max-width: 260px;
-  text-align: center;
-  position: relative;
-}
-
-/* Photo Frame Luxury */
-.photo-frame {
-  width: 190px;
-  height: 190px;
-  margin: 0 auto 25px;
-  border-radius: 50%;
-  padding: 6px;
-  background: linear-gradient(135deg, #d4af37, #f5e6b3, #c5a100);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-  position: relative;
-  overflow: hidden;
-  animation: fadeInScale 0.8s ease forwards;
-}
-
-.photo-frame img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
+  min-height: 100vh; /* ganti dari height */
+  height: 100dvh;    /* fix viewport mobile modern */
+
+  background-size: cover;
+
+  /* Geser fokus background sedikit ke atas
+     supaya wajah lebih terlihat */
+  background-position: center 20%;
+
+  /* Hapus fixed untuk mobile agar tidak dull */
+  background-attachment: scroll;
+
+  display: flex;
+
+  /* Turunkan posisi card */
+  align-items: flex-end;
+  justify-content: center;
+
+  /* Jarak dari bawah layar */
+  padding: 2rem 2rem 10vh 2rem;
+
+  scroll-snap-align: start;
+  overflow: hidden;
 }
 
-/* Soft Glow Effect */
-.photo-frame::after {
-  content: "";
+/* Dark overlay cinematic */
+.overlay {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  box-shadow: inset 0 0 20px rgba(255,255,255,0.3);
+  background: rgba(0, 0, 0, 0.25); // sebelumnya 0.6 → terlalu gelap
 }
 
-/* Luxury Ampersand */
-.ampersand.luxury {
-  font-size: clamp(48px, 8vw, 70px);
-  font-family: "Dancing Script", cursive;
-  background: linear-gradient(135deg, #d4af37, #b8960a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: relative;
-  margin: 0 20px;
-}
-
-/* Decorative line */
-.ampersand.luxury::before,
-.ampersand.luxury::after {
-  content: "";
+/* Gold soft light effect */
+.gold-glow {
   position: absolute;
-  width: 80px;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 70%);
   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(80px);
+  z-index: 1;
 }
 
-.ampersand.luxury::before {
-  right: 100%;
-  margin-right: 15px;
+/* ===== HERO CARD ===== */
+.hero-card {
+  position: relative;
+  z-index: 2;
+  width: 85%;              /* diperlebar */
+  max-width: 900px;        /* lebih lebar dari sebelumnya */
+  padding: 2.5rem 3rem;    /* jangan terlalu tinggi */
+  text-align: center;
+  border-radius: 30px;
+  /* transparan natural */
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
 }
 
-.ampersand.luxury::after {
-  left: 100%;
-  margin-left: 15px;
+/* Elegant name */
+.name {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 500;
+  color: #fff;   /* full putih */
+  margin-bottom: 1rem;
+}
+/* Text */
+.child-text {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: #f5f5f5;
+  margin-bottom: 0.5rem;
 }
 
-/* Upgrade Name Style */
-.groom-name,
-.bride-name {
-  background: linear-gradient(135deg, #2c5530, #3e7b46);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.parents {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 2rem;
+}
+
+/* Ornament line */
+.ornament-top,
+.ornament-bottom {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  margin: 1.5rem auto;
+}
+
+/* Animation */
+@keyframes fadeUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .couple-wrapper {
-    flex-direction: column;
+  .name {
+    font-size: 2.2rem;
   }
 
-  .ampersand.luxury::before,
-  .ampersand.luxury::after {
-    display: none;
+  .hero-card {
+    padding: 2.5rem 1.5rem;
   }
 }

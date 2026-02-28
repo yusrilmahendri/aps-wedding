@@ -17,7 +17,7 @@ export class ResepsiViewComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.galleryImages = this.weddingData.gallery;
+    this.doGetGalleryImages();
     this.startAutoSlide();
   }
 
@@ -90,5 +90,14 @@ export class ResepsiViewComponent implements OnInit {
   openLocation() {
     // Backwards compatibility - delegate to openMapsLocation
     this.openMapsLocation();
+  }
+
+   doGetGalleryImages(): void {
+     if (!this.weddingData?.gallery || !this.weddingData?.quotes) return;
+
+    this.galleryImages = this.weddingData.gallery
+      .slice(3, 8)
+      .map((item: any) => item?.photo)
+      .filter(Boolean);
   }
 }

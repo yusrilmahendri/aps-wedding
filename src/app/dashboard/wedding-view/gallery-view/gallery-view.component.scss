@@ -1,126 +1,44 @@
-:host {
-  display: block;
+.cinema-gallery {
+  position: relative;
   width: 100%;
-  min-height: 100vh;
-  // background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
-  background: transparent !important;
-  background-image: url("../../../../assets/bg-wd-gl.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  font-family: "Georgia", "Times New Roman", serif;
-  overflow-x: hidden;
+  overflow: hidden;
+  padding: 6rem 0;
+  background: radial-gradient(circle at center, #f8f4ee, #ebe3d6);
 }
 
-/* Container grid */
-.gallery-container {
+.cinema-track {
+  display: flex;
+  transition: transform 1.5s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+.cinema-slide {
+  min-width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  box-sizing: border-box;
 }
 
-.container-custom {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 kolom desktop */
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1200px;
-}
-
-/* Gambar */
-.gallery-item {
-  width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
+.cinema-slide img {
+  width: 70%;
+  height: 70vh;
   object-fit: cover;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
-  filter: brightness(1.02) contrast(1.05);
-  animation: fadeInScale 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
-  opacity: 0;
-  transform: scale(0.95) translateY(20px);
+  border-radius: 25px;
+
+  box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+
+  transition: transform 1.2s ease, box-shadow 1.2s ease;
 }
 
-.gallery-item:nth-child(1) { animation-delay: 0.1s; }
-.gallery-item:nth-child(2) { animation-delay: 0.2s; }
-.gallery-item:nth-child(3) { animation-delay: 0.3s; }
-.gallery-item:nth-child(4) { animation-delay: 0.4s; }
-
-.gallery-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
-  filter: brightness(1.08) contrast(1.1);
+/* Cinematic hover */
+.cinema-slide img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 50px 100px rgba(0,0,0,0.35);
 }
 
-@keyframes fadeInScale {
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Tablet: 2 kolom */
-@media (max-width: 991.98px) {
-  .container-custom {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Mobile: 1 kolom */
-@media (max-width: 767.98px) {
-  .container-custom {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Background responsive */
+/* Mobile */
 @media (max-width: 768px) {
-  :host {
-    background-size: 120vw 120vh;
-    background-attachment: scroll;
+  .cinema-slide img {
+    width: 90%;
+    height: 60vh;
   }
 }
-@media (max-width: 576px) {
-  :host {
-    background-size: 140vw 140vh;
-  }
-}
-@media (max-width: 480px) {
-  :host {
-    background-size: 160vw 160vh;
-  }
-}
-
-/* Print styles */
-@media print {
-  :host {
-    background: white !important;
-  }
-  .gallery-item {
-    box-shadow: none !important;
-    filter: none !important;
-  }
-}
-/* Mobile: 2 kolom (tetap berdampingan) + animasi tetap rapi */
-@media (max-width: 767.98px) {
-  .container-custom {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .gallery-item {
-    border-radius: 0.4rem;
-    animation-duration: 0.7s; /* Lebih cepat untuk HP */
-    transform: scale(0.95) translateY(15px);
-  }
-}
-.gallery-item:nth-child(1) { animation-delay: 0.1s; }
-.gallery-item:nth-child(2) { animation-delay: 0.2s; }
-.gallery-item:nth-child(3) { animation-delay: 0.3s; }
-.gallery-item:nth-child(4) { animation-delay: 0.4s; }
-.gallery-item:nth-child(5) { animation-delay: 0.5s; }
-.gallery-item:nth-child(6) { animation-delay: 0.6s; }
-/* dan seterusnya jika perlu */

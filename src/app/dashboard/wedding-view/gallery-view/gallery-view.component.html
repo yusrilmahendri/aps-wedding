@@ -1,20 +1,25 @@
-<div class="gallery-container">
-  <div class="container-custom" *ngIf="hasImages(); else noGalleryTemplate">
-    <img
-      *ngFor="let item of getGalleryImages(); let i = index; trackBy: trackByGalleryId"
-      [src]="getImageUrl(item)"
-      [alt]="getImageAlt(item, i)"
-      class="gallery-item"
-      loading="lazy"
-    />
+<div class="cinema-gallery" *ngIf="hasImages(); else noGalleryTemplate">
+
+  <div class="cinema-track"
+       [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'">
+
+    <div class="cinema-slide"
+         *ngFor="let item of getGalleryImages(); let i = index; trackBy: trackByGalleryId">
+
+      <img [src]="getImageUrl(item)"
+           [alt]="getImageAlt(item, i)"
+           loading="lazy" />
+
+    </div>
+
   </div>
 
-  <ng-template #noGalleryTemplate>
-    <div class="container-custom">
-      <img src="assets/default-gallery.jpg" alt="Default gallery image 1" class="gallery-item" loading="lazy"/>
-      <img src="assets/default-gallery.jpg" alt="Default gallery image 2" class="gallery-item" loading="lazy"/>
-      <img src="assets/default-gallery.jpg" alt="Default gallery image 3" class="gallery-item" loading="lazy"/>
-      <img src="assets/default-gallery.jpg" alt="Default gallery image 4" class="gallery-item" loading="lazy"/>
-    </div>
-  </ng-template>
 </div>
+
+<ng-template #noGalleryTemplate>
+  <div class="cinema-gallery">
+    <div class="cinema-slide">
+      <img src="assets/default-gallery.jpg" />
+    </div>
+  </div>
+</ng-template>

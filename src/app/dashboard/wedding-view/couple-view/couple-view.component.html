@@ -1,38 +1,61 @@
-<div class="invitation-container">
+<!-- ================= BRIDE ================= -->
+<section
+  class="hero-section bride-section"
+  [ngStyle]="{'background-image': 'url(' + getBridePhoto() + ')'}"
+>
 
-  <div class="opening-text" [innerHTML]="getOpeningText()"></div>
+  <div class="overlay"></div>
+  <div class="gold-glow"></div>
 
-  <div class="dots">.....</div>
+  <div class="hero-card">
+    <div class="ornament-top"></div>
 
-  <div class="couple-wrapper">
+    <h1 class="name">
+      {{ getBrideName() }}
+    </h1>
 
-    <!-- Groom -->
-    <div class="person groom">
-      <div class="photo-frame">
-        <img [src]="getGroomPhoto()" alt="Groom Photo">
-      </div>
+    <p class="child-text">
+      Putri pertama dari
+    </p>
 
-      <div class="groom-name">{{ getGroomName() }}</div>
-      <div class="groom-parents">
-        {{ getGroomParents() }}
-      </div>
-    </div>
+    <p class="parents">
+      {{ getBrideParents() }}
+    </p>
 
-    <!-- Ampersand -->
-    <div class="ampersand luxury">&</div>
 
-    <!-- Bride -->
-    <div class="person bride">
-      <div class="photo-frame">
-        <img [src]="getBridePhoto()" alt="Bride Photo">
-      </div>
-
-      <div class="bride-name">{{ getBrideName() }}</div>
-      <div class="bride-parents">
-        {{ getBrideParents() }}
-      </div>
-    </div>
-
+    <div class="ornament-bottom"></div>
   </div>
 
-</div>
+</section>
+
+
+<!-- ================= GROOM ================= -->
+<section
+  class="hero-section groom-section"
+  [ngStyle]="{'background-image': 'url(' + getGroomPhoto() + ')'}"
+>
+
+  <div class="overlay"></div>
+  <div class="gold-glow"></div>
+
+  <div class="hero-card">
+    <div class="ornament-top"></div>
+
+    <h1 class="name">
+      {{ getGroomName() }}
+    </h1>
+
+    <p class="child-text">
+      Putra pertama dari
+    </p>
+
+    <p class="parents">
+      {{ getGroomParents() }}
+    </p>
+
+
+
+    <div class="ornament-bottom"></div>
+  </div>
+
+</section>

@@ -3,9 +3,18 @@
   <div class="akad-wrapper">
 
     <!-- IMAGE TOP -->
-    <div class="akad-image" *ngIf="galleryImages?.length">
-      <img [src]="galleryImages[0]" alt="Akad Image">
+<div class="akad-image" *ngIf="galleryImages?.length">
+
+  <div
+    class="slide-wrapper"
+    [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'"
+  >
+    <div class="slide" *ngFor="let img of galleryImages">
+      <img [src]="img" alt="Akad Image">
     </div>
+  </div>
+
+</div>
 
     <!-- CARD BOTTOM -->
     <div class="akad-card">

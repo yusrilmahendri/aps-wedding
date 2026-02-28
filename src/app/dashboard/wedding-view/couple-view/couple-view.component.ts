@@ -45,10 +45,10 @@ export class CoupleViewComponent implements OnInit {
   }
 
   getGroomPhoto() {
-
+    return this.weddingData?.mempelai?.pria?.photo || 'assets/default-groom.jpg';
   }
 
   getBridePhoto(){
-
+    return this.weddingData?.mempelai?.wanita?.photo || 'assets/default-bride.jpg';
   }
 }

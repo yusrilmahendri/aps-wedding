@@ -19,7 +19,7 @@ export class AkadViewComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    this.galleryImages = this.weddingData?.gallery || [];
+    this.doGetGalleryImages();
 
     if (this.galleryImages.length > 1) {
       this.startAutoSlide();
@@ -36,7 +36,7 @@ export class AkadViewComponent implements OnInit, OnDestroy {
     this.slideInterval = setInterval(() => {
       this.currentSlide =
         (this.currentSlide + 1) % this.galleryImages.length;
-    }, 4000);
+    }, 10000);
   }
 
   getEventData(): WeddingEvent | null {
@@ -95,6 +95,15 @@ export class AkadViewComponent implements OnInit, OnDestroy {
   hasValidEvent(): boolean {
     const event = this.getEventData();
     return !!(event && event.tanggal_acara && event.start_acara && event.alamat);
+  }
+
+  doGetGalleryImages(): void {
+     if (!this.weddingData?.gallery || !this.weddingData?.quotes) return;
+
+    this.galleryImages = this.weddingData.gallery
+      .slice(3, 8)
+      .map((item: any) => item?.photo)
+      .filter(Boolean);
   }
 
 
