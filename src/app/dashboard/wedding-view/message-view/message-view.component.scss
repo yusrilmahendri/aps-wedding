@@ -1,155 +1,130 @@
-/* ===============================
-   💎 MESSAGE SECTION
-================================ */
-
 .message-container {
-  padding: 140px 20px;
-  background: linear-gradient(135deg, #f8f4ef, #efe6dc);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
   text-align: center;
 }
 
-/* ===============================
-   ✨ TITLE
-================================ */
-
 .message-title {
-  font-size: 2.6rem;
-  font-weight: 600;
-  color: #b07d32;
-  margin-bottom: 70px;
-  position: relative;
+  font-family: "Georgia", serif;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #5a4a42;
 }
 
-.message-title::after {
-  content: "";
-  width: 90px;
-  height: 3px;
-  background: linear-gradient(to right, #c6a55c, #e8d8a8);
-  display: block;
-  margin: 15px auto 0;
-  border-radius: 2px;
-}
-
-/* ===============================
-   📜 MESSAGE LIST
-================================ */
-
+/* ===== Scroll Internal ===== */
 .messages-list {
-  max-width: 750px;
-  margin: 0 auto;
+  max-height: 520px; /* cukup untuk 6 pesan */
+  overflow-y: auto;
+  padding-right: 8px;
+
   display: flex;
   flex-direction: column;
-  gap: 35px;
+  gap: 1rem;
+
+  scroll-behavior: smooth;
 }
 
-/* ===============================
-   🏆 MESSAGE CARD
-================================ */
+/* Scrollbar Elegant */
+.messages-list::-webkit-scrollbar {
+  width: 6px;
+}
 
+.messages-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.messages-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===== Card Style ===== */
 .message-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  padding: 40px 35px;
-  border-radius: 28px;
-  box-shadow: 0 25px 60px rgba(31, 46, 43, 0.12);
+  background: #ffffffcc;
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 1.2rem;
   text-align: left;
-  transition: all 0.4s ease;
-  position: relative;
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  transition: 0.3s ease;
 }
 
 .message-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 35px 80px rgba(31, 46, 43, 0.18);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-
-/* subtle gold accent */
-.message-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background: linear-gradient(to bottom, #c6a55c, #e8d8a8);
-  border-top-left-radius: 28px;
-  border-bottom-left-radius: 28px;
-}
-
-/* ===============================
-   👤 HEADER
-================================ */
 
 .message-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 0.5rem;
 }
 
 .guest-name {
-  font-size: 1.2rem;
   font-weight: 600;
-  color: #2f3e3c;
+  color: #6d4c41;
 }
 
 .message-date {
   font-size: 0.85rem;
-  color: #888;
+  color: #9e9e9e;
 }
-
-/* ===============================
-   🎉 ATTENDANCE BADGE
-================================ */
 
 .attendance-status {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  padding: 4px 10px;
+  border-radius: 12px;
   display: inline-block;
-  padding: 6px 14px;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-bottom: 20px;
 }
 
-/* Warna lebih soft dan elegan */
-
-.attendance-status.ya {
-  background: rgba(46, 125, 50, 0.1);
+.hadir {
+  background: #e8f5e9;
   color: #2e7d32;
 }
 
-.attendance-status.tidak {
-  background: rgba(183, 28, 28, 0.1);
-  color: #b71c1c;
+.tidak-hadir {
+  background: #ffebee;
+  color: #c62828;
 }
-
-.attendance-status.belum_pasti {
-  background: rgba(255, 152, 0, 0.1);
-  color: #ef6c00;
-}
-
-/* ===============================
-   💬 MESSAGE CONTENT
-================================ */
 
 .message-content {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #444;
-  white-space: pre-line;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4e4e4e;
 }
 
-/* ===============================
-   📱 RESPONSIVE
-================================ */
+/* ===== Pagination ===== */
+.pagination-controls {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
 
-@media (max-width: 768px) {
+.pagination-controls button {
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  border: none;
+  background: #8d6e63;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-  .message-title {
-    font-size: 2rem;
-  }
+.pagination-controls button:hover:not(:disabled) {
+  background: #6d4c41;
+}
 
-  .message-card {
-    padding: 30px 25px;
-  }
+.pagination-controls button:disabled {
+  background: #d7ccc8;
+  cursor: not-allowed;
+}
 
+.page-info {
+  font-weight: 500;
+  color: #6d4c41;
 }

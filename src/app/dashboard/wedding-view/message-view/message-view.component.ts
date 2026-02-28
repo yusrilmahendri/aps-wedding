@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { GuestWish } from '../../../services/wedding-data.service';
 
 @Component({
@@ -8,12 +8,49 @@ import { GuestWish } from '../../../services/wedding-data.service';
 })
 export class MessageViewComponent implements OnInit {
   @Input() guestWishes: GuestWish[] | undefined = [];
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+
+  currentPage = 1;
+  itemsPerPage = 6;
 
   constructor() { }
 
   ngOnInit(): void {
     console.log('MessageViewComponent initialized with guestWishes:', this.guestWishes);
   }
+
+  get totalPages(): number {
+    return Math.ceil(this.getGuestWishes().length / this.itemsPerPage);
+  }
+
+  get paginatedWishes() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.getGuestWishes().slice(start, start + this.itemsPerPage);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.scrollToTop();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.scrollToTop();
+    }
+  }
+
+  scrollToTop() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }
+
 
 getGuestWishes(): GuestWish[] {
   return (this.guestWishes || []).filter(wish =>

@@ -9,30 +9,11 @@ import { GalleryItem } from '../../../services/wedding-data.service';
 export class GalleryViewComponent implements OnInit {
   @Input() galleryItems: GalleryItem[] | undefined = [];
 
-
-  currentIndex = 0;
-  private galleryInterval: any;
-
   constructor() { }
 
   ngOnInit(): void {
     console.log('GalleryViewComponent initialized with gallery:', this.galleryItems);
   }
-
-  ngAfterViewInit(): void {
-  if (this.getGalleryImages()?.length > 1) {
-    this.startCinemaAutoSlide();
-  }
-}
-
-startCinemaAutoSlide() {
-  this.galleryInterval = setInterval(() => {
-    this.currentIndex++;
-    if (this.currentIndex >= this.getGalleryImages().length) {
-      this.currentIndex = 0;
-    }
-  }, 7000); // 7 detik elegan
-}
 
   getGalleryImages(): GalleryItem[] {
     return this.galleryItems || [];

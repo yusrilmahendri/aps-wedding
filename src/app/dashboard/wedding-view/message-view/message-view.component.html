@@ -1,10 +1,10 @@
 <div class="message-container" *ngIf="hasMessages()">
   <h1 class="message-title">Ucapan & Doa</h1>
 
-  <div class="messages-list">
+  <div #scrollContainer class="messages-list">
     <div
       class="message-card"
-      *ngFor="let wish of getGuestWishes(); trackBy: trackByWishId"
+      *ngFor="let wish of paginatedWishes; trackBy: trackByWishId"
     >
       <div class="message-header">
         <div class="guest-name">{{ wish.nama }}</div>
@@ -14,15 +14,34 @@
       </div>
 
       <div
-      class="attendance-status"
-      [ngClass]="getAttendanceClass(wish.kehadiran)"
-    >
-      {{ getAttendanceText(wish.kehadiran || '') }}
-    </div>
+        class="attendance-status"
+        [ngClass]="getAttendanceClass(wish.kehadiran)"
+      >
+        {{ getAttendanceText(wish.kehadiran || '') }}
+      </div>
 
       <div class="message-content">
         {{ wish.pesan }}
       </div>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+    <button
+      (click)="prevPage()"
+      [disabled]="currentPage === 1">
+      Sebelumnya
+    </button>
+
+    <span class="page-info">
+      {{ currentPage }} / {{ totalPages }}
+    </span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages">
+      Selanjutnya
+    </button>
   </div>
 </div>
