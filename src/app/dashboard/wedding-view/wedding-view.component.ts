@@ -107,7 +107,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isAudioLoading: boolean = false;
   audioError: string | null = null;
   currentVolume: number = 0.7; // Default volume (70%)
-
+  currentYear: number = new Date().getFullYear();
   // Subscriptions
   private subscriptions = new Subscription();
 

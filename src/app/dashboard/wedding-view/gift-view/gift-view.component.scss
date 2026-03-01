@@ -9,7 +9,13 @@
   text-align: center;
   overflow: hidden;
 }
-
+.invitation-wrapper {
+  width: 100%;
+  max-width: 900px;   /* 👈 diperbesar untuk desktop */
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
 .invitation-overlay {
   position: absolute;
   inset: 0;
@@ -17,13 +23,6 @@
       rgba(198,165,92,0.15),
       transparent 60%);
   pointer-events: none;
-}
-
-.invitation-container {
-  max-width: 900px;
-  margin: auto;
-  position: relative;
-  z-index: 2;
 }
 
 /* ===============================

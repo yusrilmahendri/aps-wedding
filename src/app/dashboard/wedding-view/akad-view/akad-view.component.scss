@@ -14,7 +14,6 @@ body {
   width: 100%;
   max-width: 430px;
 }
-
 /* ================= IMAGE ================= */
 
 .akad-image {
@@ -171,6 +170,7 @@ body {
   display: flex; /* horizontal */
   width: 100%;
   height: 100%;
+
   transition: transform 1.2s ease-in-out;
 }
 
@@ -222,8 +222,11 @@ body {
 .akad-wrapper {
   width: 100%;
   max-width: 900px;   /* 👈 diperbesar untuk desktop */
+  margin: 0 auto;
 }
-
+.akad-right {
+  padding: 40px 25px;  // padding cukup di sini saja
+}
 /* ================= IMAGE ================= */
 
 .akad-image {

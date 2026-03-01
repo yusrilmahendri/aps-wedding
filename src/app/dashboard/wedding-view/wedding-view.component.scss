@@ -350,7 +350,7 @@ html, body {
   z-index: 1;
   overflow-y: scroll;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -882,6 +882,7 @@ html, body {
   color: #fff;
   text-align: center;
   padding: 20px;
+  max-width: 900px;
 }
 
 .mini-hero-title {
@@ -1096,6 +1097,95 @@ html, body {
   font-size: 14px;
   letter-spacing: 2px;
   color: #777;
+}
+
+/* ===============================
+   ✨ LUXURY WEDDING FOOTER
+================================ */
+
+.luxury-footer {
+  position: relative;
+  padding: 120px 20px 60px;
+  background: linear-gradient(135deg, #f5f2f0 0%, #ede5e1 100%);
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+.footer-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left,
+      rgba(198,165,92,0.15),
+      transparent 60%);
+  pointer-events: none;
+}
+
+.footer-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: auto;
+}
+
+.footer-divider {
+  width: 120px;
+  height: 4px;
+  margin: 0 auto 40px;
+  background: linear-gradient(to right,#f5f2f0 0%, #ede5e1 100%);
+  border-radius: 4px;
+}
+
+.footer-title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #111110;
+}
+
+.footer-subtitle {
+  font-size: 1.1rem;
+  color: #272424;
+  line-height: 1.8;
+  margin-bottom: 50px;
+}
+
+.footer-brand {
+  font-size: 1rem;
+  color: #0c0a0a;
+  margin-bottom: 30px;
+}
+
+.brand-name {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #c6a55c, #a67c2d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.footer-bottom {
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  .footer-title {
+    font-size: 1.6rem;
+  }
+
+  .footer-subtitle {
+    font-size: 1rem;
+  }
 }
 
 /* =========================================
