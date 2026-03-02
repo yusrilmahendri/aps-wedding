@@ -86,6 +86,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   hours = 0;
   minutes = 0;
   seconds = 0;
+  isOpening = false;
 
   sliderImages: string[] = [];
   currentSlide = 0;
@@ -193,6 +194,16 @@ scrollToContent() {
     top: window.innerHeight,
     behavior: 'smooth'
   });
+}
+
+handleOpenInvitation() {
+  if (this.isOpening) return;
+
+  this.isOpening = true;
+
+  setTimeout(() => {
+    this.openInvitation();
+  }, 800); // delay supaya animasi selesai
 }
 
 setResepsiDate() {
@@ -1279,6 +1290,21 @@ setResepsiDate() {
 
   isCurrentView(view: ContentView): boolean {
     return this.currentView === view;
+  }
+
+  hasCoverPhoto(): boolean {
+  return !!this.weddingData?.mempelai?.cover_photo;
+  }
+
+  getHeroBackgroundImage(): string {
+    const photo = this.weddingData?.mempelai?.cover_photo;
+
+    if (photo) {
+      return `url('${photo}')`;
+    }
+
+    // default cream luxury (tanpa image)
+    return 'linear-gradient(135deg, #f8f3eb, #efe6d8, #e8dcc9)';
   }
 
   /**

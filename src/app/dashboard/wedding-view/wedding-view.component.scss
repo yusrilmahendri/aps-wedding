@@ -78,7 +78,144 @@ html, body {
   display: block;
   overflow-x: hidden;
 }
+.ultra-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Background from API */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.75);
+  transform: scale(1.05);
+}
+
+/* Default cream luxury */
+.hero-default-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #f8f3eb,
+    #ccd6d6,
+    #e8dcc9
+  );
+}
+
+/* Elegant overlay (only affects photo) */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0.65)
+  );
+}
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 20px;
+}
+
+/* Typography */
+.hero-subtitle {
+  letter-spacing: 5px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #e8dcc9; /* cream gold soft */
+  margin-bottom: 15px;
+}
+
+.hero-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  font-weight: 500;
+  margin-bottom: 40px;
+  color: #f8f6f2; /* putih cream soft */
+}
+
+.invite-label {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+  color: #f3efe7;
+}
+
+.invite-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #f3efe7;
+  margin-bottom: 30px;
+}
+
+/* Button */
+.hero-button {
+  width: auto !important;
+  display: inline-block;
+  background: transparent;
+  border: 1.5px solid #d8c8a8;
+  padding: 10px 28px;
+  border-radius: 50px;
+  color: #f8f6f2;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.ultra-hero.fade-out {
+  animation: heroFadeOut 1s ease forwards;
+}
+
+@keyframes heroFadeOut {
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+/* Hover */
+.hero-button:hover {
+  background: rgba(248, 246, 242, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Click Animation */
+.hero-button.opening {
+  transform: scale(0.95);
+  background: #d8c8a8;
+  color: #2e2a25;
+  box-shadow:
+    0 0 30px rgba(216, 200, 168, 0.6),
+    0 0 60px rgba(216, 200, 168, 0.3);
+}
+.hero-names {
+  text-shadow: 0 4px 20px rgba(255, 248, 230, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-names {
+    font-size: 40px;
+  }
+}
 .slider-wrapper {
   overflow: hidden;
   width: 100%;

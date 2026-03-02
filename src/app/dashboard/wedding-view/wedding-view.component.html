@@ -31,14 +31,31 @@
 
       <!-- Main content - hidden when gallery is active -->
       <div  class="content">
-        <div class="wrap mt-5" *ngIf="isCurrentView(ContentView.MAIN)">
-          <p class="wedding-header">The Wedding Of</p>
-          <h1 class="couple-names">{{ getCoupleDisplayName() }}</h1>
-          <div class="card-weedings">
-            <p class="greeting">Kepada Yth.</p>
-            <p class="formal-address">Bapak/Ibu/Saudara/i</p>
-            <p class="guest-name">{{ guestName }}</p>
-            <button class="open-invitation-btn" (click)="openInvitation()">Buka Undangan</button>
+        <div class="ultra-hero" [class.fade-out]="isOpening" *ngIf="isCurrentView(ContentView.MAIN)">
+          <!-- Background Image (jika ada) -->
+          <div
+            *ngIf="weddingData?.mempelai?.cover_photo; else defaultBg"
+            class="hero-bg"
+            [style.backgroundImage]="getHeroBackgroundImage()"
+          ></div>
+          <!-- Default Background -->
+          <ng-template #defaultBg>
+            <div class="hero-default-bg"></div>
+          </ng-template>
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="hero-subtitle">The Wedding Of</p>
+            <h1 class="hero-names">
+              {{ getCoupleDisplayName() }}
+            </h1>
+            <div class="hero-invite">
+              <p class="invite-label">Kepada Yth.</p>
+              <p class="invite-name">{{ guestName }}</p>
+
+              <button class="hero-button" [class.opening]="isOpening" (click)="openInvitation()">
+                Buka Undangan
+              </button>
+            </div>
           </div>
         </div>
 
