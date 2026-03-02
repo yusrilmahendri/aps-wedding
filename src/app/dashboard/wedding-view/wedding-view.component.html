@@ -43,6 +43,7 @@
             <div class="hero-default-bg"></div>
           </ng-template>
           <div class="hero-overlay"></div>
+          <div class="page-transition" *ngIf="isOpening"></div>
           <div class="hero-content">
             <p class="hero-subtitle">The Wedding Of</p>
             <h1 class="hero-names">
@@ -58,7 +59,7 @@
             </div>
           </div>
         </div>
-
+        <div class="global-transition" *ngIf="isTransitioning"></div>
           <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
             <div class="mini-hero-section">
 

@@ -76,6 +76,7 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isMuted: boolean = false;
   sideIconsVisible: boolean = false;
   invitationOpened: boolean = false;
+  isTransitioning = false;
 
   currentView: ContentView = ContentView.MAIN;
 
@@ -194,16 +195,6 @@ scrollToContent() {
     top: window.innerHeight,
     behavior: 'smooth'
   });
-}
-
-handleOpenInvitation() {
-  if (this.isOpening) return;
-
-  this.isOpening = true;
-
-  setTimeout(() => {
-    this.openInvitation();
-  }, 800); // delay supaya animasi selesai
 }
 
 setResepsiDate() {
@@ -1168,6 +1159,8 @@ setResepsiDate() {
 
   openInvitation(): void {
     this.invitationOpened = true;
+    this.isTransitioning = true;
+    this.isOpening = true;
     this.setCurrentView(ContentView.COUPLE);
     this.submitAttendanceView();
     this.cdr.detectChanges();
@@ -1190,7 +1183,10 @@ setResepsiDate() {
     setTimeout(() => {
       const firstSection = document.getElementById("section-1");
       firstSection?.scrollIntoView({ behavior: "smooth" });
-    }, 300);
+      this.currentView = ContentView.COUPLE; // ⬅ langsung ubah view
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.isOpening = false;
+    }, 400);
   }
 
 
