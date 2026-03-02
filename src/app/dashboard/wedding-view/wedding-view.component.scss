@@ -180,14 +180,16 @@ html, body {
   /* Side icons collapsible container */
   .side-icons-container {
     position: fixed;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 20px;
+    bottom: 110px; /* 🔥 di atas bottom navbar */
+    top: auto;
+    transform: none;
     z-index: 1002;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   /* Main toggle button */
@@ -525,11 +527,11 @@ html, body {
 .bottom-navbar {
   position: fixed;
   bottom: 20px;
+  padding: 15px 0 25px 0;
   left: 0;
   right: 0;
   background: transparent;
   z-index: 1001;
-  padding: 15px 0 25px 0;
 }
 
 .nav-container {
@@ -747,7 +749,6 @@ html, body {
     font-size: 0.85rem;
   }
 }
-
 @media (max-width: 360px) {
   :host {
     background-size: 200vw 200vh;

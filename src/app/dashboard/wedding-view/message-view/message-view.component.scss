@@ -17,11 +17,9 @@
   max-height: 520px; /* cukup untuk 6 pesan */
   overflow-y: auto;
   padding-right: 8px;
-
   display: flex;
   flex-direction: column;
   gap: 1rem;
-
   scroll-behavior: smooth;
 }
 
@@ -136,7 +134,7 @@
   width: 100%;
   padding: 100px 0;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 0px auto;
   background: linear-gradient(135deg, #fdf8f3, #f5eee6);
   position: relative;
 }

@@ -3,10 +3,12 @@
   padding: 0;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  width: 100%;
 }
 :root {
   height: 100%;
 }
+
 body {
   font-family: $main-font;
   overflow-x: hidden;
@@ -102,6 +104,10 @@ ul {
 }
 .no-scroll body {
   overflow: none;
+}
+.side-icons-container,
+.side-icons-container * {
+  width: 50px !important;
 }
 
 // Custom Modal Styles - Global override for ngx-bootstrap modal
