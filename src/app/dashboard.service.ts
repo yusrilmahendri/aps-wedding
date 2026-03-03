@@ -174,6 +174,13 @@ export enum DashboardServiceType {
   THEME_USER_SELECTED,
   DELETE_REKENING_ADMIN,
   UPDATE_REKENING_ADMIN,
+
+  // === Midtrans Payment Endpoints ===
+  // Snap token creation, status polling, and admin CRUD for Midtrans config.
+  MIDTRANS_CREATE_SNAP_TOKEN,
+  MIDTRANS_CHECK_STATUS,
+  ADM_GET_MIDTRANS_LIST,
+  ADM_GET_MIDTRANS_DETAIL,
 }
 
 // Testimonial Interfaces
@@ -560,6 +567,16 @@ export class DashboardService {
         return `${this.BASE_URL_API}/themes/select`;
       case DashboardServiceType.THEME_USER_SELECTED:
         return `${this.BASE_URL_API}/themes/selected`;
+
+      // Midtrans Payment API endpoints
+      case DashboardServiceType.MIDTRANS_CREATE_SNAP_TOKEN:
+        return `${this.BASE_URL_API}/v1/midtrans/create-snap-token`;
+      case DashboardServiceType.MIDTRANS_CHECK_STATUS:
+        return `${this.BASE_URL_API}/v1/midtrans/check-status`;
+      case DashboardServiceType.ADM_GET_MIDTRANS_LIST:
+        return `${this.BASE_URL_API}/v1/admin/midtrans`;
+      case DashboardServiceType.ADM_GET_MIDTRANS_DETAIL:
+        return `${this.BASE_URL_API}/v1/admin/midtrans`;
 
       default:
         return '';

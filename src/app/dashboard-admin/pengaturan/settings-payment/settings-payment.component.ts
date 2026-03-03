@@ -892,9 +892,8 @@ export class SettingsPaymentComponent implements OnInit {
   }
 
   private updateMidtransPayment(formValues: any): void {
-    // Use PUT /api/v1/admin/midtrans/{id} endpoint according to API contract
     const itemId = this.currentEditItem!.id;
-    const updateUrl = `/api/v1/admin/midtrans/${itemId}`;
+    const updateUrl = `${this.dashboardSvc.getUrl(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL)}/${itemId}`;
 
     this.dashboardSvc.httpSvc.put(updateUrl, formValues).subscribe({
       next: (res: any) => {
@@ -973,8 +972,7 @@ export class SettingsPaymentComponent implements OnInit {
 
   private deleteMidtransPayment(): void {
     const itemId = this.currentEditItem!.id;
-    // Use DELETE /api/v1/admin/midtrans/{id} endpoint according to API contract
-    const deleteUrl = `/api/v1/admin/midtrans/${itemId}`;
+    const deleteUrl = `${this.dashboardSvc.getUrl(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL)}/${itemId}`;
 
     this.dashboardSvc.httpSvc.delete(deleteUrl).subscribe({
       next: (res: any) => {

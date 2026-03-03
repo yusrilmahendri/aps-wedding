@@ -3,10 +3,10 @@
   <div class="rp-form-group">
     <label for="payment_method" class="rp-label">Metode Pembayaran</label>
     <div class="rp-select-wrapper">
-      <ngx-select [items]="selectOptions.payment.items" 
-                  [optionTextField]="'name'" 
+      <ngx-select [items]="selectOptions.payment.items"
+                  [optionTextField]="'name'"
                   [optionValueField]="'id'"
-                  placeholder="Pilih metode pembayaran" 
+                  placeholder="Pilih metode pembayaran"
                   (select)="onMetodeSelect($event)"
                   class="rp-select">
       </ngx-select>
@@ -63,7 +63,7 @@
   <ng-container *ngIf="selectedMethod === 2">
     <div *ngFor="let tripayData of bill" class="rp-payment-section">
       <h3 class="rp-section-title">{{ tripayData.methode_pembayaran }}</h3>
-      
+
       <div class="rp-form-group">
         <label class="rp-label">API Key</label>
         <div class="rp-readonly-field rp-copyable" (click)="copyTripayToClipboard(tripayData.api_key)">
@@ -112,43 +112,44 @@
       <h3 class="rp-section-title">{{ midtransData.methode_pembayaran }}</h3>
 
       <div class="rp-form-group">
-        <label class="rp-label">Server Key</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyMidtrans(midtransData.server_key)">
-          <span>{{ midtransData.server_key }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">Client Key</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyMidtrans(midtransData.client_key)">
-          <span>{{ midtransData.client_key }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">Metode Production</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyMidtrans(midtransData.metode_production)">
-          <span>{{ midtransData.metode_production }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">URL Setting</label>
+        <label class="rp-label">Jumlah Pembayaran</label>
         <div class="rp-readonly-field">
-          <a [href]="midtransData.url" target="_blank" class="rp-link">{{ midtransData.url }}</a>
+          <span>Rp. {{ manualBill | number }}</span>
         </div>
+      </div>
+
+      <div class="rp-form-group">
+        <label class="rp-label">Mode</label>
+        <div class="rp-readonly-field">
+          <span>{{ midtransData.metode_production === 'production' ? 'Production' : 'Sandbox (Testing)' }}</span>
+        </div>
+      </div>
+
+      <!-- Payment status feedback -->
+      <div *ngIf="midtransPaymentStatus === 'pending'" class="rp-status-info rp-status-pending" role="status" aria-live="polite" data-testid="status-pending">
+        <span>Menunggu konfirmasi pembayaran... Kami memverifikasi secara otomatis.</span>
+      </div>
+      <div *ngIf="midtransPaymentStatus === 'paid'" class="rp-status-info rp-status-paid" role="status" aria-live="polite" data-testid="status-paid">
+        <span>Pembayaran berhasil! Undangan Anda sedang diproses.</span>
+      </div>
+      <div *ngIf="midtransPaymentStatus === 'failed'" class="rp-status-info rp-status-failed" role="alert" aria-live="assertive" data-testid="status-failed">
+        <span>Pembayaran gagal. Silakan coba lagi.</span>
+      </div>
+
+      <div class="rp-midtrans-action">
+        <button
+          type="button"
+          class="rp-btn rp-btn-midtrans"
+          (click)="onPayWithMidtrans()"
+          [disabled]="isPayingMidtrans || midtransPaymentStatus === 'paid'"
+          aria-label="Bayar dengan Midtrans"
+          data-testid="btn-pay-midtrans"
+        >
+          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid'">Bayar Sekarang</span>
+          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'pending'">Memverifikasi...</span>
+          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'idle'">Memuat Pembayaran...</span>
+          <span *ngIf="midtransPaymentStatus === 'paid'">Pembayaran Lunas</span>
+        </button>
       </div>
     </div>
   </ng-container>
@@ -157,8 +158,8 @@
   <ng-container *ngIf="selectedMethod === 4">
     <div class="rp-trial-section">
       <p class="rp-trial-text">
-        Anda memilih metode "Trial dulu" sehingga masa uji coba hanya berlangsung selama 3 hari. 
-        Beberapa fitur tidak akan tersedia di akun Anda. Setelah masa uji coba habis, 
+        Anda memilih metode "Trial dulu" sehingga masa uji coba hanya berlangsung selama 3 hari.
+        Beberapa fitur tidak akan tersedia di akun Anda. Setelah masa uji coba habis,
         Anda tidak dapat lagi mengakses undangan yang Anda buat.
       </p>
     </div>
