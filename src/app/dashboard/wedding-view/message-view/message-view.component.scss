@@ -1,5 +1,5 @@
 .message-container {
-  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   padding: 2rem 1rem;
   text-align: center;
@@ -133,7 +133,6 @@
 .message-section {
   width: 100%;
   padding: 100px 0;
-  max-width: 900px;
   margin: 0px auto;
   background: linear-gradient(135deg, #fdf8f3, #f5eee6);
   position: relative;

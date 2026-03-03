@@ -371,6 +371,7 @@ html, body {
   max-height: 100vh; /* atau tinggi sesuai kebutuhan */
   overflow-y: auto;  /* memungkinkan scroll vertikal */
   scroll-behavior: smooth; /* untuk smooth scroll otomatis */
+    width: 100%;
 }
 
 /* Side icons container */
@@ -549,7 +550,7 @@ html, body {
   z-index: 1;
   overflow-y: scroll;
   width: 100%;
-  max-width: 900px;
+  max-width: 990px;
   margin: 0 auto;
   box-sizing: border-box;
 }
