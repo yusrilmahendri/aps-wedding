@@ -30,7 +30,7 @@
     <div class="floral-bg"></div>
 
       <!-- Main content - hidden when gallery is active -->
-      <div  class="content">
+      <div  class="main-content">
         <div class="ultra-hero" [class.fade-out]="isOpening" *ngIf="isCurrentView(ContentView.MAIN)">
           <!-- Background Image (jika ada) -->
           <div
@@ -60,7 +60,7 @@
           </div>
         </div>
         <div class="global-transition" *ngIf="isTransitioning"></div>
-          <div *ngIf="isCurrentView(ContentView.COUPLE)" class="content fade-section">
+          <div *ngIf="isCurrentView(ContentView.COUPLE)" class="wedding-full fade-section">
             <div class="mini-hero-section">
 
             <!-- SLIDER BACKGROUND -->
