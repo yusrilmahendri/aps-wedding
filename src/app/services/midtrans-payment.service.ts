@@ -84,7 +84,7 @@ export class MidtransPaymentService {
   private readonly SNAP_SANDBOX_URL = 'https://app.sandbox.midtrans.com/snap/snap.js';
   private readonly SNAP_PRODUCTION_URL = 'https://app.midtrans.com/snap/snap.js';
   private readonly POLL_INTERVAL_MS = 5000;
-  private readonly POLL_MAX_ATTEMPTS = 12;
+  private readonly POLL_MAX_ATTEMPTS = 180; // 15 minutes (180 × 5s) to handle delayed payments
 
   constructor(
     private dashboardSvc: DashboardService,
@@ -170,6 +170,20 @@ export class MidtransPaymentService {
       catchError((err) => {
         return throwError(() => new Error(err?.error?.message ?? 'Status check failed'));
       }),
+    );
+  }
+
+  /**
+   * Single call to check payment status (no polling loop).
+   * Used for immediate payment confirmation after onSuccess callback.
+   */
+  checkPaymentStatus(orderId: string): Observable<PaymentStatusResponse> {
+    const url = this.dashboardSvc.getUrl(DashboardServiceType.MIDTRANS_CHECK_STATUS);
+    return this.http.post<PaymentStatusResponse>(url, { order_id: orderId }).pipe(
+      catchError((err) => {
+        const message = err?.error?.message ?? 'Failed to verify payment status';
+        return throwError(() => new Error(message));
+      })
     );
   }
 

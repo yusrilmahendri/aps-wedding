@@ -6,6 +6,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { PaymentConfirmComponent } from 'src/app/shared/payment-confirm/payment-confirm.component';
 import { MidtransPaymentService, SnapResult } from 'src/app/services/midtrans-payment.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'wc-regis-pembayaran',
@@ -43,6 +44,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     private dashboardSvc: DashboardService,
     private modalService: BsModalService,
     private midtransSvc: MidtransPaymentService,
+    private router: Router,
   ) {
     this.notyf = new Notyf({
       duration: 3000,
@@ -55,10 +57,14 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     const raw = localStorage.getItem('formData');
     if (raw) {
       const stored = JSON.parse(raw);
-      this.manualBill = stored?.registrasi?.formData?.price ?? null;
-      this.invoiceAmount = this.manualBill ? Number(this.manualBill) : null;
-      this.userId = stored?.registrasi?.response?.user?.id ?? null;
-      this.invitationId = stored?.registrasi?.response?.invitation?.id ?? null;
+      const priceSnapshot = stored?.registrasi?.response?.invitation?.package_price_snapshot;
+      const formPrice     = stored?.registrasi?.formData?.price;
+      const resolvedPrice = priceSnapshot ?? formPrice ?? null;
+
+      this.manualBill    = resolvedPrice !== null ? Number(resolvedPrice) : null;
+      this.invoiceAmount = this.manualBill;
+      this.userId        = stored?.registrasi?.response?.user?.id ?? null;
+      this.invitationId  = stored?.registrasi?.response?.invitation?.id ?? null;
     }
   }
 
@@ -152,9 +158,53 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   }
 
   private onSnapSuccess(result: SnapResult): void {
-    this.isPayingMidtrans = false;
-    this.midtransPaymentStatus = 'paid';
-    this.notyf.success('Pembayaran berhasil! Undangan Anda sedang diproses.');
+    const orderId = result.order_id ?? this.currentOrderId;
+
+    if (!orderId) {
+      this.isPayingMidtrans = false;
+      this.midtransPaymentStatus = 'paid';
+      this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
+      setTimeout(() => {
+        localStorage.removeItem('formData');
+        localStorage.removeItem('formRegis');
+        window.location.href = '/dashboard/overview';
+      }, 1500);
+      return;
+    }
+
+    // Verify payment with backend to trigger database update
+    this.midtransSvc.checkPaymentStatus(orderId).subscribe({
+      next: (res) => {
+        this.isPayingMidtrans = false;
+        this.midtransPaymentStatus = 'paid';
+
+        if (res.payment_status === 'paid') {
+          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
+        } else {
+          this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
+        }
+
+        setTimeout(() => {
+          localStorage.removeItem('formData');
+          localStorage.removeItem('formRegis');
+          window.location.href = '/dashboard/overview';
+        }, 1500);
+      },
+      error: (err) => {
+        // Payment succeeded in Midtrans but backend verification failed
+        // Proceed with redirect anyway - webhook or manual sync will handle it
+        console.error('Failed to verify payment status:', err);
+        this.isPayingMidtrans = false;
+        this.midtransPaymentStatus = 'paid';
+        this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
+
+        setTimeout(() => {
+          localStorage.removeItem('formData');
+          localStorage.removeItem('formRegis');
+          window.location.href = '/dashboard/overview';
+        }, 1500);
+      }
+    });
   }
 
   private onSnapPending(result: SnapResult): void {
@@ -170,9 +220,53 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   }
 
   private onSnapClose(): void {
-    if (this.midtransPaymentStatus === 'idle') {
+    // When user closes Snap popup, check if payment was completed
+    // This handles cases where 3DS timeout prevents callbacks from firing
+    if (this.currentOrderId && this.midtransPaymentStatus !== 'paid') {
+      console.log('Snap popup closed. Verifying payment status for order:', this.currentOrderId);
+      
+      // Give Midtrans a moment to process before checking
+      setTimeout(() => {
+        this.verifyPaymentAfterClose();
+      }, 2000);
+    } else if (this.midtransPaymentStatus === 'idle') {
       this.isPayingMidtrans = false;
     }
+  }
+
+  private verifyPaymentAfterClose(): void {
+    if (!this.currentOrderId) return;
+
+    this.midtransSvc.checkPaymentStatus(this.currentOrderId).subscribe({
+      next: (res) => {
+        if (res.payment_status === 'paid') {
+          this.stopPolling();
+          this.isPayingMidtrans = false;
+          this.midtransPaymentStatus = 'paid';
+          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
+          setTimeout(() => {
+            localStorage.removeItem('formData');
+            localStorage.removeItem('formRegis');
+            window.location.href = '/dashboard/overview';
+          }, 1500);
+        } else if (res.payment_status === 'pending') {
+          // Payment still pending, continue polling
+          console.log('Payment still pending after popup close');
+          if (!this.pollSubscription) {
+            this.startStatusPolling(this.currentOrderId!);
+          }
+        } else {
+          // Payment failed or other status
+          this.isPayingMidtrans = false;
+          this.midtransPaymentStatus = 'idle';
+        }
+      },
+      error: (err) => {
+        console.error('Failed to verify payment after popup close:', err);
+        this.isPayingMidtrans = false;
+        this.midtransPaymentStatus = 'idle';
+      }
+    });
   }
 
   private startStatusPolling(orderId: string): void {
@@ -184,7 +278,12 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
           this.stopPolling();
           this.midtransPaymentStatus = 'paid';
           this.isPayingMidtrans = false;
-          this.notyf.success('Pembayaran terkonfirmasi!');
+          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
+          setTimeout(() => {
+            localStorage.removeItem('formData');
+            localStorage.removeItem('formRegis');
+            window.location.href = '/dashboard/overview';
+          }, 1500);
         } else if (res.payment_status === 'failed') {
           this.stopPolling();
           this.midtransPaymentStatus = 'failed';

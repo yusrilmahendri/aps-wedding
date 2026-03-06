@@ -242,7 +242,7 @@ export class RekeningComponent implements OnInit, OnDestroy {
   }
 
   // CRUD Operations
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.bankAccounts.length >= this.maxRekening) {
       this.notyf.error(`Anda sudah memiliki ${this.maxRekening} rekening. Silakan edit atau hapus rekening yang ada.`);
       return;
@@ -258,8 +258,8 @@ export class RekeningComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const payload = this.buildCreatePayload(newAccounts);
-    this.createBankAccounts(payload);
+    // Create accounts sequentially (backend accepts single record per request)
+    await this.createBankAccountsSequentially(newAccounts);
   }
 
   private getNewAccounts(): BankAccountFormData[] {
@@ -279,37 +279,44 @@ export class RekeningComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  private buildCreatePayload(accounts: BankAccountFormData[]): FormData {
+  private buildCreatePayload(account: BankAccountFormData): FormData {
     const formData = new FormData();
 
-    // Add array data
-    accounts.forEach((acc, index) => {
-      formData.append(`kode_bank[${index}]`, acc.kode_bank);
-      formData.append(`nomor_rekening[${index}]`, acc.nomor_rekening);
-      formData.append(`nama_pemilik[${index}]`, acc.nama_pemilik);
+    // Backend expects single record without array indices
+    formData.append('kode_bank', account.kode_bank);
+    formData.append('nomor_rekening', account.nomor_rekening);
+    formData.append('nama_pemilik', account.nama_pemilik);
 
-      // Add file if exists
-      if (acc.photo_rek instanceof File) {
-        formData.append(`photo_rek[${index}]`, acc.photo_rek);
-      }
-    });
+    // Add file if exists
+    if (account.photo_rek instanceof File) {
+      formData.append('photo_rek', account.photo_rek);
+    }
 
     return formData;
   }
 
-  private createBankAccounts(payload: FormData): void {
+  private async createBankAccountsSequentially(accounts: BankAccountFormData[]): Promise<void> {
     this.isSubmitting = true;
-    this.dashboardSvc.uploadFile(DashboardServiceType.REKENINGS_STORE, payload).subscribe({
-      next: (res) => {
-        this.notyf.success(res?.message || 'Rekening berhasil ditambahkan');
-        this.loadBankAccounts();
-        this.isSubmitting = false;
-      },
-      error: (err) => {
+    let successCount = 0;
+
+    for (const account of accounts) {
+      try {
+        const payload = this.buildCreatePayload(account);
+        const res = await this.dashboardSvc.uploadFile(DashboardServiceType.REKENINGS_STORE, payload).toPromise();
+        successCount++;
+        console.log(`Rekening ${successCount} created successfully`);
+      } catch (err) {
         this.handleApiError(err);
-        this.isSubmitting = false;
+        break; // Stop on first error
       }
-    });
+    }
+
+    this.isSubmitting = false;
+
+    if (successCount > 0) {
+      this.notyf.success(`${successCount} rekening berhasil ditambahkan`);
+      this.loadBankAccounts();
+    }
   }
 
   onEdit(index: number): void {
@@ -339,6 +346,11 @@ export class RekeningComponent implements OnInit, OnDestroy {
 
     const accountData = accountForm.value;
 
+    if (!accountData.id) {
+      this.notyf.error('ID rekening tidak ditemukan');
+      return;
+    }
+
     // Use FormData if file is present, otherwise use JSON
     if (accountData.photo_rek instanceof File) {
       const formData = new FormData();
@@ -346,21 +358,15 @@ export class RekeningComponent implements OnInit, OnDestroy {
       // Laravel method spoofing for PUT request via POST
       formData.append('_method', 'PUT');
 
-      // Append data in the exact format Laravel expects for nested arrays
-      formData.append('rekenings[0][id]', accountData.id.toString());
-      formData.append('rekenings[0][kode_bank]', accountData.kode_bank);
-      formData.append('rekenings[0][nomor_rekening]', accountData.nomor_rekening);
-      formData.append('rekenings[0][nama_pemilik]', accountData.nama_pemilik);
-      formData.append('rekenings[0][photo_rek]', accountData.photo_rek);
-
-      // Debug: Log FormData contents
-      console.log('FormData contents for update:');
-      formData.forEach((value, key) => {
-        console.log(key + ': ' + value);
-      });
+      // Backend expects flat object, not nested array
+      formData.append('kode_bank', accountData.kode_bank);
+      formData.append('nomor_rekening', accountData.nomor_rekening);
+      formData.append('nama_pemilik', accountData.nama_pemilik);
+      formData.append('photo_rek', accountData.photo_rek);
 
       this.isSubmitting = true;
-      this.dashboardSvc.uploadFile(DashboardServiceType.REKENINGS_UPDATE_JSON, formData).subscribe({
+      // Use uploadFileWithId to append ID to URL
+      this.dashboardSvc.uploadFileWithId(DashboardServiceType.REKENINGS_UPDATE_JSON, accountData.id, formData).subscribe({
         next: (res: any) => {
           this.notyf.success(res?.message || 'Rekening berhasil diperbarui');
           accountForm.get('editMode')?.setValue(false);
@@ -373,25 +379,22 @@ export class RekeningComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      // For JSON payload, only include basic fields
-      // Don't include photo_rek if it's a string URL (existing photo)
+      // For JSON payload, backend expects flat object
       const payload: any = {
-        rekenings: [{
-          id: accountData.id,
-          kode_bank: accountData.kode_bank,
-          nomor_rekening: accountData.nomor_rekening,
-          nama_pemilik: accountData.nama_pemilik
-        }]
+        kode_bank: accountData.kode_bank,
+        nomor_rekening: accountData.nomor_rekening,
+        nama_pemilik: accountData.nama_pemilik
       };
 
       // Only include photo_rek if it's explicitly null (user wants to remove photo)
       if (accountData.photo_rek === null) {
-        payload.rekenings[0].photo_rek = null;
+        payload.photo_rek = null;
       }
       // If photo_rek is a string URL, don't include it in payload (keep existing photo)
 
       this.isSubmitting = true;
-      this.dashboardSvc.update(DashboardServiceType.REKENINGS_UPDATE_JSON, '', payload).subscribe({
+      // Include /{id} parameter in URL
+      this.dashboardSvc.update(DashboardServiceType.REKENINGS_UPDATE_JSON, `/${accountData.id}`, payload).subscribe({
         next: (res: any) => {
           this.notyf.success(res?.message || 'Rekening berhasil diperbarui');
           accountForm.get('editMode')?.setValue(false);

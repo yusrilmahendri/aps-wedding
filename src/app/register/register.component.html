@@ -4,20 +4,21 @@
       <div class="login-image">
         <img src="/assets/login.svg" alt="Beach" />
       </div>
-  
+
       <!-- Right Section with Form -->
       <div class="login-form">
         <h1>DAFTAR AKUN</h1>
-  
+
         <!-- Error Message Section -->
         <div *ngIf="errorMessage" class="error-message">
           {{ errorMessage }}
         </div>
-  
+
         <form [formGroup]="loginForm" (ngSubmit)="onRegister()">
           <!-- Email Input -->
           <div class="form-group">
             <input
+              data-cy="register-email"
               type="email"
               formControlName="email"
               placeholder="Email"
@@ -26,10 +27,11 @@
               Email is required and must be valid.
             </span>
           </div>
-  
+
           <!-- Password Input -->
           <div class="form-group">
             <input
+              data-cy="register-password"
               type="password"
               formControlName="password"
               placeholder="Password"
@@ -38,10 +40,11 @@
               Password is required and must be at least 6 characters.
             </span>
           </div>
-  
+
           <!-- Password Confirmation Input -->
           <div class="form-group">
             <input
+              data-cy="register-password-confirm"
               type="password"
               formControlName="password_confirmation"
               placeholder="Repeat Password"
@@ -55,10 +58,11 @@
               Passwords must match.
             </span>
           </div>
-  
+
           <!-- Phone Input -->
           <div class="form-group">
             <input
+              data-cy="register-phone"
               type="text"
               formControlName="phone"
               placeholder="Phone"
@@ -67,15 +71,14 @@
               Phone is required.
             </span>
           </div>
-  
+
           <!-- Submit Button -->
           <div class="login-actions">
-            <button type="submit" [disabled]="loginForm.invalid">Daftar</button>
+            <button data-cy="register-submit" type="submit" [disabled]="loginForm.invalid">Daftar</button>
           </div>
         </form>
-  
+
         <p>Sudah punya akun? <a href="/login"><b>Login.</b></a></p>
       </div>
     </div>
   </div>
-  

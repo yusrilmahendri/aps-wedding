@@ -1,7 +1,0 @@
-{
-  "/api": {
-    "target": "https://horuzt.pioneersolve.id/api",
-    "secure": false,
-    "changeOrigin": true
-  }
-}

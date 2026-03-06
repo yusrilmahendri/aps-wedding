@@ -181,6 +181,9 @@ export enum DashboardServiceType {
   MIDTRANS_CHECK_STATUS,
   ADM_GET_MIDTRANS_LIST,
   ADM_GET_MIDTRANS_DETAIL,
+
+  // === Billing / Tagihan Endpoints ===
+  USER_TAGIHAN,
 }
 
 // Testimonial Interfaces
@@ -577,6 +580,8 @@ export class DashboardService {
         return `${this.BASE_URL_API}/v1/admin/midtrans`;
       case DashboardServiceType.ADM_GET_MIDTRANS_DETAIL:
         return `${this.BASE_URL_API}/v1/admin/midtrans`;
+      case DashboardServiceType.USER_TAGIHAN:
+        return `${this.BASE_URL_API}/v1/user/tagihan`;
 
       default:
         return '';
@@ -591,6 +596,9 @@ export class DashboardService {
     return this.httpSvc.post<LoginResponse>(this.getUrl(DashboardServiceType.USER_LOGIN), body).pipe(
       tap(response => {
         localStorage.setItem('access_token', response.access_token);
+        if (response.role && response.role.length > 0) {
+          localStorage.setItem('user_role', response.role[0]);
+        }
       })
     );
   }
@@ -636,6 +644,13 @@ export class DashboardService {
    */
   getAdminProfile(): Observable<ProfileResponse> {
     return this.httpSvc.get<ProfileResponse>(this.getUrl(DashboardServiceType.ADMIN_PROFILE_GET));
+  }
+
+  /**
+   * Get current logged-in user's billing/invoice history
+   */
+  getBillingHistory(): Observable<any> {
+    return this.httpSvc.get<any>(this.getUrl(DashboardServiceType.USER_TAGIHAN));
   }
 
   /**
@@ -750,6 +765,14 @@ export class DashboardService {
     // Don't set Content-Type header, let browser set it automatically for multipart/form-data
     return this.httpSvc.put(this.getUrl(serviceType), formData);
   }
+
+  uploadFileWithId(serviceType: DashboardServiceType, id: number, formData: FormData): Observable<any> {
+    // Append ID to URL for PUT requests with file upload
+    const baseUrl = this.getUrl(serviceType);
+    const url = `${baseUrl}/${id}`;
+    // Don't set Content-Type header, let browser set it automatically for multipart/form-data
+    return this.httpSvc.post(url, formData); // Use POST with _method=PUT for Laravel method spoofing
+  }
 }
 
 export class QueryService {
@@ -768,6 +791,7 @@ export interface Page {
 export interface LoginResponse {
   access_token: string;
   token_type: string;
+  role: string[];
 }
 
 // Dashboard Analytics API interfaces - Updated to match actual API response

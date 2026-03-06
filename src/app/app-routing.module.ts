@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginPageComponent } from './login-page/login-page.component';
@@ -23,6 +22,7 @@ import { UcapanComponent } from './dashboard/pengunjung/ucapan/ucapan.component'
 import { GenerateUndanganComponent } from './generate-undangan/generate-undangan.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard';
+import { AdminRoleGuard } from './admin-role.guard';
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 import { DashboardComponent } from './dashboard-admin/dashboard/dashboard.component';
 import { PenggunaComponent } from './dashboard-admin/pengguna/pengguna.component';
@@ -85,7 +85,7 @@ const routes: Routes = [
   {
     path: 'admin',
     component: DashboardAdminComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AdminRoleGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
@@ -109,7 +109,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
