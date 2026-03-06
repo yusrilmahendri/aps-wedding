@@ -224,7 +224,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     // This handles cases where 3DS timeout prevents callbacks from firing
     if (this.currentOrderId && this.midtransPaymentStatus !== 'paid') {
       console.log('Snap popup closed. Verifying payment status for order:', this.currentOrderId);
-      
+
       // Give Midtrans a moment to process before checking
       setTimeout(() => {
         this.verifyPaymentAfterClose();
