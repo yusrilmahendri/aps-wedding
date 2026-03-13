@@ -1,0 +1,33 @@
+# robots.txt for Sena Digital - Undangan Digital Pernikahan
+
+# Allow all search engines to crawl public pages
+User-agent: *
+Allow: /
+Allow: /wedding/
+Allow: /buat-undangan
+Allow: /register
+Allow: /login
+
+# Disallow private areas
+Disallow: /dashboard/
+Disallow: /dashboard-admin/
+Disallow: /admin/
+Disallow: /payment-success
+Disallow: /payment-pending
+Disallow: /api/
+
+# Disallow assets and configuration files
+Disallow: /*.json$
+Disallow: /*.map$
+
+# Allow specific assets for indexing
+Allow: /assets/images/
+Allow: /assets/*.jpg
+Allow: /assets/*.png
+Allow: /assets/*.svg
+
+# Sitemap location
+Sitemap: https://sena-digital.com/sitemap.xml
+
+# Crawl delay (optional, adjust based on server capacity)
+Crawl-delay: 1

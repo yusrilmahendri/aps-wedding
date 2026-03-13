@@ -8,352 +8,164 @@
   </div>
 </div>
 
-<div class="mempelai-container container-fluid px-2 px-md-4">
-  <section class="form-section">
-    <div class="border-pink ps-3 mb-3">
-      <h2 class="text-pink fs-6 fw-semibold mb-0">
-        Cover Photo & Urutan Mempelai
-      </h2>
+<div class="mempelai-container">
+  <!-- Cover Photo & Urutan Mempelai -->
+  <section class="card-section">
+    <div class="section-header">
+      <h2>Cover Photo &amp; Urutan Mempelai</h2>
     </div>
 
     <form [formGroup]="coverPhotoForm" (ngSubmit)="onUpdateCoverPhoto()">
-      <div class="upload-container mx-auto">
-        <img
-          *ngIf="coverPhotoPreview; else defaultCoverPhoto"
-          [src]="coverPhotoPreview"
-          alt="Cover Photo Preview"
-          class="cover-preview-img"
-        />
+      <div class="upload-area">
+        <img *ngIf="coverPhotoPreview; else defaultCoverPhoto"
+          [src]="coverPhotoPreview" alt="Cover Photo Preview" class="upload-area__img" />
         <ng-template #defaultCoverPhoto>
-          <img
-            alt="Decorative abstract line pattern in gray inside rounded rectangle"
-            src="https://storage.googleapis.com/a1aa/image/43ef1ca4-e117-47a4-f961-16352a1d24fe.jpg"
-          />
+          <img alt="Default cover" src="https://storage.googleapis.com/a1aa/image/43ef1ca4-e117-47a4-f961-16352a1d24fe.jpg"
+            class="upload-area__img" />
         </ng-template>
-        <button
-          type="button"
-          class="upload-btn-center"
-          (click)="triggerFileInput('coverPhotoInput')"
-        >
+        <button type="button" class="upload-area__btn" (click)="triggerFileInput('coverPhotoInput')">
           {{ coverPhotoPreview ? "Ganti Cover Photo" : "Unggah Cover Photo" }}
         </button>
-        <input
-          type="file"
-          id="coverPhotoInput"
-          accept="image/*"
-          style="display: none"
-          (change)="handlePhotoUpload($event, 'cover_photo')"
-        />
+        <input type="file" id="coverPhotoInput" accept="image/*" class="visually-hidden"
+          (change)="handlePhotoUpload($event, 'cover_photo')" />
       </div>
 
-      <div
-        class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3 px-2 px-sm-0"
-      >
-        <div class="w-100 w-sm-50" style="max-width: 320px">
-          <label for="urutan" class="form-label">Urutan Mempelai </label>
-          <ngx-select
-            formControlName="urutan_mempelai"
-            placeholder="Pilih urutan"
-            [items]="urutanMempelaiOptions"
-            [optionTextField]="'label'"
-            [optionValueField]="'value'"
-            (change)="onUrutanMempelaiChange($event)"
-          >
+      <div class="cover-actions">
+        <div class="cover-actions__select">
+          <label for="urutan" class="form-label">Urutan Mempelai</label>
+          <ngx-select formControlName="urutan_mempelai" placeholder="Pilih urutan"
+            [items]="urutanMempelaiOptions" [optionTextField]="'label'" [optionValueField]="'value'"
+            (change)="onUrutanMempelaiChange($event)">
           </ngx-select>
-          <div
-            *ngIf="
-              coverPhotoForm.get('urutan_mempelai')?.invalid &&
-              coverPhotoForm.get('urutan_mempelai')?.touched
-            "
-            class="text-danger small mt-1"
-          >
+          <div *ngIf="coverPhotoForm.get('urutan_mempelai')?.invalid && coverPhotoForm.get('urutan_mempelai')?.touched"
+            class="text-danger small mt-1">
             Urutan mempelai harus dipilih
           </div>
         </div>
-        <button
-          type="submit"
-          class="btn btn-cyan align-self-end align-self-sm-auto w-100 w-sm-auto"
-          [disabled]="coverPhotoForm.invalid || isUpdating"
-        >
+        <button type="submit" class="btn btn-cyan" [disabled]="coverPhotoForm.invalid || isUpdating">
           {{ isUpdating ? "Menyimpan..." : "Simpan Cover Photo" }}
         </button>
       </div>
     </form>
   </section>
 
-  <section class="row g-3 g-md-4" style="gap: 10px; justify-content: center">
-    <form
-      [formGroup]="dualSectionForm"
-      autocomplete="off"
-      novalidate
-      class="form-section col-12 col-md-5 d-flex flex-column gap-3"
-    >
-      <div class="border-pink ps-3">
-        <h2 class="text-pink fs-6 fw-semibold mb-0">Data Mempelai Pria</h2>
+  <!-- Mempelai Data Grid -->
+  <div class="mempelai-grid">
+    <!-- Mempelai Pria -->
+    <section class="card-section">
+      <div class="section-header">
+        <h2>Data Mempelai Pria</h2>
       </div>
 
-      <div class="d-flex flex-column flex-sm-row align-items-center gap-2 gap-sm-3 pt-2">
-        <img
-          [src]="
-            groomPhotoPreview ||
-            'https://storage.googleapis.com/a1aa/image/c0debede-8764-4d3f-b3b8-17cb7ae513b7.jpg'
-          "
-          alt="Foto Mempelai Pria"
-          class="profile-img mx-auto mx-sm-0"
-        />
-        <button
-          type="button"
-          class="btn btn-pink w-100 w-sm-auto"
-          (click)="triggerFileInput('groomPhotoInput')"
-        >
-          {{ groomPhotoPreview ? "Ganti Foto" : "Unggah Foto" }}
-        </button>
-        <input
-          type="file"
-          id="groomPhotoInput"
-          accept="image/*"
-          style="display: none"
-          (change)="handlePhotoUpload($event, 'photo_pria')"
-        />
-      </div>
-
-      <div>
-        <label for="nama-lengkap-pria">Nama Lengkap </label>
-        <input
-          type="text"
-          id="nama-lengkap-pria"
-          formControlName="name_lengkap_pria"
-          placeholder="Masukkan nama lengkap"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('name_lengkap_pria')?.invalid &&
-            dualSectionForm.get('name_lengkap_pria')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('name_lengkap_pria')?.invalid &&
-            dualSectionForm.get('name_lengkap_pria')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama lengkap harus diisi
+      <form [formGroup]="dualSectionForm" autocomplete="off" novalidate>
+        <div class="photo-upload-row">
+          <img [src]="groomPhotoPreview || 'https://storage.googleapis.com/a1aa/image/c0debede-8764-4d3f-b3b8-17cb7ae513b7.jpg'"
+            alt="Foto Mempelai Pria" class="profile-img" />
+          <button type="button" class="btn btn-pink" (click)="triggerFileInput('groomPhotoInput')">
+            {{ groomPhotoPreview ? "Ganti Foto" : "Unggah Foto" }}
+          </button>
+          <input type="file" id="groomPhotoInput" accept="image/*" class="visually-hidden"
+            (change)="handlePhotoUpload($event, 'photo_pria')" />
         </div>
-      </div>
 
-      <div>
-        <label for="nama-panggilan-pria">Nama Panggilan </label>
-        <input
-          type="text"
-          id="nama-panggilan-pria"
-          formControlName="name_panggilan_pria"
-          placeholder="Masukkan nama panggilan"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('name_panggilan_pria')?.invalid &&
-            dualSectionForm.get('name_panggilan_pria')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('name_panggilan_pria')?.invalid &&
-            dualSectionForm.get('name_panggilan_pria')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama panggilan harus diisi
+        <div class="form-field">
+          <label for="nama-lengkap-pria">Nama Lengkap</label>
+          <input type="text" id="nama-lengkap-pria" formControlName="name_lengkap_pria"
+            placeholder="Masukkan nama lengkap" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('name_lengkap_pria')?.invalid && dualSectionForm.get('name_lengkap_pria')?.touched" />
+          <div *ngIf="dualSectionForm.get('name_lengkap_pria')?.invalid && dualSectionForm.get('name_lengkap_pria')?.touched"
+            class="invalid-feedback">Nama lengkap harus diisi</div>
         </div>
-      </div>
 
-      <div>
-        <label for="nama-ayah-pria">Nama Ayah </label>
-        <input
-          type="text"
-          id="nama-ayah-pria"
-          formControlName="ayah_pria"
-          placeholder="Masukkan nama ayah"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('ayah_pria')?.invalid &&
-            dualSectionForm.get('ayah_pria')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('ayah_pria')?.invalid &&
-            dualSectionForm.get('ayah_pria')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama ayah harus diisi
+        <div class="form-field">
+          <label for="nama-panggilan-pria">Nama Panggilan</label>
+          <input type="text" id="nama-panggilan-pria" formControlName="name_panggilan_pria"
+            placeholder="Masukkan nama panggilan" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('name_panggilan_pria')?.invalid && dualSectionForm.get('name_panggilan_pria')?.touched" />
+          <div *ngIf="dualSectionForm.get('name_panggilan_pria')?.invalid && dualSectionForm.get('name_panggilan_pria')?.touched"
+            class="invalid-feedback">Nama panggilan harus diisi</div>
         </div>
-      </div>
 
-      <div>
-        <label for="nama-ibu-pria">Nama Ibu </label>
-        <input
-          type="text"
-          id="nama-ibu-pria"
-          formControlName="ibu_pria"
-          placeholder="Masukkan nama ibu"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('ibu_pria')?.invalid &&
-            dualSectionForm.get('ibu_pria')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('ibu_pria')?.invalid &&
-            dualSectionForm.get('ibu_pria')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama ibu harus diisi
+        <div class="form-field">
+          <label for="nama-ayah-pria">Nama Ayah</label>
+          <input type="text" id="nama-ayah-pria" formControlName="ayah_pria"
+            placeholder="Masukkan nama ayah" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('ayah_pria')?.invalid && dualSectionForm.get('ayah_pria')?.touched" />
+          <div *ngIf="dualSectionForm.get('ayah_pria')?.invalid && dualSectionForm.get('ayah_pria')?.touched"
+            class="invalid-feedback">Nama ayah harus diisi</div>
         </div>
-      </div>
-    </form>
 
-    <form
-      [formGroup]="dualSectionForm"
-      autocomplete="off"
-      novalidate
-      class="form-section col-12 col-md-5 d-flex flex-column gap-3"
-    >
-      <div class="border-pink ps-3">
-        <h2 class="text-pink fs-6 fw-semibold mb-0">Data Mempelai Wanita</h2>
-      </div>
-
-      <div class="d-flex flex-column flex-sm-row align-items-center gap-2 gap-sm-3 pt-2">
-        <img
-          [src]="
-            bridePhotoPreview ||
-            'https://storage.googleapis.com/a1aa/image/c0debede-8764-4d3f-b3b8-17cb7ae513b7.jpg'
-          "
-          alt="Foto Mempelai Wanita"
-          class="profile-img mx-auto mx-sm-0"
-        />
-        <button
-          type="button"
-          class="btn btn-pink w-100 w-sm-auto"
-          (click)="triggerFileInput('bridePhotoInput')"
-        >
-          {{ bridePhotoPreview ? "Ganti Foto" : "Unggah Foto" }}
-        </button>
-        <input
-          type="file"
-          id="bridePhotoInput"
-          accept="image/*"
-          style="display: none"
-          (change)="handlePhotoUpload($event, 'photo_wanita')"
-        />
-      </div>
-
-      <div>
-        <label for="nama-lengkap-wanita">Nama Lengkap </label>
-        <input
-          type="text"
-          id="nama-lengkap-wanita"
-          formControlName="name_lengkap_wanita"
-          placeholder="Masukkan nama lengkap"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('name_lengkap_wanita')?.invalid &&
-            dualSectionForm.get('name_lengkap_wanita')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('name_lengkap_wanita')?.invalid &&
-            dualSectionForm.get('name_lengkap_wanita')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama lengkap harus diisi
+        <div class="form-field">
+          <label for="nama-ibu-pria">Nama Ibu</label>
+          <input type="text" id="nama-ibu-pria" formControlName="ibu_pria"
+            placeholder="Masukkan nama ibu" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('ibu_pria')?.invalid && dualSectionForm.get('ibu_pria')?.touched" />
+          <div *ngIf="dualSectionForm.get('ibu_pria')?.invalid && dualSectionForm.get('ibu_pria')?.touched"
+            class="invalid-feedback">Nama ibu harus diisi</div>
         </div>
+      </form>
+    </section>
+
+    <!-- Mempelai Wanita -->
+    <section class="card-section">
+      <div class="section-header">
+        <h2>Data Mempelai Wanita</h2>
       </div>
 
-      <div>
-        <label for="nama-panggilan-wanita">Nama Panggilan </label>
-        <input
-          type="text"
-          id="nama-panggilan-wanita"
-          formControlName="name_panggilan_wanita"
-          placeholder="Masukkan nama panggilan"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('name_panggilan_wanita')?.invalid &&
-            dualSectionForm.get('name_panggilan_wanita')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('name_panggilan_wanita')?.invalid &&
-            dualSectionForm.get('name_panggilan_wanita')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama panggilan harus diisi
+      <form [formGroup]="dualSectionForm" autocomplete="off" novalidate>
+        <div class="photo-upload-row">
+          <img [src]="bridePhotoPreview || 'https://storage.googleapis.com/a1aa/image/c0debede-8764-4d3f-b3b8-17cb7ae513b7.jpg'"
+            alt="Foto Mempelai Wanita" class="profile-img" />
+          <button type="button" class="btn btn-pink" (click)="triggerFileInput('bridePhotoInput')">
+            {{ bridePhotoPreview ? "Ganti Foto" : "Unggah Foto" }}
+          </button>
+          <input type="file" id="bridePhotoInput" accept="image/*" class="visually-hidden"
+            (change)="handlePhotoUpload($event, 'photo_wanita')" />
         </div>
-      </div>
 
-      <div>
-        <label for="nama-ayah-wanita">Nama Ayah </label>
-        <input
-          type="text"
-          id="nama-ayah-wanita"
-          formControlName="ayah_wanita"
-          placeholder="Masukkan nama ayah"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('ayah_wanita')?.invalid &&
-            dualSectionForm.get('ayah_wanita')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('ayah_wanita')?.invalid &&
-            dualSectionForm.get('ayah_wanita')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama ayah harus diisi
+        <div class="form-field">
+          <label for="nama-lengkap-wanita">Nama Lengkap</label>
+          <input type="text" id="nama-lengkap-wanita" formControlName="name_lengkap_wanita"
+            placeholder="Masukkan nama lengkap" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('name_lengkap_wanita')?.invalid && dualSectionForm.get('name_lengkap_wanita')?.touched" />
+          <div *ngIf="dualSectionForm.get('name_lengkap_wanita')?.invalid && dualSectionForm.get('name_lengkap_wanita')?.touched"
+            class="invalid-feedback">Nama lengkap harus diisi</div>
         </div>
-      </div>
 
-      <div>
-        <label for="nama-ibu-wanita" class="control-required">Nama Ibu </label>
-        <input
-          type="text"
-          id="nama-ibu-wanita"
-          formControlName="ibu_wanita"
-          placeholder="Masukkan nama ibu"
-          class="form-control"
-          [class.is-invalid]="
-            dualSectionForm.get('ibu_wanita')?.invalid &&
-            dualSectionForm.get('ibu_wanita')?.touched
-          "
-        />
-        <div
-          *ngIf="
-            dualSectionForm.get('ibu_wanita')?.invalid &&
-            dualSectionForm.get('ibu_wanita')?.touched
-          "
-          class="invalid-feedback"
-        >
-          Nama ibu harus diisi
+        <div class="form-field">
+          <label for="nama-panggilan-wanita">Nama Panggilan</label>
+          <input type="text" id="nama-panggilan-wanita" formControlName="name_panggilan_wanita"
+            placeholder="Masukkan nama panggilan" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('name_panggilan_wanita')?.invalid && dualSectionForm.get('name_panggilan_wanita')?.touched" />
+          <div *ngIf="dualSectionForm.get('name_panggilan_wanita')?.invalid && dualSectionForm.get('name_panggilan_wanita')?.touched"
+            class="invalid-feedback">Nama panggilan harus diisi</div>
         </div>
-      </div>
-    </form>
-  </section>
 
-  <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center mt-4 gap-2 gap-sm-4">
-    <button
-      type="button"
-      class="btn btn-cyan btn-lg w-100 w-sm-auto"
-      [disabled]="dualSectionForm.invalid || isUpdating"
-      (click)="onUpdateDataMempelai()"
-    >
+        <div class="form-field">
+          <label for="nama-ayah-wanita">Nama Ayah</label>
+          <input type="text" id="nama-ayah-wanita" formControlName="ayah_wanita"
+            placeholder="Masukkan nama ayah" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('ayah_wanita')?.invalid && dualSectionForm.get('ayah_wanita')?.touched" />
+          <div *ngIf="dualSectionForm.get('ayah_wanita')?.invalid && dualSectionForm.get('ayah_wanita')?.touched"
+            class="invalid-feedback">Nama ayah harus diisi</div>
+        </div>
+
+        <div class="form-field">
+          <label for="nama-ibu-wanita">Nama Ibu</label>
+          <input type="text" id="nama-ibu-wanita" formControlName="ibu_wanita"
+            placeholder="Masukkan nama ibu" class="form-control"
+            [class.is-invalid]="dualSectionForm.get('ibu_wanita')?.invalid && dualSectionForm.get('ibu_wanita')?.touched" />
+          <div *ngIf="dualSectionForm.get('ibu_wanita')?.invalid && dualSectionForm.get('ibu_wanita')?.touched"
+            class="invalid-feedback">Nama ibu harus diisi</div>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Save Data Mempelai -->
+  <div class="save-action">
+    <button type="button" class="btn btn-cyan btn-cyan--primary"
+      [disabled]="dualSectionForm.invalid || isUpdating" (click)="onUpdateDataMempelai()">
       {{ isUpdating ? "Menyimpan..." : "Simpan Data Mempelai" }}
     </button>
   </div>

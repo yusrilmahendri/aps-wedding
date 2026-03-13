@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
@@ -43,9 +43,9 @@ export class GalleryComponent implements OnInit {
     this.notyf = new Notyf({ duration: 3000, position: { x: 'right', y: 'top' } });
 
     this.galleryForm = new FormGroup({
-      photo: new FormControl(null, Validators.required),
-      url_video: new FormControl('', Validators.required),
-    });
+      photo: new FormControl(null),
+      url_video: new FormControl(''),
+    }, { validators: this.atLeastOneFieldValidator });
 
     // Initialize table columns
     this.columns = [
@@ -59,6 +59,21 @@ export class GalleryComponent implements OnInit {
 
   ngOnInit(): void {
     this.initUserProfile();
+  }
+
+  /**
+   * Custom validator: requires at least one of photo OR url_video to be filled
+   */
+  private atLeastOneFieldValidator(control: AbstractControl): ValidationErrors | null {
+    const photo = control.get('photo')?.value;
+    const urlVideo = control.get('url_video')?.value;
+
+    // At least one field must have a value
+    if (!photo && !urlVideo) {
+      return { atLeastOneRequired: true };
+    }
+
+    return null;
   }
 
   initUserProfile(): void {
@@ -174,6 +189,11 @@ export class GalleryComponent implements OnInit {
           this.modalRef?.hide();
         });
       }
+    } else {
+      // Show error if form is invalid
+      if (this.galleryForm.hasError('atLeastOneRequired')) {
+        this.notyf.error('Harap isi minimal satu field: foto atau URL video.');
+      }
     }
   }
 
@@ -181,11 +201,20 @@ export class GalleryComponent implements OnInit {
     const formData = new FormData();
     const photoFile = this.galleryForm.get('photo')?.value;
     const urlVideo = this.galleryForm.get('url_video')?.value;
+
+    // Append photo only if provided
     if (photoFile) {
       formData.append('photo', photoFile, photoFile.name);
       formData.append('nama_foto', photoFile.name);
+    } else {
+      // Send empty values for photo fields when not provided
+      formData.append('photo', '');
+      formData.append('nama_foto', '');
     }
+
+    // Append video URL (empty string if not provided)
     formData.append('url_video', urlVideo || '');
+
     this.dashboardSvc.create(DashboardServiceType.GALERY_SUBMIT, formData).subscribe({
       next: (res) => {
         this.notyf.success(res?.message || 'Data berhasil disimpan.');
@@ -219,21 +248,20 @@ export class GalleryComponent implements OnInit {
 
     this.dashboardSvc.list(DashboardServiceType.GALERY_DATA, params).subscribe({
       next: (res) => {
-        const baseUrl = environment.apiBaseUrl || '';
         this.galleryData = (res?.data || []).map((item: any) => ({
           id: item.id,
-          photo_url: item.photo ? (item.photo.startsWith('http') ? item.photo : baseUrl + '/' + item.photo) : '',
-          photo_name: item.nama_foto || (item.photo ? item.photo.split('/').pop() : ''),
+          photo_url: item.photo_url || '',
+          photo_name: item.nama_foto || '',
           url_video: item.url_video,
           created_at: item.created_at ? new Date(item.created_at) : null,
-          status: item.status === 1 ? 'active' : 'inactive',
+          status: item.status === '1' || item.status === 1 ? 'active' : 'inactive',
         }));
-        this.totalItems = res?.total || this.galleryData.length;
-        this.pageSize = res?.per_page || this.pageSize;
-        this.currentPage = res?.current_page || 1;
-        this.totalPages = res?.last_page || 1;
-        this.from = res?.from || 0;
-        this.to = res?.to || 0;
+        this.totalItems = res?.pagination?.total || this.galleryData.length;
+        this.pageSize = res?.pagination?.per_page || this.pageSize;
+        this.currentPage = res?.pagination?.current_page || 1;
+        this.totalPages = res?.pagination?.last_page || 1;
+        this.from = res?.pagination?.from || 0;
+        this.to = res?.pagination?.to || 0;
         this.isLoading = false;
       },
       error: (err) => {

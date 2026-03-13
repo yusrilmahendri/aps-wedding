@@ -1,5 +1,4 @@
 <div class="dashboard-wrapper">
-  <!-- Loading Overlay -->
   <div class="loading-overlay" *ngIf="isLoading" aria-label="Loading data">
     <div class="loading-container">
       <div class="loading-spinner" aria-hidden="true"></div>
@@ -7,67 +6,79 @@
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="container-fluid px-3 px-md-4" [class.content-loading]="isLoading">
-    <!-- Dashboard Cards Section -->
+  <div class="dashboard-content" [class.content-loading]="isLoading">
     <section class="dashboard-stats" aria-label="Dashboard statistics">
-      <div class="row g-3 g-md-4">
-        <div class="col-12 col-sm-6 col-lg-4">
-          <div class="dashboard-card">
-            <div class="card-content">
-              <div class="left-border green" aria-hidden="true"></div>
-              <div class="card-details">
-                <span class="title">Total Keuntungan</span>
-                <span class="amount text-green">Rp {{ salary | number:'1.0-0':'en-US' }}</span>
-              </div>
-              <div class="card-icon">
-                <i class="fas fa-wallet icon text-green" aria-hidden="true"></i>
-              </div>
+      <div class="stats-grid">
+        <div class="dashboard-card">
+          <div class="card-content">
+            <div class="left-border green" aria-hidden="true"></div>
+            <div class="card-details">
+              <span class="title">Total Keuntungan</span>
+              <span class="amount text-green">Rp {{ salary | number:'1.0-0':'en-US' }}</span>
+            </div>
+            <div class="card-icon">
+              <i class="fas fa-wallet icon text-green" aria-hidden="true"></i>
             </div>
           </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-lg-4">
-          <div class="dashboard-card">
-            <div class="card-content">
-              <div class="left-border orange" aria-hidden="true"></div>
-              <div class="card-details">
-                <span class="title">Total Pengguna</span>
-                <span class="amount text-orange">{{ total_users || '0'}}</span>
-              </div>
-              <div class="card-icon">
-                <i class="fas fa-users icon text-orange" aria-hidden="true"></i>
-              </div>
+        <div class="dashboard-card">
+          <div class="card-content">
+            <div class="left-border orange" aria-hidden="true"></div>
+            <div class="card-details">
+              <span class="title">Total Pengguna</span>
+              <span class="amount text-orange">{{ total_users || '0' }}</span>
+            </div>
+            <div class="card-icon">
+              <i class="fas fa-users icon text-orange" aria-hidden="true"></i>
             </div>
           </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-lg-4">
-          <div class="dashboard-card">
-            <div class="card-content">
-              <div class="left-border pink" aria-hidden="true"></div>
-              <div class="card-details">
-                <span class="title">Pending Request</span>
-                <span class="amount text-pink">{{ pending_req }}</span>
-              </div>
-              <div class="card-icon">
-                <i class="fas fa-power-off icon text-pink" aria-hidden="true"></i>
-              </div>
+        <div class="dashboard-card">
+          <div class="card-content">
+            <div class="left-border pink" aria-hidden="true"></div>
+            <div class="card-details">
+              <span class="title">Pending Request</span>
+              <span class="amount text-pink">{{ pending_req }}</span>
+            </div>
+            <div class="card-icon">
+              <i class="fas fa-power-off icon text-pink" aria-hidden="true"></i>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Invoice Section -->
     <section class="invoice-section" aria-label="Invoice management">
       <div class="invoice-container" role="region" aria-label="Invoice table container">
         <div class="invoice-header">
           <h2>Invoice</h2>
         </div>
 
-        <!-- Desktop Table -->
-        <div class="table-responsive d-none d-md-block">
+        <div class="invoice-toolbar">
+          <div class="toolbar-search">
+            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+            <input type="text"
+                   class="search-input"
+                   placeholder="Cari invoice, pengguna, domain..."
+                   [ngModel]="searchTerm"
+                   (ngModelChange)="onSearchChange($event)"
+                   aria-label="Cari data invoice">
+          </div>
+          <div class="toolbar-limit">
+            <label for="pageSize" class="limit-label">Tampilkan</label>
+            <select id="pageSize"
+                    class="limit-select"
+                    [ngModel]="pageSize"
+                    (ngModelChange)="onPageSizeChange($event)"
+                    aria-label="Jumlah data per halaman">
+              <option *ngFor="let opt of pageSizeOptions" [ngValue]="opt">{{ opt }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap table-wrap--desktop">
           <table class="invoice-table" role="table" aria-label="Invoice data table">
             <thead>
               <tr>
@@ -79,11 +90,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of rows;">
+              <tr *ngFor="let row of displayedRows">
                 <td>{{ row.invoice }}</td>
-                <td>{{ row.pengguna }}</td>
-                <td>
-                  <a href="/wedding/{{ row.domain }}" tabindex="-1" [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
+                <td class="cell-truncate">{{ row.pengguna }}</td>
+                <td class="cell-truncate">
+                  <a href="/wedding/{{ row.domain }}"
+                     tabindex="-1"
+                     [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
                 </td>
                 <td>
                   <span class="status-badge"
@@ -94,10 +107,12 @@
                   </span>
                 </td>
                 <td>
-                  <button class="btn-konfirmasi" [disabled]="!row.konfirmasiAktif"
-                    [attr.aria-disabled]="!row.konfirmasiAktif" [ngClass]="{ 'active': row.konfirmasiAktif }"
-                    [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                    (click)="onConfirmClicked(row, confirmPaymentModal)">
+                  <button class="btn-konfirmasi"
+                          [disabled]="!row.konfirmasiAktif"
+                          [attr.aria-disabled]="!row.konfirmasiAktif"
+                          [ngClass]="{ 'active': row.konfirmasiAktif }"
+                          [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
+                          (click)="onConfirmClicked(row, confirmPaymentModal)">
                     Konfirmasi
                   </button>
                 </td>
@@ -106,9 +121,8 @@
           </table>
         </div>
 
-        <!-- Mobile Cards -->
-        <div class="mobile-cards d-block d-md-none">
-          <div class="invoice-card" *ngFor="let row of rows; ">
+        <div class="mobile-cards">
+          <div class="invoice-card" *ngFor="let row of displayedRows">
             <div class="invoice-card-header">
               <span class="invoice-number">{{ row.invoice }}</span>
               <span class="status-badge"
@@ -126,18 +140,67 @@
               <div class="invoice-detail">
                 <span class="label">Domain:</span>
                 <span class="value">
-                  <a href="#" [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
+                  <a [attr.href]="'/wedding/' + row.domain"
+                     [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
                 </span>
               </div>
             </div>
             <div class="invoice-card-footer">
-              <button class="btn-konfirmasi mobile" [disabled]="!row.konfirmasiAktif"
-                [attr.aria-disabled]="!row.konfirmasiAktif" [ngClass]="{ 'active': row.konfirmasiAktif }"
-                [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                (click)="onConfirmClicked(row, confirmPaymentModal)">
+              <button class="btn-konfirmasi btn-konfirmasi--mobile"
+                      [disabled]="!row.konfirmasiAktif"
+                      [attr.aria-disabled]="!row.konfirmasiAktif"
+                      [ngClass]="{ 'active': row.konfirmasiAktif }"
+                      [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
+                      (click)="onConfirmClicked(row, confirmPaymentModal)">
                 Konfirmasi
               </button>
             </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="displayedRows.length === 0 && !isLoading">
+          <i class="fas fa-inbox empty-state__icon" aria-hidden="true"></i>
+          <p class="empty-state__text" *ngIf="searchTerm">Tidak ada data yang cocok dengan "{{ searchTerm }}"</p>
+          <p class="empty-state__text" *ngIf="!searchTerm">Belum ada data invoice</p>
+        </div>
+
+        <div class="pagination-bar" *ngIf="filteredRows.length > 0">
+          <span class="pagination-info">
+            Menampilkan {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > filteredRows.length ? filteredRows.length : currentPage * pageSize }} dari {{ filteredRows.length }} data
+          </span>
+          <div class="pagination-controls" *ngIf="totalPages > 1">
+            <button class="page-btn"
+                    [disabled]="currentPage === 1"
+                    (click)="goToPage(1)"
+                    aria-label="Halaman pertama">
+              <i class="fas fa-angle-double-left" aria-hidden="true"></i>
+            </button>
+            <button class="page-btn"
+                    [disabled]="currentPage === 1"
+                    (click)="goToPage(currentPage - 1)"
+                    aria-label="Halaman sebelumnya">
+              <i class="fas fa-angle-left" aria-hidden="true"></i>
+            </button>
+            <button *ngFor="let p of pageNumbers"
+                    class="page-btn"
+                    [class.active]="p === currentPage"
+                    (click)="goToPage(p)"
+                    [attr.aria-label]="'Halaman ' + p"
+                    [attr.aria-current]="p === currentPage ? 'page' : null">
+              {{ p }}
+            </button>
+            <button class="page-btn"
+                    [disabled]="currentPage === totalPages"
+                    (click)="goToPage(currentPage + 1)"
+                    aria-label="Halaman berikutnya">
+              <i class="fas fa-angle-right" aria-hidden="true"></i>
+            </button>
+            <button class="page-btn"
+                    [disabled]="currentPage === totalPages"
+                    (click)="goToPage(totalPages)"
+                    aria-label="Halaman terakhir">
+              <i class="fas fa-angle-double-right" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
       </div>

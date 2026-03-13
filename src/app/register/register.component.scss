@@ -1,121 +1,293 @@
 .login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #d9d9d9;
+  animation: fadeIn 0.6s ease-out;
+
+  .login-card {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 2rem;
-    background-color: #d9d9d9;
-  
-    .login-card {
-      display: flex;
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 1200px;
-      flex-direction: row;
-      overflow: hidden;
-  
-      @media (max-width: 768px) {
-        flex-direction: column;
-      }
-  
-      .login-image {
-        width: 50%;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-  
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    max-width: 1200px;
+    flex-direction: row;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      max-width: 500px;
+    }
+
+    .login-image {
+      width: 50%;
+      animation: slideInLeft 0.5s ease-out;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px 0 0 20px;
+
         @media (max-width: 768px) {
-          width: 100%;
+          border-radius: 20px 20px 0 0;
         }
       }
-  
-      .login-form {
-        width: 50%;
-        padding: 40px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        max-height: 250px;
+      }
+    }
+
+    .login-form {
+      width: 50%;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      animation: slideInRight 0.5s ease-out;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-weight: 700;
+        font-size: 1.875rem;
+        color: #1f2937;
+        margin-bottom: 2rem;
+        text-align: center;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        -webkit-font-smoothing: antialiased;
+        animation: fadeInUp 0.6s ease-out;
+
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      form {
         display: flex;
         flex-direction: column;
-  
-        @media (max-width: 768px) {
-          width: 100%;
-          padding: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.7s ease-out;
+
+        &:nth-child(2) {
+          animation-delay: 0.05s;
         }
-  
-        h1 {
-          font-size: 2rem;
-          margin-bottom: 20px;
-          text-align: center;
+
+        &:nth-child(3) {
+          animation-delay: 0.1s;
         }
-  
-        form {
-          display: flex;
-          flex-direction: column;
+
+        &:nth-child(4) {
+          animation-delay: 0.15s;
         }
-  
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          margin-bottom: 15px;
-  
-          input {
-            padding: 10px 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            font-size: 16px;
+
+        &:nth-child(5) {
+          animation-delay: 0.2s;
+        }
+
+        input {
+          padding: 0.875rem 1.125rem;
+          border: 1.5px solid #e5e7eb;
+          border-radius: 12px;
+          font-size: 0.9375rem;
+          color: #374151;
+          background-color: #fafafa;
+          transition: all 0.3s ease;
+          -webkit-font-smoothing: antialiased;
+
+          &::placeholder {
+            color: #9ca3af;
           }
-  
-          span {
-            margin-top: 5px;
-            color: red;
-            font-size: 12px;
+
+          &:focus {
+            outline: none;
+            border-color: #FFA0AE;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(255, 160, 174, 0.1);
+            transform: translateY(-1px);
+          }
+
+          &:hover {
+            border-color: #d1d5db;
+          }
+
+          @media (max-width: 768px) {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
           }
         }
-  
-        .login-actions {
-          display: flex;
-          justify-content: center;
-  
-          button {
-            padding: 15px;
-            background-color: #ffa0ae;
-            color: white;
-            font-weight: 600;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 400px;
-  
-            &:hover {
-              background-color: #fb7185;
-            }
-          }
+
+        .error-text {
+          margin-top: 0.5rem;
+          color: #dc2626;
+          font-size: 0.75rem;
+          font-weight: 500;
+          line-height: 1.4;
+          animation: fadeInUp 0.3s ease-out;
         }
-  
+      }
+
+      .account-prompt {
+        text-align: center;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease-out;
+
         p {
-          text-align: center;
-          margin-top: 15px;
-  
+          font-size: 0.875rem;
+          color: #6b7280;
+          line-height: 1.5;
+          margin: 0;
+
           a {
-            color: #374151;
+            color: #f472b6;
+            font-weight: 600;
             text-decoration: none;
-  
-            &:hover {
-              text-decoration: underline;
+            transition: all 0.2s ease;
+            position: relative;
+
+            &::after {
+              content: '';
+              position: absolute;
+              width: 0;
+              height: 1px;
+              bottom: -2px;
+              left: 0;
+              background-color: #f472b6;
+              transition: width 0.3s ease;
             }
+
+            &:hover {
+              color: #ec4899;
+
+              &::after {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+
+      .login-actions {
+        display: flex;
+        justify-content: center;
+        animation: fadeInUp 0.9s ease-out;
+
+        button {
+          padding: 0.875rem 2rem;
+          background: linear-gradient(135deg, #FFA0AE 0%, #fb7185 100%);
+          color: white;
+          font-weight: 600;
+          font-size: 0.9375rem;
+          border: none;
+          border-radius: 12px;
+          width: 100%;
+          max-width: 400px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(255, 160, 174, 0.3);
+          letter-spacing: 0.01em;
+
+          &:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 6px 20px rgba(255, 160, 174, 0.4);
+          }
+
+          &:active:not(:disabled) {
+            transform: translateY(0) scale(0.99);
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 160, 174, 0.3);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #d1d5db;
+            box-shadow: none;
+          }
+
+          @media (max-width: 768px) {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
           }
         }
       }
     }
   }
+}
 
-  .error-message {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    font-size: 14px;
-    text-align: center;
+/* Refined Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: center;
+  animation: fadeInUp 0.5s ease-out;
+  line-height: 1.5;
+}

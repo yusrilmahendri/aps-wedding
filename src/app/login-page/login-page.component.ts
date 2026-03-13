@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../dashboard.service';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'wc-login-page',
@@ -15,14 +16,28 @@ export class LoginPageComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
+    this.setSeoTags();
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['error']) {
         this.errorMessage = params['error'];
       }
+    });
+  }
+
+  private setSeoTags(): void {
+    // Set SEO meta tags for login page
+    this.seoService.setMetaTags({
+      title: 'Login - Sena Digital Wedding Invitation',
+      description: 'Login ke akun Sena Digital Anda untuk mengelola undangan digital pernikahan.',
+      keywords: 'login sena digital, masuk akun, wedding invitation login',
+      url: 'https://sena-digital.com/login',
+      image: 'https://sena-digital.com/assets/images/sena-digital-og-image.jpg',
+      type: 'website'
     });
   }
 

@@ -1436,6 +1436,20 @@ setResepsiDate() {
     return Number(this.weddingData?.filter_undangan?.halaman_sampul) === 1;
   }
 
+  /**
+   * Check if couple/mempelai section should be visible based on filter_undangan.halaman_mempelai
+   */
+  isCoupleVisible(): boolean {
+    return Number(this.weddingData?.filter_undangan?.halaman_mempelai) === 1;
+  }
+
+  /**
+   * Check if quote section should be visible based on filter_undangan.halaman_qoute
+   */
+  isQuoteVisible(): boolean {
+    return Number(this.weddingData?.filter_undangan?.halaman_qoute) === 1;
+  }
+
   private initializeBootstrapTooltips(): void {
     const tooltipTriggerList = Array.from(
       this.elementRef.nativeElement.querySelectorAll('[data-bs-toggle="tooltip"]')

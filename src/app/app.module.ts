@@ -4,6 +4,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker'; // Import BsDatepickerModule
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -184,6 +186,10 @@ import { GuestGeneratorComponentsComponent } from './guest-generator-components/
     NgxSelectModule,
     BsDatepickerModule.forRoot(), // Use forRoot() on BsDatepickerModule
     ModalModule.forRoot(),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production || true,
+      registrationStrategy: 'registerImmediately'
+    }),
   ],
   providers: [
     Title,

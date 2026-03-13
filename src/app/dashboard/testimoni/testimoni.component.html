@@ -1,248 +1,78 @@
-<body>
-  <div class="container py-5 d-flex justify-content-start">
-    <div class="row w-100 justify-content-start">
-      <div class="col-12 col-md-6">
-        <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="bg-white rounded-3 p-4 p-md-5 shadow-sm" aria-label="Review submission form">
-          <h2 class="text-pink fw-semibold border-pink ps-3 mb-4">
-            Berikan Ulasan
-          </h2>
-          <h3 class="text-dark fw-semibold fs-4 mb-4">
-            Ulasan kamu sangat penting bagi kami
-          </h3>
-
-          <div class="mb-4">
-            <label for="provinsi" class="form-label fw-semibold text-dark">
-              Provinsi <span class="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              id="provinsi"
-              formControlName="provinsi"
-              placeholder="Tulis di sini.."
-              [class.is-invalid]="hasFieldError('provinsi')"
-              aria-describedby="provinsiHelp provinsiError" />
-            <div id="provinsiError" class="invalid-feedback" *ngIf="hasFieldError('provinsi')">
-              {{ getFieldError('provinsi') }}
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <label for="kota" class="form-label fw-semibold text-dark">
-              Kota <span class="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              id="kota"
-              formControlName="kota"
-              placeholder="Tulis disini..."
-              [class.is-invalid]="hasFieldError('kota')"
-              aria-describedby="kotaHelp kotaError" />
-            <div id="kotaError" class="invalid-feedback" *ngIf="hasFieldError('kota')">
-              {{ getFieldError('kota') }}
-            </div>
-          </div>
-
-          <div class="mb-5">
-            <label for="ulasan" class="form-label fw-semibold text-dark">
-              Ulasan <span class="text-danger">*</span>
-            </label>
-            <textarea
-              class="form-control"
-              id="ulasan"
-              formControlName="ulasan"
-              rows="4"
-              placeholder="Maks 500 karakter"
-              maxlength="500"
-              [class.is-invalid]="hasFieldError('ulasan')"
-              aria-describedby="ulasanHelp ulasanError"></textarea>
-            <div id="ulasanError" class="invalid-feedback" *ngIf="hasFieldError('ulasan')">
-              {{ getFieldError('ulasan') }}
-            </div>
-            <div class="form-text">
-              {{ reviewForm.get('ulasan')?.value?.length || 0 }}/500 karakter
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end">
-            <button
-              type="submit"
-              class="btn btn-sky"
-              [disabled]="isSubmitting || reviewForm.invalid">
-              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </span>
-              {{ isSubmitting ? 'Mengirim...' : 'Kirim Ulasan' }}
-            </button>
-          </div>
-        </form>
-      </div>
+<div class="testimoni-container">
+  <div class="form-section">
+    <div class="form-header">
+      <div class="title-bar"></div>
+      <h2 class="form-title">Testimoni Pengguna</h2>
     </div>
+
+    <p class="form-subtitle">
+      Bagikan pengalaman Anda menggunakan layanan kami
+    </p>
+
+    <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="review-form">
+      <div class="form-group">
+        <label for="provinsi" class="form-label">
+          Provinsi <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="provinsi"
+          formControlName="provinsi"
+          class="form-control"
+          [class.is-invalid]="hasFieldError('provinsi')"
+          placeholder="Masukkan provinsi Anda">
+        <div *ngIf="hasFieldError('provinsi')" class="error-message">
+          {{ getFieldError('provinsi') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="kota" class="form-label">
+          Kota <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="kota"
+          formControlName="kota"
+          class="form-control"
+          [class.is-invalid]="hasFieldError('kota')"
+          placeholder="Masukkan kota Anda">
+        <div *ngIf="hasFieldError('kota')" class="error-message">
+          {{ getFieldError('kota') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="ulasan" class="form-label">
+          Ulasan <span class="required">*</span>
+        </label>
+        <textarea
+          id="ulasan"
+          formControlName="ulasan"
+          class="form-control"
+          rows="6"
+          [class.is-invalid]="hasFieldError('ulasan')"
+          placeholder="Tulis ulasan Anda di sini (minimal 10 karakter)"></textarea>
+        <div class="char-counter">
+          {{ reviewForm.get('ulasan')?.value?.length || 0 }} / 1000 karakter
+        </div>
+        <div *ngIf="hasFieldError('ulasan')" class="error-message">
+          {{ getFieldError('ulasan') }}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="isSubmitting || reviewForm.invalid">
+          <span *ngIf="!isSubmitting">Kirim Testimoni</span>
+          <span *ngIf="isSubmitting">
+            <span class="spinner"></span>
+            Mengirim...
+          </span>
+        </button>
+      </div>
+    </form>
   </div>
-
-
-  <!-- <div class="container py-4">
-
-    <div class="row g-4 justify-content-start mb-4">
-      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-        <div class="card-custom">
-          <div class="side-bar" style="background-color: #0f7f8f;"></div>
-          <div class="d-flex justify-content-between align-items-start">
-            <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-              Total Testimoni
-            </p>
-            <i class="fas fa-star" style="color: #0f7f8f; font-size: 1.125rem;"></i>
-          </div>
-          <p class="mt-3 mb-1 text-large" style="color: #0f7f8f;">
-            {{ getTotalCount() }}
-          </p>
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            total testimoni
-          </p>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-        <div class="card-custom">
-          <div class="side-bar" style="background-color: #10B981;"></div>
-          <div class="d-flex justify-content-between align-items-start">
-            <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-              Disetujui
-            </p>
-            <i class="fas fa-check-circle" style="color: #10B981; font-size: 1.125rem;"></i>
-          </div>
-          <p class="mt-3 mb-1 text-large" style="color: #10B981;">
-            {{ getApprovedCount() }}
-          </p>
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            testimoni disetujui
-          </p>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-        <div class="card-custom">
-          <div class="side-bar" style="background-color: #F59E0B;"></div>
-          <div class="d-flex justify-content-between align-items-start">
-            <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-              Menunggu Persetujuan
-            </p>
-            <i class="fas fa-clock" style="color: #F59E0B; font-size: 1.125rem;"></i>
-          </div>
-          <p class="mt-3 mb-1 text-large" style="color: #F59E0B;">
-            {{ getPendingCount() }}
-          </p>
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            menunggu persetujuan
-          </p>
-        </div>
-      </div>
-    </div>
-
-
-    <section class="bg-white rounded-3 p-4 mt-4" aria-label="Testimonial data table">
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-3 gap-3">
-        <h2 class="text-pink-500 fw-semibold fs-5 border-start border-2 border-pink-400 ps-2 mb-0">
-          Data Testimoni Anda
-        </h2>
-        <div class="d-flex align-items-center gap-3 w-100 w-sm-auto">
-          <button
-            type="button"
-            class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-            (click)="reloadData()"
-            [disabled]="isLoading">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-          <label for="search" class="fw-semibold small mb-0">Cari</label>
-          <input
-            id="search"
-            type="text"
-            class="form-control form-control-sm"
-            style="max-width: 180px"
-            [(ngModel)]="searchQuery"
-            placeholder="Cari testimoni..."
-            aria-label="Search testimonial data"
-          />
-        </div>
-      </div>
-
-
-      <div *ngIf="isLoading" class="text-center py-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="mt-2">Memuat data...</div>
-      </div>
-
-
-      <div *ngIf="apiError && !isLoading" class="alert alert-danger" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        {{ apiError }}
-      </div>
-
-
-      <div class="table-responsive" *ngIf="!isLoading && !apiError">
-        <table class="table align-middle text-black mb-0" style="border-spacing: 0 0.25rem; border-collapse: separate;">
-          <thead>
-            <tr>
-              <th style="width: 40px;">No.</th>
-              <th style="width: 120px;">Provinsi</th>
-              <th style="width: 120px;">Kota</th>
-              <th>Ulasan</th>
-              <th style="width: 120px;">Status</th>
-              <th style="width: 120px;">Tanggal</th>
-              <th style="width: 100px;" class="text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="filteredDataList.length === 0">
-              <td colspan="7" class="text-center py-4 text-muted">
-                <i class="fas fa-inbox fa-2x mb-2 opacity-25"></i>
-                <div>Tidak ada data yang ditemukan</div>
-              </td>
-            </tr>
-            <tr *ngFor="let item of filteredDataList; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td class="fw-semibold">{{ item.provinsi }}</td>
-              <td class="fw-semibold">{{ item.kota }}</td>
-              <td>
-                <div class="text-truncate" style="max-width: 300px;" [title]="item.ulasan">
-                  {{ item.ulasan }}
-                </div>
-              </td>
-              <td>
-                <span [class]="getStatusBadgeClass(item.status)" class="rounded-pill px-2 py-1 text-white" style="font-size: 0.75rem;">
-                  {{ getStatusText(item.status) }}
-                </span>
-              </td>
-              <td class="small text-muted">
-                {{ formatDate(item.created_at) }}
-              </td>
-              <td class="text-center">
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm"
-                  (click)="doDelete(item)"
-                  [disabled]="isLoading"
-                  title="Hapus testimoni">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-4 gap-3 text-black-50 small" *ngIf="!isLoading && !apiError">
-        <div class="d-flex align-items-center gap-1">
-          <span>Menampilkan {{ filteredDataList.length }} dari {{ getTotalCount() }} data</span>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <small>Total: {{ getTotalCount() }} | Disetujui: {{ getApprovedCount() }} | Pending: {{ getPendingCount() }}</small>
-        </div>
-      </div>
-    </section>
-  </div> -->
-
-</body>
+</div>

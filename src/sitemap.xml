@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Homepage - Highest Priority -->
+  <url>
+    <loc>https://sena-digital.com/</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Generate Invitation Page - High Priority -->
+  <url>
+    <loc>https://sena-digital.com/buat-undangan</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Register Page - High Priority -->
+  <url>
+    <loc>https://sena-digital.com/register</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Login Page - Medium Priority -->
+  <url>
+    <loc>https://sena-digital.com/login</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Wedding View Generic - Medium Priority -->
+  <url>
+    <loc>https://sena-digital.com/wedding</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!--
+    Dynamic Wedding Pages:
+    Individual wedding invitation pages with domain-specific URLs
+    These should be generated dynamically based on actual wedding data
+    Example format:
+    <url>
+      <loc>https://sena-digital.com/wedding/johndoe-janedoe</loc>
+      <lastmod>2025-01-07</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+  -->
+
+</urlset>

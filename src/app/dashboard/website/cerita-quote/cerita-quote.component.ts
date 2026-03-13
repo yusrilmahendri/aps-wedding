@@ -24,6 +24,9 @@ export class CeritaQuoteComponent implements OnInit {
   editingQuoteId: number | null = null;
   editQuoteForm: FormGroup | null = null;
 
+  activeFormTab: 'cerita' | 'quote' = 'cerita';
+  activeDataTab: 'cerita' | 'quote' = 'cerita';
+
   // Loading states for better UX
   isLoadingCeritaData = false;
   isLoadingQuoteData = false;

@@ -14,15 +14,15 @@
         {{ errorMessage }}
       </div>
 
-      <input data-cy="login-email" type="email" placeholder="Email" [(ngModel)]="email" />
-      <input data-cy="login-password" type="password" placeholder="Password" [(ngModel)]="password" />
+      <input type="email" placeholder="Email" [(ngModel)]="email" />
+      <input type="password" placeholder="Password" [(ngModel)]="password" />
 
-      <div class="login-actions">
-        <p>Belum punya akun? <a href="/register"><b>Daftar sekarang.</b></a></p>
+      <div class="account-prompt">
+        <p>Belum punya akun? <a href="/register">Daftar sekarang</a></p>
       </div>
 
       <div class="login-actions">
-        <button data-cy="login-submit" (click)="onLogin()" type="button">Masuk</button>
+        <button (click)="onLogin()" type="button">Masuk</button>
       </div>
     </div>
   </div>

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Notyf } from 'notyf';
-import { 
-  DashboardService, 
-  DashboardServiceType, 
-  UcapanItem, 
-  UcapanResponse, 
+import {
+  DashboardService,
+  DashboardServiceType,
+  UcapanItem,
+  UcapanResponse,
   UcapanStatisticsResponse,
-  UcapanDeleteResponse 
+  UcapanDeleteResponse
 } from 'src/app/dashboard.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,7 +29,8 @@ export class UcapanComponent implements OnInit {
   private notyf: Notyf
 
   searchQuery = '';
-  entriesToShow = 10;
+  itemsPerPage = 10;
+  currentPage = 1;
   attendanceFilter: 'all' | 'hadir' | 'tidak_hadir' | 'mungkin' = 'all';
 
   modalRef?: BsModalRef;
@@ -117,11 +118,96 @@ export class UcapanComponent implements OnInit {
     return filtered;
   }
 
+  get paginatedDataList(): UcapanItem[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredDataList.slice(startIndex, endIndex);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredDataList.length / this.itemsPerPage);
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get visiblePageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const delta = 2; // Pages to show on each side of current page
+
+    if (total <= 7) {
+      return this.pageNumbers;
+    }
+
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+
+    for (let i = 1; i <= total; i++) {
+      if (
+        i === 1 ||
+        i === total ||
+        (i >= current - delta && i <= current + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    let prev = 0;
+    for (const i of range) {
+      if (prev && i - prev > 1) {
+        rangeWithDots.push('...');
+      }
+      rangeWithDots.push(i);
+      prev = i;
+    }
+
+    return rangeWithDots.filter(n => typeof n === 'number') as number[];
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  get endIndex(): number {
+    const end = this.currentPage * this.itemsPerPage;
+    return Math.min(end, this.filteredDataList.length);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  onItemsPerPageChange(value: number): void {
+    this.itemsPerPage = value;
+    this.currentPage = 1; // Reset to first page
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1; // Reset to first page on search
+  }
+
   /**
    * Set attendance filter
    */
   setAttendanceFilter(filter: 'all' | 'hadir' | 'tidak_hadir' | 'mungkin'): void {
     this.attendanceFilter = filter;
+    this.currentPage = 1; // Reset to first page on filter change
   }
 
   /**
@@ -155,7 +241,7 @@ export class UcapanComponent implements OnInit {
     if (this.modalRef && this.modalRef.content) {
         this.modalRef.content.onClose.subscribe((res: any) => {
             if (res && res.state === 'delete') {
-                this.deleteEntry(parameterDelete); 
+                this.deleteEntry(parameterDelete);
             } else if (res && res.state === 'cancel') {
                 console.log('Delete canceled');
             }
@@ -187,7 +273,7 @@ handleSubmitClicked(data: any, parameterDelete: any) {
   if (this.modalRef && this.modalRef.content) {
       this.modalRef.content.onClose.subscribe((res: any) => {
           if (res && res.state === 'delete') {
-              this.deleteAll(); 
+              this.deleteAll();
           } else if (res && res.state === 'cancel') {
               console.log('Delete canceled');
           }
@@ -236,10 +322,10 @@ handleDeleteAllClicked(data: any) {
   formatDate(dateString: string): string {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('id-ID', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
+      return date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
       });
     } catch (error) {
       return dateString;

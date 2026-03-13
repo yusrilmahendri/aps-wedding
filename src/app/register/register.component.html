@@ -18,12 +18,11 @@
           <!-- Email Input -->
           <div class="form-group">
             <input
-              data-cy="register-email"
               type="email"
               formControlName="email"
               placeholder="Email"
             />
-            <span *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            <span *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error-text">
               Email is required and must be valid.
             </span>
           </div>
@@ -31,12 +30,11 @@
           <!-- Password Input -->
           <div class="form-group">
             <input
-              data-cy="register-password"
               type="password"
               formControlName="password"
               placeholder="Password"
             />
-            <span *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            <span *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error-text">
               Password is required and must be at least 6 characters.
             </span>
           </div>
@@ -44,7 +42,6 @@
           <!-- Password Confirmation Input -->
           <div class="form-group">
             <input
-              data-cy="register-password-confirm"
               type="password"
               formControlName="password_confirmation"
               placeholder="Repeat Password"
@@ -54,6 +51,7 @@
                 loginForm.get('password_confirmation')?.touched &&
                 loginForm.get('password_confirmation')?.value !== loginForm.get('password')?.value
               "
+              class="error-text"
             >
               Passwords must match.
             </span>
@@ -62,23 +60,24 @@
           <!-- Phone Input -->
           <div class="form-group">
             <input
-              data-cy="register-phone"
               type="text"
               formControlName="phone"
               placeholder="Phone"
             />
-            <span *ngIf="loginForm.get('phone')?.touched && loginForm.get('phone')?.invalid">
+            <span *ngIf="loginForm.get('phone')?.touched && loginForm.get('phone')?.invalid" class="error-text">
               Phone is required.
             </span>
           </div>
 
+          <div class="account-prompt">
+            <p>Sudah punya akun? <a href="/login">Login</a></p>
+          </div>
+
           <!-- Submit Button -->
           <div class="login-actions">
-            <button data-cy="register-submit" type="submit" [disabled]="loginForm.invalid">Daftar</button>
+            <button type="submit" [disabled]="loginForm.invalid">Daftar</button>
           </div>
         </form>
-
-        <p>Sudah punya akun? <a href="/login"><b>Login.</b></a></p>
       </div>
     </div>
   </div>

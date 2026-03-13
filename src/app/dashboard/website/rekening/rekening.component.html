@@ -1,251 +1,241 @@
 <div class="rekening-container">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Loading State -->
-      <div *ngIf="isLoading" class="col-12 text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <p class="mt-2 text-muted">Memuat data rekening...</p>
-      </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Memuat data rekening...</p>
+  </div>
 
-      <!-- Main Content -->
-      <div *ngIf="!isLoading" class="col-12">
-        <form [formGroup]="rekeningForm" (ngSubmit)="onSubmit()">
-          <div formArrayName="accounts">
-            <div class="row">
-              <!-- Account Forms -->
-              <div
-                *ngFor="let account of accounts.controls; let i = index"
-                [formGroupName]="i"
-                class="col-lg-6 col-md-12 mb-4"
-              >
-                <div class="account-card">
-                  <!-- Card Header -->
-                  <div class="card-header">
-                    <div class="header-content">
-                      <h3 class="card-title">
-                        <i class="fas fa-plus-circle me-2"></i>
-                        Tambah Rekening
-                      </h3>
-                      <span class="account-number">#{{ i + 1 }}</span>
-                    </div>
-                    <div class="header-actions" *ngIf="account.get('id')?.value">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-primary me-2"
-                        (click)="onEdit(i)"
-                        [disabled]="account.get('editMode')?.value || isSubmitting"
-                      >
-                        <i class="fas fa-edit me-1"></i>Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                        (click)="onDelete(i)"
-                        [disabled]="isSubmitting"
-                      >
-                        <i class="fas fa-trash me-1"></i>Hapus
-                      </button>
-                    </div>
-                  </div>
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="rekening-form">
+    <form [formGroup]="rekeningForm" (ngSubmit)="onSubmit()">
+      <div formArrayName="accounts">
+        <div class="accounts-grid">
+          <!-- Account Forms -->
+          <div
+            *ngFor="let account of accounts.controls; let i = index"
+            [formGroupName]="i"
+            class="account-card"
+          >
+            <!-- Card Header -->
+            <div class="account-card__header">
+              <div class="header-content">
+                <h3 class="card-title">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Tambah Rekening</span>
+                </h3>
+                <span class="account-number">#{{ i + 1 }}</span>
+              </div>
+              <div class="header-actions" *ngIf="account.get('id')?.value">
+                <button
+                  type="button"
+                  class="btn-icon-text btn-icon-text--edit"
+                  (click)="onEdit(i)"
+                  [disabled]="account.get('editMode')?.value || isSubmitting"
+                >
+                  <i class="fas fa-edit"></i>
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-icon-text btn-icon-text--delete"
+                  (click)="onDelete(i)"
+                  [disabled]="isSubmitting"
+                >
+                  <i class="fas fa-trash"></i>
+                  <span>Hapus</span>
+                </button>
+              </div>
+            </div>
 
-                  <!-- Card Body -->
-                  <div class="card-body">
-                    <!-- Bank Selection -->
-                    <div class="form-group">
-                      <label for="namaBank{{i}}" class="form-label required">
-                      Nama Bank
-                      </label>
-                      <ngx-select
-                        [items]="listBank"
-                        [optionTextField]="'name'"
-                        [optionValueField]="'kode_bank'"
-                        placeholder="Pilih Bank"
-                        formControlName="kode_bank"
-                        [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
-                        (select)="onBankSelect(i, $event)"
-                        class="bank-select"
-                      ></ngx-select>
-                      <div class="error-message" *ngIf="getFieldError(i, 'kode_bank')">
-                        <i class="fas fa-exclamation-circle me-1"></i>
-                        {{ getFieldError(i, 'kode_bank') }}
-                      </div>
-                    </div>
+            <!-- Card Body -->
+            <div class="account-card__body">
+              <!-- Bank Selection -->
+              <div class="form-field">
+                <label for="namaBank{{i}}" class="field-label field-label--required">
+                  Nama Bank
+                </label>
+                <ngx-select
+                  [items]="listBank"
+                  [optionTextField]="'name'"
+                  [optionValueField]="'kode_bank'"
+                  placeholder="Pilih Bank"
+                  formControlName="kode_bank"
+                  [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
+                  (select)="onBankSelect(i, $event)"
+                  class="bank-select"
+                ></ngx-select>
+                <div class="field-error" *ngIf="getFieldError(i, 'kode_bank')">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>{{ getFieldError(i, 'kode_bank') }}</span>
+                </div>
+              </div>
 
-                    <!-- Account Number -->
-                    <div class="form-group">
-                      <label for="noRekening{{i}}" class="form-label required">
-                        No Rekening
-                      </label>
-                      <input
-                        type="text"
-                        id="noRekening{{i}}"
-                        class="form-control"
-                        formControlName="nomor_rekening"
-                        placeholder="Contoh: 009988112233"
-                        [readonly]="account.get('id')?.value && !account.get('editMode')?.value"
-                        [class.is-invalid]="getFieldError(i, 'nomor_rekening')"
-                      />
-                      <div class="error-message" *ngIf="getFieldError(i, 'nomor_rekening')">
-                        <i class="fas fa-exclamation-circle me-1"></i>
-                        {{ getFieldError(i, 'nomor_rekening') }}
-                      </div>
-                    </div>
+              <!-- Account Number -->
+              <div class="form-field">
+                <label for="noRekening{{i}}" class="field-label field-label--required">
+                  No Rekening
+                </label>
+                <input
+                  type="text"
+                  id="noRekening{{i}}"
+                  class="form-control"
+                  formControlName="nomor_rekening"
+                  placeholder="Contoh: 009988112233"
+                  [readonly]="account.get('id')?.value && !account.get('editMode')?.value"
+                  [class.is-invalid]="getFieldError(i, 'nomor_rekening')"
+                />
+                <div class="field-error" *ngIf="getFieldError(i, 'nomor_rekening')">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>{{ getFieldError(i, 'nomor_rekening') }}</span>
+                </div>
+              </div>
 
-                    <!-- Account Owner -->
-                    <div class="form-group">
-                      <label for="namaPemilik{{i}}" class="form-label required">
-                      Nama Pemilik
-                      </label>
-                      <input
-                        type="text"
-                        id="namaPemilik{{i}}"
-                        class="form-control"
-                        formControlName="nama_pemilik"
-                        placeholder="Contoh: John Doe"
-                        [readonly]="account.get('id')?.value && !account.get('editMode')?.value"
-                        [class.is-invalid]="getFieldError(i, 'nama_pemilik')"
-                      />
-                      <div class="error-message" *ngIf="getFieldError(i, 'nama_pemilik')">
-                        <i class="fas fa-exclamation-circle me-1"></i>
-                        {{ getFieldError(i, 'nama_pemilik') }}
-                      </div>
-                    </div>
+              <!-- Account Owner -->
+              <div class="form-field">
+                <label for="namaPemilik{{i}}" class="field-label field-label--required">
+                  Nama Pemilik
+                </label>
+                <input
+                  type="text"
+                  id="namaPemilik{{i}}"
+                  class="form-control"
+                  formControlName="nama_pemilik"
+                  placeholder="Contoh: John Doe"
+                  [readonly]="account.get('id')?.value && !account.get('editMode')?.value"
+                  [class.is-invalid]="getFieldError(i, 'nama_pemilik')"
+                />
+                <div class="field-error" *ngIf="getFieldError(i, 'nama_pemilik')">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>{{ getFieldError(i, 'nama_pemilik') }}</span>
+                </div>
+              </div>
 
-                    <!-- File Upload (Optional) -->
-                    <div class="form-group">
-                      <label class="form-label">
-                        Foto Rekening (Opsional)
-                      </label>
-                      <div class="file-upload-wrapper">
-                        <input
-                          type="file"
-                          id="photoRek{{i}}"
-                          class="file-input"
-                          accept="image/jpeg,image/png,image/jpg"
-                          (change)="onFileSelect($event, i)"
-                          [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
-                        />
-                        <label for="photoRek{{i}}" class="file-label">
-                          <i class="fas fa-cloud-upload-alt me-2"></i>
-                          Choose File
-                        </label>
-                        <!-- <span class="file-info">{{ getFileName(account.get('photo_rek')?.value) }}</span> -->
-                      </div>
+              <!-- File Upload (Optional) -->
+              <div class="form-field">
+                <label class="field-label">
+                  Foto Rekening (Opsional)
+                </label>
+                <div class="file-upload">
+                  <input
+                    type="file"
+                    id="photoRek{{i}}"
+                    class="file-upload__input"
+                    accept="image/jpeg,image/png,image/jpg"
+                    (change)="onFileSelect($event, i)"
+                    [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
+                  />
+                  <label for="photoRek{{i}}" class="file-upload__label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Pilih File</span>
+                  </label>
+                </div>
 
-                      <!-- Photo Preview -->
-                      <div *ngIf="account.get('photo_rek')?.value" class="photo-preview">
-                        <img
-                          [src]="getPhotoUrl(account.get('photo_rek')?.value)"
-                          alt="Preview foto rekening"
-                          class="preview-image"
-                        />
-                        <button
-                          type="button"
-                          class="btn btn-sm btn-danger remove-photo-btn"
-                          (click)="removePhoto(i)"
-                          [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
-                          title="Hapus foto"
-                        >
-                          <i class="fas fa-times"></i>
-                        </button>
-                      </div>
-                    </div>
+                <!-- Photo Preview -->
+                <div *ngIf="account.get('photo_rek')?.value" class="photo-preview">
+                  <img
+                    [src]="getPhotoUrl(account.get('photo_rek')?.value)"
+                    alt="Preview foto rekening"
+                    class="photo-preview__img"
+                  />
+                  <button
+                    type="button"
+                    class="photo-preview__remove"
+                    (click)="removePhoto(i)"
+                    [disabled]="account.get('id')?.value && !account.get('editMode')?.value"
+                    title="Hapus foto"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
 
-                    <!-- Bank Logo Display -->
-                    <div *ngIf="account.get('kode_bank')?.value" class="bank-info">
-                      <div class="bank-logo">
+              <!-- Bank Logo Display -->
+              <div *ngIf="account.get('kode_bank')?.value" class="bank-display">
+                <i class="fas fa-university bank-display__icon"></i>
+                <span class="bank-display__name">{{ getBankName(account.get('kode_bank')?.value) }}</span>
+              </div>
+            </div>
 
-                        <span class="bank-name">{{ getBankName(account.get('kode_bank')?.value) }}</span>
-                      </div>
-                    </div>
-                  </div>
+            <!-- Card Footer - Action Buttons -->
+            <div class="account-card__footer" *ngIf="account.get('id')?.value">
+              <div class="footer-actions">
+                <!-- Edit Mode Actions -->
+                <div *ngIf="account.get('editMode')?.value" class="edit-mode-actions">
+                  <button
+                    type="button"
+                    class="btn-success-action"
+                    (click)="onUpdate(i)"
+                    [disabled]="!isFormValid(i) || isSubmitting"
+                  >
+                    <i class="fas fa-save"></i>
+                    <span>{{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-secondary-action"
+                    (click)="onCancelEdit(i)"
+                    [disabled]="isSubmitting"
+                  >
+                    <i class="fas fa-times"></i>
+                    <span>Batal</span>
+                  </button>
+                </div>
 
-                  <!-- Card Footer - Action Buttons -->
-                  <div class="card-footer" *ngIf="account.get('id')?.value">
-                    <div class="footer-actions">
-                      <!-- Edit Mode Actions -->
-                      <div *ngIf="account.get('editMode')?.value" class="edit-actions">
-                        <button
-                          type="button"
-                          class="btn btn-success me-2"
-                          (click)="onUpdate(i)"
-                          [disabled]="!isFormValid(i) || isSubmitting"
-                        >
-
-                          {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          (click)="onCancelEdit(i)"
-                          [disabled]="isSubmitting"
-                        >
-                          <i class="fas fa-times me-1"></i>Batal
-                        </button>
-                      </div>
-
-                      <!-- Remove Button for New Accounts -->
-                      <div *ngIf="!account.get('id')?.value" class="remove-action">
-                        <button
-                          type="button"
-                          class="btn btn-outline-danger btn-sm"
-                          (click)="removeAccountForm(i)"
-                          [disabled]="isSubmitting"
-                        >
-                          <i class="fas fa-times me-1"></i>Hapus Form
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Remove Button for New Accounts -->
+                <div *ngIf="!account.get('id')?.value" class="new-account-actions">
+                  <button
+                    type="button"
+                    class="btn-danger-action btn-danger-action--outline"
+                    (click)="removeAccountForm(i)"
+                    [disabled]="isSubmitting"
+                  >
+                    <i class="fas fa-times"></i>
+                    <span>Hapus Form</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <div class="row">
-              <div class="col-md-6">
-                <button
-                  *ngIf="canAddNewAccount()"
-                  type="button"
-                  class="btn btn-outline-primary btn-lg"
-                  (click)="addNewAccountForm()"
-                  [disabled]="isSubmitting"
-                >
-                  <i class="fas fa-plus me-2"></i>Tambah Rekening Baru
-                </button>
-              </div>
-              <div class="col-md-6 text-end">
-                <button
-                  type="submit"
-                  class="btn btn-primary btn-lg"
-                  [disabled]="rekeningForm.invalid || isSubmitting || bankAccounts.length >= maxRekening"
-                >
-                  <i class="fas fa-save me-2"></i>
-                  {{ isSubmitting ? 'Menyimpan...' : 'Simpan Rekening' }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Info Panel -->
-          <div class="info-panel mt-4">
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle me-2"></i>
-              <strong>Informasi:</strong>
-              <ul class="mb-0 mt-2">
-                <li>Maksimal {{ maxRekening }} rekening per pengguna</li>
-                <li>Semua field bertanda * wajib diisi</li>
-                <li>Foto rekening bersifat opsional (maksimal 2MB, format: JPG, JPEG, PNG)</li>
-                <li>Nomor rekening hanya boleh berisi angka</li>
-              </ul>
-            </div>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <button
+          *ngIf="canAddNewAccount()"
+          type="button"
+          class="btn-outline-action"
+          (click)="addNewAccountForm()"
+          [disabled]="isSubmitting"
+        >
+          <i class="fas fa-plus"></i>
+          <span>Tambah Rekening Baru</span>
+        </button>
+        <button
+          type="submit"
+          class="btn-primary-action"
+          [disabled]="rekeningForm.invalid || isSubmitting || bankAccounts.length >= maxRekening"
+        >
+          <i class="fas fa-save"></i>
+          <span>{{ isSubmitting ? 'Menyimpan...' : 'Simpan Rekening' }}</span>
+        </button>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel">
+        <div class="info-panel__content">
+          <i class="fas fa-info-circle info-panel__icon"></i>
+          <div class="info-panel__text">
+            <strong>Informasi:</strong>
+            <ul>
+              <li>Maksimal {{ maxRekening }} rekening per pengguna</li>
+              <li>Semua field bertanda * wajib diisi</li>
+              <li>Foto rekening bersifat opsional (maksimal 2MB, format: JPG, JPEG, PNG)</li>
+              <li>Nomor rekening hanya boleh berisi angka</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
 </div>

@@ -1,26 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 // Color Variables matching the admin design - Pink and White theme
 :host {
-  --sidebar-bg: #ffffff; // White background
-  --sidebar-text: #374151; // Dark gray text
-  --active-bg: #ff6b9d; // Pink active state
-  --active-text: #ffffff; // White active text
+  --sidebar-bg: #ffffff;           // White background
+  --sidebar-text: #374151;        // Dark gray text
+  --active-bg: #FF6B9D;           // Pink active state
+  --active-text: #ffffff;         // White active text
   --hover-bg: rgba(255, 107, 157, 0.1); // Pink transparent hover
-  --border-color: #e5e7eb; // Light gray border
-  --icon-color: #6b7280; // Gray icons
-  --content-bg: #f9fafb; // Light content background
-  --header-bg: #ffffff; // White header
-  --text-primary: #1a202c; // Dark text
-  --text-secondary: #64748b; // Gray text
+  --border-color: #e5e7eb;        // Light gray border
+  --icon-color: #6b7280;          // Gray icons
+  --content-bg: #f9fafb;          // Light content background
+  --header-bg: #ffffff;           // White header
+  --text-primary: #1a202c;        // Dark text
+  --text-secondary: #64748b;      // Gray text
 }
 
 .dashboard-container {
   display: flex;
   height: 100vh;
-  overflow: scroll;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--content-bg);
 }
 
@@ -35,7 +34,7 @@
   z-index: 998;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 
   &.active {
     opacity: 1;
@@ -49,12 +48,12 @@
 
 // Enhanced Hamburger Menu
 .menu-toggle {
-  display: none;
+  display: flex;
   position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 44px;
-  height: 44px;
+  top: 15px;
+  left: 15px;
+  width: 40px;
+  height: 40px;
   background: var(--active-bg);
   border: none;
   border-radius: 12px;
@@ -65,19 +64,19 @@
   justify-content: center;
   gap: 4px;
   box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 
   &:hover {
-    background: darken(#ff6b9d, 10%);
+    background: darken(#FF6B9D, 10%);
     box-shadow: 0 12px 35px rgba(255, 107, 157, 0.5);
   }
 
   .hamburger-line {
-    width: 20px;
+    width: 18px;
     height: 2px;
     background-color: white;
     border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     transform-origin: center;
   }
 
@@ -93,25 +92,28 @@
       transform: rotate(-45deg) translate(6px, -6px);
     }
   }
-
-  @media screen and (max-width: 1024px) {
-    display: flex;
-  }
 }
 
 // Main Sidebar
 .sidebar {
-  width: 280px;
+  width: 240px;
   background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: -240px;
+  height: 100vh;
   z-index: 999;
   box-shadow: 4px 0 25px rgba(0, 0, 0, 0.1);
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
   overflow-x: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  &.open {
+    left: 0;
+  }
 
   // Custom scrollbar
   &::-webkit-scrollbar {
@@ -127,17 +129,18 @@
 
   // Logo Section
   .logo-section {
-    padding: 30px 25px 40px;
+    padding: 18px 15px 20px 58px;
     border-bottom: 1px solid var(--border-color);
 
     .logo-container {
       display: flex;
+      flex-direction: row-reverse;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
 
       img {
-        width: 50px;
-        height: 50px;
+        width: 42px;
+        height: 42px;
         border-radius: 12px;
         object-fit: cover;
         box-shadow: 0 6px 20px rgba(255, 107, 157, 0.2);
@@ -145,7 +148,7 @@
 
       .logo-text {
         h1 {
-          font-size: 24px;
+          font-size: 20px;
           font-weight: 700;
           color: var(--sidebar-text);
           margin: 0;
@@ -154,7 +157,7 @@
         }
 
         h2 {
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 400;
           color: rgba(107, 114, 128, 0.8);
           margin: 0;
@@ -172,7 +175,7 @@
 
     .menu-section {
       margin-bottom: 8px;
-      padding: 0 20px;
+      padding: 0 12px;
 
       // Section Header (FITUR, BANTUAN)
       .section-header {
@@ -191,14 +194,14 @@
       .menu-item {
         display: flex;
         align-items: center;
-        padding: 14px 20px;
+        padding: 12px 18px;
         margin-bottom: 4px;
         border-radius: 16px;
         color: var(--sidebar-text);
         text-decoration: none;
         font-weight: 500;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         cursor: pointer;
         position: relative;
         outline: none;
@@ -210,8 +213,8 @@
         i {
           width: 20px;
           height: 20px;
-          margin-right: 16px;
-          font-size: 18px;
+          margin-right: 14px;
+          font-size: 16px;
           color: var(--icon-color);
           display: flex;
           align-items: center;
@@ -230,11 +233,7 @@
         }
 
         &.active {
-          background: linear-gradient(
-            135deg,
-            var(--active-bg) 0%,
-            darken(#ff6b9d, 10%) 100%
-          );
+          background: linear-gradient(135deg, var(--active-bg) 0%, darken(#FF6B9D, 10%) 100%);
           color: var(--active-text);
           box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
 
@@ -260,7 +259,7 @@
             height: 16px;
             margin-left: 8px;
             margin-right: 0;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 
             &.rotated {
               transform: rotate(90deg);
@@ -284,7 +283,7 @@
           font-size: 14px;
           font-weight: 400;
           border-radius: 12px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
           position: relative;
           outline: none;
 
@@ -293,7 +292,7 @@
           }
 
           &::before {
-            content: "";
+            content: '';
             position: absolute;
             left: 8px;
             top: 50%;
@@ -333,22 +332,24 @@
   display: flex;
   flex-direction: column;
   background-color: var(--content-bg);
-  overflow: visible;
+  overflow: hidden;
+  min-width: 0;
 
   // Header
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
+    padding: 12px 15px 12px 65px;
 
     .breadcrumbs {
       display: flex;
       align-items: baseline;
       gap: 8px;
+      min-width: 0;
 
       .route-name {
-        font-size: 28px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--text-primary);
         margin: 0;
@@ -356,9 +357,10 @@
       }
 
       .route-path {
-        font-size: 16px;
+        font-size: 14px;
         color: var(--text-secondary);
         font-weight: 400;
+        display: none;
       }
     }
 
@@ -396,13 +398,14 @@
         }
 
         // Fallback for broken images
-        &[src="assets/logos.png"] {
+        &[src="assets/wom.png"] {
           padding: 4px;
           object-fit: contain;
         }
       }
 
       .user-name {
+        display: none;
         font-size: 15px;
         color: var(--text-primary);
         font-weight: 500;
@@ -417,27 +420,31 @@
 
       .dropdown-menu {
         position: absolute;
-        right: 0;
-        top: 100%;
+        right: -8px;
+        top: calc(100% + 8px);
         background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         display: block;
         z-index: 10;
-        min-width: 160px;
+        min-width: 140px;
+        overflow: hidden;
 
         .dropdown-item {
-          padding: 10px 15px;
+          padding: 12px 16px;
           text-decoration: none;
-          color: #333;
-          display: block;
+          color: var(--text-primary);
+          display: flex;
+          align-items: center;
           font-size: 14px;
-          font-weight: 400;
-          transition: background-color 0.3s ease;
+          font-weight: 500;
+          transition: background-color 0.2s ease;
+          min-height: 44px;
+          cursor: pointer;
 
           &:hover {
-            background-color: #f0f0f0;
+            background-color: rgba(255, 107, 157, 0.08);
           }
         }
       }
@@ -447,7 +454,7 @@
   // Content Well
   .well {
     flex: 1;
-    padding: 30px;
+    padding: 15px;
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -475,161 +482,134 @@
   }
 }
 
-// Responsive Design
-@media screen and (min-width: 1025px) {
-  .sidebar {
-    position: relative;
-    left: 0;
-    transform: translateX(0);
-  }
-}
+// =========================================================
+// Responsive Design  (mobile-first: min-width breakpoints)
+// =========================================================
 
-@media screen and (max-width: 1024px) {
-  .sidebar {
-    width: 280px;
-    position: fixed;
-    left: -280px;
-    height: 100vh;
-    top: 0;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &.open {
-      left: 0;
-    }
-  }
-
-  .content {
-    .header {
-      padding-left: 80px;
-
-      .breadcrumbs .route-name {
-        font-size: 24px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .content {
-    .header {
-      padding: 15px 20px 15px 75px;
-
-      .breadcrumbs {
-        .route-name {
-          font-size: 20px;
-        }
-        .route-path {
-          font-size: 14px;
-        }
-      }
-
-      .user-profile {
-        .user-name {
-          display: none;
-        }
-      }
-    }
-
-    .well {
-      padding: 20px;
-    }
-
-    .footer {
-      padding: 12px 20px;
-      font-size: 12px;
-    }
-  }
-
-  .sidebar {
-    .logo-section {
-      padding: 25px 20px 35px;
-
-      .logo-container {
-        .logo-text {
-          h1 {
-            font-size: 22px;
-          }
-          h2 {
-            font-size: 15px;
-          }
-        }
-      }
-    }
-
-    .navigation-menu {
-      .menu-section {
-        padding: 0 15px;
-
-        .menu-item {
-          padding: 12px 18px;
-          font-size: 14px;
-
-          i {
-            font-size: 16px;
-            margin-right: 14px;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 425px) {
+// >= 426px  (larger phones)
+@media screen and (min-width: 426px) {
   .menu-toggle {
-    width: 40px;
-    height: 40px;
-    top: 15px;
-    left: 15px;
+    top: 20px;
+    left: 20px;
+    width: 44px;
+    height: 44px;
 
     .hamburger-line {
-      width: 18px;
-    }
-  }
-
-  .content {
-    .header {
-      padding: 12px 15px 12px 65px;
-
-      .breadcrumbs .route-name {
-        font-size: 18px;
-      }
-    }
-
-    .well {
-      padding: 15px;
+      width: 20px;
     }
   }
 
   .sidebar {
     width: 260px;
     left: -260px;
+  }
 
-    .logo-section {
-      padding: 20px 15px 30px;
-    }
+  .content {
+    .header {
+      padding: 15px 20px 15px 75px;
 
-    .navigation-menu {
-      .menu-section {
-        padding: 0 12px;
+      .breadcrumbs .route-name {
+        font-size: 18px;
       }
     }
   }
 }
 
-@media screen and (max-width: 320px) {
+// >= 769px  (tablets)
+@media screen and (min-width: 769px) {
   .sidebar {
-    width: 240px;
-    left: -240px;
+    width: 280px;
+    left: -280px;
 
     .logo-section {
+      padding: 18px 20px 25px 60px;
+
       .logo-container {
+        flex-direction: row;
+        gap: 15px;
+
+        img {
+          width: 45px;
+          height: 45px;
+        }
+
         .logo-text {
-          h1 {
-            font-size: 20px;
-          }
-          h2 {
-            font-size: 14px;
-          }
+          h1 { font-size: 22px; }
+          h2 { font-size: 15px; }
+        }
+      }
+    }
+
+    .navigation-menu .menu-section {
+      padding: 0 15px;
+    }
+  }
+
+  .content {
+    .header {
+      padding: 15px 20px 15px 80px;
+
+      .breadcrumbs {
+        .route-name { font-size: 20px; }
+        .route-path {
+          display: inline;
+          font-size: 14px;
+        }
+      }
+
+      .user-profile .user-name {
+        display: inline;
+      }
+    }
+
+    .well {
+      padding: 20px;
+    }
+  }
+}
+
+// >= 1025px  (desktop -- sidebar always visible)
+@media screen and (min-width: 1025px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .sidebar {
+    position: relative;
+    left: 0;
+    width: 280px;
+    height: auto;
+
+    .logo-section {
+      padding: 30px 25px 40px;
+
+      .logo-container {
+        img {
+          width: 50px;
+          height: 50px;
+        }
+
+        .logo-text {
+          h1 { font-size: 24px; }
+          h2 { font-size: 16px; }
+        }
+      }
+    }
+
+    .navigation-menu .menu-section {
+      padding: 0 20px;
+
+      .menu-item {
+        padding: 14px 20px;
+        font-size: 15px;
+
+        i {
+          font-size: 18px;
+          margin-right: 16px;
         }
       }
     }
@@ -637,9 +617,16 @@
 
   .content {
     .header {
-      .breadcrumbs .route-name {
-        font-size: 16px;
+      padding: 20px 30px;
+
+      .breadcrumbs {
+        .route-name { font-size: 28px; }
+        .route-path { font-size: 16px; }
       }
+    }
+
+    .well {
+      padding: 30px;
     }
   }
 }

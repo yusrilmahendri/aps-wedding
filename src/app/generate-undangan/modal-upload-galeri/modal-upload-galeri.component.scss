@@ -18,7 +18,7 @@
 .mg-title {
   font-size: 24px;
   font-weight: 700;
-  color: #66a3ff;
+  color: #ff6f84;
   margin: 0 0 8px 0;
   text-align: center;
   letter-spacing: -0.02em;
@@ -48,7 +48,7 @@
 
 .mg-progress-fill {
   height: 100%;
-  background: #4ea0e4;
+  background: #ff6f84;
   border-radius: 12px;
   transition: width 0.3s ease;
   position: relative;
@@ -96,13 +96,13 @@
   margin-bottom: 20px;
 
   &:hover {
-    border-color: #4ea0e4;
-    background: #f8fbff;
+    border-color: #ff6f84;
+    background: #fff0f2;
   }
 
   &.dragover {
-    border-color: #4ea0e4;
-    background: #f0f8ff;
+    border-color: #ff6f84;
+    background: #fff0f2;
   }
 }
 
@@ -116,7 +116,7 @@
 }
 
 .mg-upload-icon {
-  color: #87ceeb;
+  color: #ff6f84;
   margin-bottom: 16px;
 
   svg {
@@ -144,7 +144,7 @@
 }
 
 .mg-browse-btn {
-  background: #4ea0e4;
+  background: #ff6f84;
   color: white;
   border: none;
   padding: 12px 32px;
@@ -155,9 +155,9 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: #3d8bcd;
+    background: #d9364d;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(78, 160, 228, 0.3);
+    box-shadow: 0 4px 12px rgba(237, 64, 89, 0.3);
   }
 
   &:active {
@@ -224,8 +224,8 @@
   position: relative;
 
   &:checked {
-    background: #4ea0e4;
-    border-color: #4ea0e4;
+    background: #ff6f84;
+    border-color: #ff6f84;
 
     &::after {
       content: "✓";
@@ -241,7 +241,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(78, 160, 228, 0.1);
+    box-shadow: 0 0 0 3px rgba(237, 64, 89, 0.1);
   }
 }
 
@@ -274,19 +274,27 @@
   align-items: center;
   justify-content: center;
 
-  &:disabled {
+  &:disabled,
+  &.mg-btn-disabled {
     cursor: not-allowed;
     opacity: 0.5;
+  }
+
+  &:disabled:hover,
+  &.mg-btn-disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 }
 
 .mg-btn-secondary {
   background: white;
-  color: #ffa0ae;
-  border: 1.5px solid #ffa0ae;
+  color: #ff6f84;
+  border: 1.5px solid #ff6f84;
 
-  &:hover:not(:disabled) {
-    background: #ffa0ae;
+  &:hover:not(:disabled),
+  &:hover:not(.mg-btn-disabled) {
+    background: #ff6f84;
     color: white;
   }
 
@@ -296,14 +304,15 @@
 }
 
 .mg-btn-primary {
-  background: #ffa0ae;
+  background: #ff6f84;
   color: white;
   border: 1.5px solid transparent;
 
-  &:hover:not(:disabled) {
-    background: #ff8a9a;
+  &:hover:not(:disabled),
+  &:hover:not(.mg-btn-disabled) {
+    background: #d9364d;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 160, 174, 0.3);
+    box-shadow: 0 4px 12px rgba(237, 64, 89, 0.3);
   }
 
   &:active {
@@ -443,9 +452,9 @@
 .mg-browse-btn:focus,
 .mg-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(78, 160, 228, 0.3);
+  box-shadow: 0 0 0 3px rgba(237, 64, 89, 0.3);
 }
 
 .mg-checkbox:focus + .mg-checkbox-label {
-  color: #4ea0e4;
+  color: #ff6f84;
 }

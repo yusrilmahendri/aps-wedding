@@ -1,565 +1,678 @@
-:root {
-  --primary-color: #ff66a3;
-  --secondary-color: #4bd0f1;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --warning-color: #ffc107;
-  --info-color: #17a2b8;
-  --light-color: #f8f9fa;
-  --dark-color: #343a40;
-  --border-color: #e5e5e5;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s ease;
-}
+// ============================================================
+// wc-rekening — Mobile-first responsive styles
+// Breakpoints: 576px, 768px, 1024px
+// ============================================================
 
+// --- Container ---
 .rekening-container {
-  padding: 2rem 1rem;
-  // background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0.75rem 0.5rem;
   min-height: 100vh;
 
-  .container-fluid {
+  @media (min-width: 576px) {
+    padding: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
   }
+}
 
-  .account-card {
-    background: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    transition: var(--transition);
-    overflow: hidden;
-    border: 1px solid var(--border-color);
+// --- Loading State ---
+.loading-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
+.loader-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid #f0f0f0;
+  border-top-color: #ec4899;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
 
-    .card-header {
-      background: white;
-      color: white;
-      padding: 1.5rem 1.5rem 0rem 1.5rem;
-      border-bottom: none;
+.loader-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
 
-      .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .card-title {
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin: 0;
-          display: flex;
-          align-items: center;
-          color: var(--primary-color);
-
-          i {
-            color: var(--primary-color);
-          }
-        }
-
-        .account-number {
-          background: var(--primary-color);
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-weight: 600;
-          font-size: 0.9rem;
-        }
-      }
-
-      .header-actions {
-        display: flex;
-        gap: 0.5rem;
-
-        .btn {
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          // color: ;
-          font-weight: 500;
-          transition: var(--transition);
-
-          // &:hover {
-            // background: rgba(255, 255, 255, 0.2);
-            // border-color: rgba(255, 255, 255, 0.5);
-          // }
-
-          &:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-          }
-        }
-      }
-    }
-
-    .card-body {
-      padding: 2rem;
-
-      .form-group {
-        margin-bottom: 1.5rem;
-
-        .form-label {
-          display: flex;
-          align-items: center;
-          font-weight: 600;
-          color: var(--dark-color);
-          margin-bottom: 0.5rem;
-          font-size: 0.95rem;
-
-          &.required::after {
-            content: " *";
-            color: var(--danger-color);
-            font-weight: bold;
-          }
-
-          i {
-            color: var(--primary-color);
-            width: 18px;
-          }
-        }
-
-        .form-control {
-          /* border: 2px solid var(--border-color); */
-          border-radius: 8px;
-          /* padding: .75rem; */
-          font-size: 1rem;
-          transition: var(--transition);
-
-          &:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(255, 102, 163, 0.25);
-            outline: none;
-          }
-
-          &:read-only {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
-          }
-
-          &.is-invalid {
-            border-color: var(--danger-color);
-          }
-        }
-
-        .bank-select {
-          .ngx-select {
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            transition: var(--transition);
-
-            &:focus-within {
-              border-color: var(--primary-color);
-              box-shadow: 0 0 0 0.2rem rgba(255, 102, 163, 0.25);
-            }
-          }
-        }
-
-        .file-upload-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          flex-wrap: wrap;
-
-          .file-input {
-            display: none;
-          }
-
-          .file-label {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px;
-            font-size: 15px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-
-            &:hover {
-              // background: darken(var(--primary-color), 10%);
-              transform: translateY(-1px);
-            }
-
-            i {
-              margin-right: 0.5rem;
-            }
-          }
-
-          .file-info {
-            color: #6c757d;
-            font-size: 0.9rem;
-            font-style: italic;
-          }
-        }
-
-        .photo-preview {
-          margin-top: 1rem;
-
-          .preview-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          }
-        }
-
-        .bank-info {
-          margin-top: 1rem;
-          padding: 1rem;
-          background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-          border-radius: 8px;
-          border-left: 4px solid var(--secondary-color);
-
-          .bank-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-
-            .bank-icon {
-              font-size: 1.5rem;
-              color: var(--secondary-color);
-            }
-
-            .bank-name {
-              font-weight: 600;
-              color: var(--dark-color);
-              font-size: 1rem;
-            }
-          }
-        }
-
-        .error-message {
-          color: var(--danger-color);
-          font-size: 0.875rem;
-          margin-top: 0.25rem;
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-
-          i {
-            font-size: 0.8rem;
-          }
-        }
-      }
-    }
-
-    .card-footer {
-      background: #f8f9fa;
-      border-top: 1px solid var(--border-color);
-      padding: 1.5rem;
-
-      .footer-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .edit-actions,
-        .remove-action {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .btn {
-          font-weight: 500;
-          padding: 0.5rem 1.25rem;
-          border-radius: 6px;
-          transition: var(--transition);
-
-          &:hover {
-            transform: translateY(-1px);
-          }
-
-          &:disabled {
-            opacity: 0.6;
-            transform: none;
-          }
-
-          i {
-            font-size: 0.9rem;
-          }
-        }
-      }
-    }
-  }
-
-  .action-buttons {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-
-    .btn {
-      font-weight: 600;
-      font-size: 13px;
-      padding: 10px;
-      border-radius: 8px;
-      transition: var(--transition);
-      border: 2px solid transparent;
-
-      &.btn-outline-primary {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-
-        &:hover {
-          background: var(--primary-color);
-          color: white;
-          transform: translateY(-2px);
-        }
-      }
-
-      &.btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), #ff8cc5);
-        border: none;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 102, 163, 0.3);
-        }
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        transform: none;
-        cursor: not-allowed;
-      }
-
-      i {
-        font-size: 0.9rem;
-      }
-    }
-  }
-
-  .info-panel {
-    .alert {
-      border: none;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-
-      &.alert-info {
-        background: linear-gradient(135deg, #d1ecf1, #bee5eb);
-        color: #0c5460;
-        border-left: 4px solid var(--info-color);
-      }
-
-      ul {
-        list-style-type: none;
-        padding-left: 0;
-
-        li {
-          padding: 0.25rem 0;
-          position: relative;
-          padding-left: 1.5rem;
-
-          &::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--success-color);
-            font-weight: bold;
-          }
-        }
-      }
-    }
-  }
-
-  // Loading spinner
-  .spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.3em;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-// Responsive Design
-@media (max-width: 1199.98px) {
-  .rekening-container {
-    .account-card {
-      .card-header {
-        .header-content {
-          flex-direction: column;
-          gap: 1rem;
-          text-align: center;
-        }
+// --- Rekening Form ---
+.rekening-form {
+  width: 100%;
+}
 
-        .header-actions {
-          justify-content: center;
-        }
+// --- Accounts Grid ---
+.accounts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 1.5rem;
+  }
+}
+
+// --- Account Card ---
+.account-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// --- Account Card Header ---
+.account-card__header {
+  background: white;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
+
+  @media (min-width: 576px) {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ec4899;
+  margin: 0;
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  @media (min-width: 576px) {
+    font-size: 1.125rem;
+  }
+}
+
+.account-number {
+  background: #ec4899;
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+
+  @media (min-width: 576px) {
+    padding: 0.4rem 0.875rem;
+    font-size: 0.85rem;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (min-width: 576px) {
+    flex-wrap: nowrap;
+  }
+}
+
+.btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.825rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.875rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: 576px) {
+    padding: 0.4rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+.btn-icon-text--edit {
+  background: white;
+  color: #3b82f6;
+  border-color: #3b82f6;
+
+  &:hover:not(:disabled) {
+    background: #3b82f6;
+    color: white;
+  }
+}
+
+.btn-icon-text--delete {
+  background: white;
+  color: #dc2626;
+  border-color: #dc2626;
+
+  &:hover:not(:disabled) {
+    background: #dc2626;
+    color: white;
+  }
+}
+
+// --- Account Card Body ---
+.account-card__body {
+  padding: 1.25rem 1rem;
+
+  @media (min-width: 576px) {
+    padding: 1.5rem 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+// --- Form Field ---
+.form-field {
+  margin-bottom: 1rem;
+
+  @media (min-width: 576px) {
+    margin-bottom: 1.125rem;
+  }
+}
+
+.field-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.825rem;
+  color: #111827;
+  margin-bottom: 0.35rem;
+
+  @media (min-width: 576px) {
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+.field-label--required::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  background: white;
+  border: 1.5px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #ec4899;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+  }
+
+  &:read-only {
+    background: #f9fafb;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.is-invalid {
+    border-color: #dc2626;
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  @media (min-width: 576px) {
+    padding: 0.55rem 0.875rem;
+    font-size: 0.9rem;
+  }
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+// --- File Upload ---
+.file-upload {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.file-upload__input {
+  display: none;
+}
+
+.file-upload__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: #ec4899;
+  color: white;
+  font-weight: 500;
+  font-size: 0.825rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+
+  &:hover {
+    background: #db2777;
+    transform: translateY(-1px);
+  }
+
+  @media (min-width: 576px) {
+    padding: 0.5rem 1.125rem;
+    font-size: 0.875rem;
+  }
+}
+
+// --- Photo Preview ---
+.photo-preview {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.75rem;
+}
+
+.photo-preview__img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 2px solid #e5e7eb;
+
+  @media (min-width: 576px) {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+.photo-preview__remove {
+  position: absolute;
+  top: -0.375rem;
+  right: -0.375rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// --- Bank Display ---
+.bank-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border-radius: 0.5rem;
+  border-left: 3px solid #38bdf8;
+}
+
+.bank-display__icon {
+  font-size: 1.25rem;
+  color: #38bdf8;
+}
+
+.bank-display__name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.875rem;
+
+  @media (min-width: 576px) {
+    font-size: 0.9rem;
+  }
+}
+
+// --- Account Card Footer ---
+.account-card__footer {
+  background: #f9fafb;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+
+  @media (min-width: 576px) {
+    padding: 1.125rem 1.25rem;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-mode-actions,
+.new-account-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (min-width: 576px) {
+    flex-wrap: nowrap;
+  }
+}
+
+.btn-success-action,
+.btn-secondary-action,
+.btn-danger-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.875rem;
+  font-size: 0.825rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: 576px) {
+    padding: 0.45rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+.btn-success-action {
+  background: #10b981;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #059669;
+  }
+}
+
+.btn-secondary-action {
+  background: #6b7280;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #4b5563;
+  }
+}
+
+.btn-danger-action {
+  background: #dc2626;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+}
+
+.btn-danger-action--outline {
+  background: white;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+
+  &:hover:not(:disabled) {
+    background: #dc2626;
+    color: white;
+  }
+}
+
+// --- Action Bar ---
+.action-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.25rem;
+
+  @media (min-width: 576px) {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 1.5rem 1.75rem;
+  }
+}
+
+.btn-outline-action,
+.btn-primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media (min-width: 576px) {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+.btn-outline-action {
+  background: white;
+  color: #ec4899;
+  border-color: #ec4899;
+
+  &:hover:not(:disabled) {
+    background: #ec4899;
+    color: white;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-primary-action {
+  background: #ec4899;
+  color: white;
+  border-color: #ec4899;
+  box-shadow: 0 4px 10px rgba(236, 72, 153, 0.25);
+
+  &:hover:not(:disabled) {
+    background: #db2777;
+    border-color: #db2777;
+    box-shadow: 0 6px 12px rgba(219, 39, 119, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+// --- Info Panel ---
+.info-panel {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border-left: 4px solid #3b82f6;
+}
+
+.info-panel__content {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+
+  @media (min-width: 576px) {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+}
+
+.info-panel__icon {
+  font-size: 1.25rem;
+  color: #3b82f6;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+
+  @media (min-width: 576px) {
+    font-size: 1.5rem;
+  }
+}
+
+.info-panel__text {
+  flex: 1;
+  color: #1e40af;
+  font-size: 0.825rem;
+
+  strong {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+
+    li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.25rem;
+
+      &::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
       }
+    }
+  }
+
+  @media (min-width: 576px) {
+    font-size: 0.875rem;
+
+    strong {
+      font-size: 0.9rem;
     }
   }
 }
 
-@media (max-width: 991.98px) {
-  .rekening-container {
-    padding: 1rem;
-
-    .account-card {
-      .card-body {
-        padding: 1.5rem;
-      }
-
-      .card-footer {
-        padding: 1rem;
-
-        .footer-actions {
-          flex-direction: column;
-          gap: 1rem;
-        }
-      }
-    }
-
-    .action-buttons {
-      padding: 1.5rem;
-
-      .row > div {
-        margin-bottom: 1rem;
-        text-align: center !important;
-      }
-    }
-  }
-}
-
-@media (max-width: 767.98px) {
-  .rekening-container {
-    padding: 0.5rem;
-
-    .account-card {
-      .card-header {
-        padding: 1rem;
-
-        .card-title {
-          font-size: 1.1rem;
-          color: var(--primary-color);
-        }
-
-        .header-actions {
-          flex-direction: column;
-          gap: 0.5rem;
-          width: 100%;
-
-          .btn {
-            width: 100%;
-            justify-content: center;
-          }
-        }
-      }
-
-      .card-body {
-        padding: 1rem;
-
-        .form-group {
-          .file-upload-wrapper {
-            flex-direction: column;
-            align-items: stretch;
-
-            .file-label {
-              text-align: center;
-              justify-content: center;
-            }
-          }
-
-          .bank-info {
-            .bank-logo {
-              flex-direction: column;
-              text-align: center;
-              gap: 0.5rem;
-            }
-          }
-        }
-      }
-    }
-
-    .action-buttons {
-      padding: 1rem;
-
-      .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-      }
-    }
-
-    .info-panel {
-      .alert {
-        padding: 1rem;
-        font-size: 0.9rem;
-      }
-    }
-  }
-}
-
-@media (max-width: 575.98px) {
-  .rekening-container {
-    .account-card {
-      .card-header {
-        .header-content {
-          .card-title {
-            font-size: 1rem;
-            flex-direction: column;
-            gap: 0.5rem;
-            color: var(--primary-color);
-          }
-
-          .account-number {
-            background: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            font-size: 0.8rem;
-          }
-        }
-      }
-
-      .card-body {
-        .form-group {
-          .form-label {
-            font-size: 0.9rem;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
-          }
-
-          .form-control {
-            font-size: 0.9rem;
-            padding: 0.6rem;
-          }
-        }
-      }
-    }
-  }
-}
-
-// Custom ngx-select styling
+// --- ngx-select Custom Styling ---
 ::ng-deep {
-  .ngx-select {
-    .ngx-select__selected {
-      border: none !important;
-      padding: 0.75rem !important;
-      font-size: 1rem !important;
-    }
+  .bank-select .ngx-select {
+    border: 1.5px solid #d1d5db;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
     .ngx-select__toggle {
-      border: none !important;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+
+      @media (min-width: 576px) {
+        padding: 0.55rem 0.875rem;
+        font-size: 0.9rem;
+      }
     }
 
     .ngx-select__placeholder {
-      color: #6c757d !important;
+      color: #9ca3af;
     }
 
     &.ngx-select_focused {
-      box-shadow: 0 0 0 0.2rem rgba(255, 102, 163, 0.25) !important;
+      border-color: #ec4899;
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+    }
+
+    &.ngx-select_disabled {
+      background: #f9fafb;
+      opacity: 0.7;
+      cursor: not-allowed;
     }
   }
 }
 
-// Animation for smooth transitions
+// --- Animation ---
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -568,27 +681,9 @@
 }
 
 .account-card {
-  animation: fadeInUp 0.5s ease-out;
+  animation: fadeInUp 0.4s ease-out;
 }
 
 .account-card:nth-child(even) {
   animation-delay: 0.1s;
-}
-
-// Print styles
-@media print {
-  .rekening-container {
-    .action-buttons,
-    .card-header .header-actions,
-    .card-footer {
-      display: none !important;
-    }
-
-    .account-card {
-      box-shadow: none !important;
-      border: 1px solid #000 !important;
-      page-break-inside: avoid;
-      margin-bottom: 2rem;
-    }
-  }
 }

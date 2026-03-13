@@ -1,157 +1,147 @@
-<!-- responsive card -->
-<body class="bg-light">
-  <div class="container-fluid p-4">
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" *ngIf="isLoading">
-      <div class="spinner-container">
-        <div class="spinner"></div>
-        <p class="loading-text">Memuat data...</p>
-      </div>
+<!-- Loading Overlay -->
+<div class="loader-overlay" *ngIf="isLoading">
+  <div class="loader-container">
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Memuat data...</p>
+  </div>
+</div>
+
+<div class="acara-container">
+  <!-- Pengaturan Acara (Countdown) -->
+  <section class="card-section">
+    <div class="section-header">
+      <h2>Pengaturan Acara</h2>
     </div>
 
-    <div class="row">
-      <div class="col-12">
+    <form [formGroup]="staticEventForm" (ngSubmit)="onStaticSubmitClicked()">
+      <div class="countdown-row">
+        <div class="countdown-row__field">
+          <label for="event" class="form-label">Sebagai countdown acara</label>
+          <input type="text" id="event" class="form-control"
+            placeholder="Masukkan nama countdown acara"
+            formControlName="selectedEvent"
+            [value]="countdownData?.name_countdown || ''" />
+        </div>
+        <div class="countdown-row__actions">
+          <button type="button" class="btn btn-primary-action" (click)="onStaticUpdateClicked()"
+            *ngIf="hasExistingData()" [disabled]="isLoading">
+            Update Countdown
+          </button>
+          <button type="submit" class="btn btn-primary-action" *ngIf="!hasExistingData()" [disabled]="isLoading">
+            Simpan Countdown
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
 
-        <!-- Static Event Form (Countdown) -->
-        <div class="col-12 mb-4">
-          <div class="card-custom">
-            <h2 class="title-border">Pengaturan Acara</h2>
-            <form class="row g-3 align-items-end" [formGroup]="staticEventForm" (ngSubmit)="onStaticSubmitClicked()">
-              <div class="col-12 col-lg">
-                <label for="event" class="form-label">Sebagai countdown acara</label>
-                <input type="text" id="event" class="form-control"
-                  placeholder="Masukkan nama countdown acara"
-                  formControlName="selectedEvent"
-                  [value]="countdownData?.name_countdown || ''" />
-              </div>
-              <div class="col-12 col-lg-auto">
-                <div class="d-flex gap-2 flex-wrap">
-                  <button type="button" class="btn btn-simpan" (click)="onStaticUpdateClicked()" *ngIf="hasExistingData()" [disabled]="isLoading">
-                    Update Countdown
-                  </button>
-                  <button type="submit" class="btn btn-simpan" *ngIf="!hasExistingData()" [disabled]="isLoading">
-                    Simpan Countdown
-                  </button>
-                </div>
-              </div>
-            </form>
+  <!-- Dynamic Events -->
+  <form [formGroup]="dynamicEventForm" (ngSubmit)="onDynamicSubmitClicked()">
+    <div formArrayName="dynamicEvents" class="events-grid">
+      <div *ngFor="let eventForm of dynamicEvents.controls; let i = index"
+        [formGroupName]="i" class="card-section event-card">
+
+        <div class="event-card__header">
+          <h2 class="section-title">Acara #{{ i + 1 }}</h2>
+          <div class="event-card__actions">
+            <button type="button" class="btn-icon btn-icon--add" (click)="addDynamicEvent()"
+              aria-label="Tambah acara" [disabled]="isLoading">
+              <i class="fa fa-plus"></i>
+            </button>
+            <button type="button" class="btn-icon btn-icon--delete" (click)="deleteDynamicEvent(i)"
+              *ngIf="dynamicEvents.length > 1" aria-label="Hapus acara" [disabled]="isLoading">
+              <i class="fa fa-trash"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Dynamic Events Form -->
-        <div class="col-12">
-          <form [formGroup]="dynamicEventForm" (ngSubmit)="onDynamicSubmitClicked()">
-            <div formArrayName="dynamicEvents" class="dynamic-events-container">
-              <div *ngFor="let eventForm of dynamicEvents.controls; let i = index" [formGroupName]="i" class="form-container">
+        <input type="hidden" formControlName="id" />
 
-                <div class="card-header-responsive">
-                  <h2 class="title mb-0">Acara #{{ i + 1 }}</h2>
-                  <div class="card-action-buttons">
-                    <button type="button" class="btn btn-link text-dark fs-2 fw-bold p-0 m-0"
-                      (click)="addDynamicEvent()" aria-label="Add" [disabled]="isLoading">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-link text-danger fs-2 fw-bold p-0 m-0"
-                      (click)="deleteDynamicEvent(i)" *ngIf="dynamicEvents.length > 1" aria-label="Delete"
-                      [disabled]="isLoading">
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Hidden ID -->
-                <input type="hidden" formControlName="id" />
-
-                <div class="mb-4">
-                  <label for="namaAcara{{i}}" class="form-label fw-semibold">Nama Acara</label>
-                  <input type="text" class="form-control text-secondary" id="namaAcara{{i}}"
-                    placeholder="Contoh: Pernikahan Andra dan Mega"
-                    formControlName="nama_acara" [disabled]="isLoading" />
-                  <div class="text-danger small mt-1"
-                    *ngIf="eventForm.get('nama_acara')?.invalid && eventForm.get('nama_acara')?.touched">
-                    Nama acara wajib diisi
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <label for="tanggal{{i}}" class="form-label fw-semibold">Tanggal</label>
-                  <div class="input-icon">
-                    <input type="text" class="form-control text-secondary pe-5" id="tanggal{{i}}"
-                      placeholder="Pilih tanggal" formControlName="tanggal_acara" bsDatepicker [bsConfig]="bsConfig"
-                      readonly [disabled]="isLoading" />
-                    <i class="far fa-calendar-alt"></i>
-                  </div>
-                  <div class="text-danger small mt-1"
-                    *ngIf="eventForm.get('tanggal_acara')?.invalid && eventForm.get('tanggal_acara')?.touched">
-                    Tanggal acara wajib diisi
-                  </div>
-                </div>
-
-                <div class="responsive-form-row mb-4">
-                  <div>
-                    <label for="waktuMulai{{i}}" class="form-label fw-semibold">Waktu Mulai</label>
-                    <div class="input-icon">
-                      <input type="time" class="form-control text-secondary pe-5" id="waktuMulai{{i}}"
-                        formControlName="start_acara" [disabled]="isLoading" />
-                      <i class="far fa-clock"></i>
-                    </div>
-                    <div class="text-danger small mt-1"
-                      *ngIf="eventForm.get('start_acara')?.invalid && eventForm.get('start_acara')?.touched">
-                      Waktu mulai wajib diisi
-                    </div>
-                  </div>
-                  <div>
-                    <label for="waktuSelesai{{i}}" class="form-label fw-semibold">Waktu Selesai</label>
-                    <div class="input-icon">
-                      <input type="time" class="form-control text-secondary pe-5" id="waktuSelesai{{i}}"
-                        formControlName="end_acara" [disabled]="isLoading" />
-                      <i class="far fa-clock"></i>
-                    </div>
-                    <div class="text-danger small mt-1"
-                      *ngIf="eventForm.get('end_acara')?.invalid && eventForm.get('end_acara')?.touched">
-                      Waktu selesai wajib diisi
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <label for="alamat{{i}}" class="form-label fw-semibold">Alamat</label>
-                  <textarea class="form-control text-secondary" id="alamat{{i}}" rows="3"
-                    formControlName="alamat" placeholder="Masukkan alamat lengkap acara"
-                    [disabled]="isLoading"></textarea>
-                  <div class="text-danger small mt-1"
-                    *ngIf="eventForm.get('alamat')?.invalid && eventForm.get('alamat')?.touched">
-                    Alamat wajib diisi
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <label for="linkLokasi{{i}}" class="form-label fw-semibold">Link Lokasi</label>
-                  <div class="input-group">
-                    <button class="btn btn-google" type="button" disabled>Google Maps</button>
-                    <input type="url" class="form-control text-secondary" id="linkLokasi{{i}}"
-                      placeholder="https://maps.google.com/..." formControlName="link_maps"
-                      [disabled]="isLoading" />
-                  </div>
-                  <div class="text-danger small mt-1"
-                    *ngIf="eventForm.get('link_maps')?.invalid && eventForm.get('link_maps')?.touched">
-                    Link lokasi wajib diisi
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="submit-button-container">
-              <button type="submit" class="btn btn-save" [disabled]="isLoading || dynamicEventForm.invalid">
-                {{ hasExistingData() ? 'Update Data Acara' : 'Simpan Data Acara' }}
-              </button>
-            </div>
-          </form>
+        <div class="form-field">
+          <label for="namaAcara{{i}}" class="form-label fw-semibold">Nama Acara</label>
+          <input type="text" class="form-control" id="namaAcara{{i}}"
+            placeholder="Contoh: Pernikahan Andra dan Mega"
+            formControlName="nama_acara" [disabled]="isLoading" />
+          <div class="field-error"
+            *ngIf="eventForm.get('nama_acara')?.invalid && eventForm.get('nama_acara')?.touched">
+            Nama acara wajib diisi
+          </div>
         </div>
 
+        <div class="form-field">
+          <label for="tanggal{{i}}" class="form-label fw-semibold">Tanggal</label>
+          <div class="input-icon">
+            <input type="text" class="form-control" id="tanggal{{i}}"
+              placeholder="Pilih tanggal" formControlName="tanggal_acara" bsDatepicker
+              [bsConfig]="bsConfig" readonly [disabled]="isLoading" />
+            <i class="far fa-calendar-alt"></i>
+          </div>
+          <div class="field-error"
+            *ngIf="eventForm.get('tanggal_acara')?.invalid && eventForm.get('tanggal_acara')?.touched">
+            Tanggal acara wajib diisi
+          </div>
+        </div>
+
+        <div class="time-row">
+          <div class="form-field">
+            <label for="waktuMulai{{i}}" class="form-label fw-semibold">Waktu Mulai</label>
+            <div class="input-icon">
+              <input type="time" class="form-control" id="waktuMulai{{i}}"
+                formControlName="start_acara" [disabled]="isLoading" />
+              <i class="far fa-clock"></i>
+            </div>
+            <div class="field-error"
+              *ngIf="eventForm.get('start_acara')?.invalid && eventForm.get('start_acara')?.touched">
+              Waktu mulai wajib diisi
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="waktuSelesai{{i}}" class="form-label fw-semibold">Waktu Selesai</label>
+            <div class="input-icon">
+              <input type="time" class="form-control" id="waktuSelesai{{i}}"
+                formControlName="end_acara" [disabled]="isLoading" />
+              <i class="far fa-clock"></i>
+            </div>
+            <div class="field-error"
+              *ngIf="eventForm.get('end_acara')?.invalid && eventForm.get('end_acara')?.touched">
+              Waktu selesai wajib diisi
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="alamat{{i}}" class="form-label fw-semibold">Alamat</label>
+          <textarea class="form-control" id="alamat{{i}}" rows="3"
+            formControlName="alamat" placeholder="Masukkan alamat lengkap acara"
+            [disabled]="isLoading"></textarea>
+          <div class="field-error"
+            *ngIf="eventForm.get('alamat')?.invalid && eventForm.get('alamat')?.touched">
+            Alamat wajib diisi
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="linkLokasi{{i}}" class="form-label fw-semibold">Link Lokasi</label>
+          <div class="maps-input">
+            <span class="maps-input__prefix">Google Maps</span>
+            <input type="url" class="form-control" id="linkLokasi{{i}}"
+              placeholder="https://maps.google.com/..." formControlName="link_maps"
+              [disabled]="isLoading" />
+          </div>
+          <div class="field-error"
+            *ngIf="eventForm.get('link_maps')?.invalid && eventForm.get('link_maps')?.touched">
+            Link lokasi wajib diisi
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+
+    <!-- Submit Button -->
+    <div class="save-action">
+      <button type="submit" class="btn btn-primary-action btn-primary-action--wide"
+        [disabled]="isLoading || dynamicEventForm.invalid">
+        {{ hasExistingData() ? 'Update Data Acara' : 'Simpan Data Acara' }}
+      </button>
+    </div>
+  </form>
+</div>

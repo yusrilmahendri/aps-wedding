@@ -4,6 +4,49 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModalUploadGaleriComponent } from '../modal-upload-galeri/modal-upload-galeri.component';
 import { DashboardService, DashboardServiceType } from '../../dashboard.service';
 import { Notyf } from 'notyf';
+import { debounceTime } from 'rxjs/operators';
+
+const FORM_DATA_KEY = 'formData';
+const STEP_DATA_KEY = 'informasiMempelai';
+
+interface StoredFormData {
+  registrasi?: {
+    response?: {
+      user?: {
+        id?: string | number;
+      };
+      user_id?: string | number;
+    };
+    formData?: {
+      user_id?: string | number;
+    };
+  };
+  informasiMempelai?: InformasiMempelaiFieldData | InformasiMempelaiData;
+  cerita?: Record<string, any>;
+  pembayaran?: Record<string, any>;
+  step?: number;
+  [key: string]: any;
+}
+
+interface InformasiMempelaiFieldData {
+  name_lengkap_pria?: string;
+  name_panggilan_pria?: string;
+  ayah_pria?: string;
+  ibu_pria?: string;
+  name_lengkap_wanita?: string;
+  name_panggilan_wanita?: string;
+  ayah_wanita?: string;
+  ibu_wanita?: string;
+  user_id?: string | number;
+  status?: number;
+  photo_pria?: string;
+  photo_wanita?: string;
+  cover_photo?: string;
+}
+
+interface InformasiMempelaiData {
+  updatedData?: InformasiMempelaiFieldData;
+}
 
 @Component({
   selector: 'wc-informasi-mempelai',
@@ -39,6 +82,12 @@ export class InformasiMempelaiComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initializeForm();
+    this.restoreFormData();
+    this.setupAutoSave();
+  }
+
+  private initializeForm(): void {
     this.formGroup = this.fb.group({
       name_lengkap_pria: ['', Validators.required],
       name_panggilan_pria: ['', Validators.required],
@@ -54,36 +103,121 @@ export class InformasiMempelaiComponent implements OnInit {
       photo_wanita: [null],
       cover_photo: [null]
     });
+  }
 
-    const step1LocalStorage = localStorage.getItem('formData');
-    if (step1LocalStorage) {
-      const allDataFromSteps = JSON.parse(step1LocalStorage);
-      const userID = allDataFromSteps?.registrasi?.response?.user?.id;
-      this.userId = userID;
-      this.formGroup.patchValue({
-        user_id: userID
+  private getUserId(): string | null {
+    const savedData = localStorage.getItem(FORM_DATA_KEY);
+    if (!savedData) {
+      console.log('[getUserId] No formData in localStorage');
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(savedData);
+      console.log('[getUserId] Parsed localStorage structure:', {
+        hasRegistrasi: !!parsed?.registrasi,
+        hasResponse: !!parsed?.registrasi?.response,
+        hasUser: !!parsed?.registrasi?.response?.user,
+        userId: parsed?.registrasi?.response?.user?.id,
+        responseUserId: parsed?.registrasi?.response?.user_id,
       });
+
+      // Try multiple paths - check ALL possible locations
+      // Note: After backend fix, authenticated user response includes user_id at root level
+      const userId = parsed?.registrasi?.response?.user_id?.toString()
+        || parsed?.registrasi?.response?.user?.id?.toString()
+        || parsed?.registrasi?.formData?.user_id?.toString()
+        || (parsed as any)['user_id']?.toString()
+        || null;
+
+      console.log('[getUserId] Retrieved userId:', userId);
+      return userId;
+    } catch (error) {
+      console.error('[getUserId] Error parsing localStorage:', error);
+      return null;
+    }
+  }
+
+  private restoreFormData(): void {
+    const savedData = localStorage.getItem(FORM_DATA_KEY);
+    if (!savedData) {
+      console.log('[restoreFormData] No savedData found');
+      return;
     }
 
-    const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
-    if (existingFormData.informasiMempelai) {
-      this.formGroup.patchValue(existingFormData.informasiMempelai.updatedData);
-      console.log(existingFormData.informasiMempelai);
+    try {
+      const parsed: StoredFormData = JSON.parse(savedData);
 
+      const userId = this.getUserId();
+      console.log('[restoreFormData] Retrieved userId:', userId);
+
+      if (userId) {
+        this.userId = userId;
+        this.formGroup.patchValue({ user_id: userId });
+        console.log('[restoreFormData] Patched user_id to form. Value after patch:', this.formGroup.get('user_id')?.value);
+        console.log('[restoreFormData] Form valid status:', this.formGroup.valid);
+        console.log('[restoreFormData] Form errors:', this.formGroup.errors);
+      } else {
+        console.warn('[restoreFormData] userId is null or undefined! Form will be invalid.');
+      }
+
+      if ((parsed as any)[STEP_DATA_KEY]) {
+        const stepData: InformasiMempelaiData = (parsed as any)[STEP_DATA_KEY];
+        const dataToRestore: InformasiMempelaiFieldData = stepData.updatedData || (stepData as any);
+
+        this.formGroup.patchValue({
+          name_lengkap_pria: dataToRestore.name_lengkap_pria || '',
+          name_panggilan_pria: dataToRestore.name_panggilan_pria || '',
+          ayah_pria: dataToRestore.ayah_pria || '',
+          ibu_pria: dataToRestore.ibu_pria || '',
+          name_lengkap_wanita: dataToRestore.name_lengkap_wanita || '',
+          name_panggilan_wanita: dataToRestore.name_panggilan_wanita || '',
+          ayah_wanita: dataToRestore.ayah_wanita || '',
+          ibu_wanita: dataToRestore.ibu_wanita || '',
+          status: dataToRestore.status || 1,
+          photo_pria: dataToRestore.photo_pria || null,
+          photo_wanita: dataToRestore.photo_wanita || null,
+          cover_photo: dataToRestore.cover_photo || null
+        });
+
+        this.restoreImagePreviews(dataToRestore);
+      }
+    } catch (error) {
+      console.error('Error restoring form data:', error);
     }
+  }
+
+  private restoreImagePreviews(data: InformasiMempelaiFieldData): void {
     this.imagePreviews = {
-      photo_pria: existingFormData?.informasiMempelai?.updatedData?.photo_pria
-        ? 'data:image/jpeg;base64,' + existingFormData?.informasiMempelai?.updatedData?.photo_pria
-        : null,
-      photo_wanita: existingFormData?.informasiMempelai?.updatedData?.photo_wanita
-        ? 'data:image/jpeg;base64,' + existingFormData?.informasiMempelai?.updatedData?.photo_wanita
-        : null,
-      cover_photo: existingFormData?.informasiMempelai?.updatedData?.cover_photo
-        ? 'data:image/jpeg;base64,' + existingFormData?.informasiMempelai?.updatedData.cover_photo
-        : null
+      photo_pria: data.photo_pria ? `data:image/jpeg;base64,${data.photo_pria}` : null,
+      photo_wanita: data.photo_wanita ? `data:image/jpeg;base64,${data.photo_wanita}` : null,
+      cover_photo: data.cover_photo ? `data:image/jpeg;base64,${data.cover_photo}` : null
     };
+  }
 
+  private setupAutoSave(): void {
+    this.formGroup.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe(() => {
+        this.saveFormData();
+      });
+  }
 
+  private saveFormData(): void {
+    try {
+      const savedData = localStorage.getItem(FORM_DATA_KEY);
+      const parsed = savedData ? JSON.parse(savedData) : {};
+
+      (parsed as any)[STEP_DATA_KEY] = {
+        updatedData: {
+          ...this.formGroup.value
+        }
+      };
+
+      localStorage.setItem(FORM_DATA_KEY, JSON.stringify(parsed));
+    } catch (error) {
+      console.error('Error saving form data:', error);
+    }
   }
 
   onFileSelected(event: any, controlName: string) {
@@ -91,7 +225,7 @@ export class InformasiMempelaiComponent implements OnInit {
     if (!file) return;
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    const maxSize = 2 * 1024 * 1024; // 2MB
+    const maxSize = 2 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
       this.notyf.error('Format gambar tidak didukung. Gunakan PNG atau JPG.');
@@ -108,15 +242,7 @@ export class InformasiMempelaiComponent implements OnInit {
       const base64String = reader.result as string;
       this.imagePreviews[controlName] = base64String;
       this.formGroup.patchValue({ [controlName]: base64String.split(',')[1] });
-      const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
-      const updatedFormData = {
-        ...existingFormData,
-        informasiMempelai: {
-          ...existingFormData.informasiMempelai,
-          ...this.formGroup.value
-        }
-      };
-      localStorage.setItem('formData', JSON.stringify(updatedFormData));
+      this.saveFormData();
     };
     reader.readAsDataURL(file);
   }
@@ -168,6 +294,7 @@ export class InformasiMempelaiComponent implements OnInit {
     this.dashboardSvc.create(DashboardServiceType.MNL_STEP_TWO, payload,).subscribe({
       next: (res) => {
         this.notyf.success(res?.message || 'Data berhasil disimpan.');
+        // Note: Backend already saves photos to gallery table, no need for dual submission
         setTimeout(() => this.onNext(), 1000);
       },
       error: (err) => {

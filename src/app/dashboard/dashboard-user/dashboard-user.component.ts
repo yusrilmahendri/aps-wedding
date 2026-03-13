@@ -233,7 +233,7 @@ export class DashboardUserComponent implements OnInit, OnDestroy {
       return this.userData.profile_photo_url;
     }
     // Default avatar if no profile photo
-    return 'assets/logos.png';
+    return 'assets/wom.png';
   }
 
   /**

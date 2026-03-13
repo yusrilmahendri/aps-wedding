@@ -1,19 +1,16 @@
 <div class="settings-payment-container">
-  <div class="container-fluid">
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading && !selectedPaymentMethod" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <p class="mt-2 text-muted">Memuat metode pembayaran...</p>
-    </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading && !selectedPaymentMethod" class="loading-state">
+    <div class="loading-spinner" role="status" aria-label="Loading"></div>
+    <p class="loading-text">Memuat metode pembayaran...</p>
+  </div>
 
-    <!-- Main Content -->
-    <div *ngIf="!isLoading || selectedPaymentMethod" class="row">
+  <!-- Main Content -->
+  <div *ngIf="!isLoading || selectedPaymentMethod" class="form-grid">
 
-      <!-- Payment Method Selection -->
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-4">
+    <!-- Payment Method Selection -->
+    <div class="form-grid__item">
         <div class="card payment-method-card">
           <div class="card-header">
             <div class="header-content">
@@ -40,7 +37,7 @@
       </div>
 
       <!-- Payment Configuration Form -->
-      <div *ngIf="selectedPaymentMethod && paymentForm" class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-4">
+      <div *ngIf="selectedPaymentMethod && paymentForm" class="form-grid__item">
         <div class="card config-card">
           <div class="card-header">
             <div class="header-content">
@@ -233,22 +230,21 @@
     </div>
 
     <!-- Payment Details Table -->
-    <div *ngIf="selectedPaymentMethod && hasPaymentDetails()" class="row">
-      <div class="col-12">
+    <div *ngIf="selectedPaymentMethod && hasPaymentDetails()" class="table-section">
         <div class="card table-card">
           <div class="card-header table-header">
             <div class="header-content">
               <h3 class="table-title">
                 <i class="fas fa-table me-2"></i>
-                <span class="d-none d-md-inline">Konfigurasi {{ selectedPaymentMethod.name }}</span>
-                <span class="d-md-none">Data {{ selectedPaymentMethod.name }}</span>
+                <span class="title-desktop">Konfigurasi {{ selectedPaymentMethod.name }}</span>
+                <span class="title-mobile">Data {{ selectedPaymentMethod.name }}</span>
               </h3>
             </div>
           </div>
 
-          <div class="card-body p-0">
+          <div class="card-body card-body--flush">
             <!-- Desktop Table View -->
-            <div class="table-responsive d-none d-lg-block">
+            <div class="table-wrap table-wrap--desktop">
               <table class="table payment-table" role="table" aria-label="Payment configuration table">
                 <thead>
                   <tr>
@@ -367,7 +363,7 @@
             </div>
 
             <!-- Mobile Card List View -->
-            <div class="mobile-card-list d-lg-none">
+            <div class="mobile-card-list">
               <div class="payment-card-item" *ngFor="let detail of paymentDetails; let i = index">
 
                 <!-- Manual Payment Card -->
@@ -520,25 +516,21 @@
             </div>
 
             <!-- Empty State -->
-            <div *ngIf="!hasPaymentDetails()" class="empty-state text-center py-5">
-              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-              <h5 class="text-muted">Belum ada konfigurasi pembayaran</h5>
-              <p class="text-muted">Silakan tambahkan konfigurasi pembayaran terlebih dahulu</p>
+            <div *ngIf="!hasPaymentDetails()" class="empty-state">
+              <i class="fas fa-inbox empty-state__icon" aria-hidden="true"></i>
+              <p class="empty-state__title">Belum ada konfigurasi pembayaran</p>
+              <p class="empty-state__text">Silakan tambahkan konfigurasi pembayaran terlebih dahulu</p>
             </div>
           </div>
         </div>
-      </div>
     </div>
 
     <!-- Loading State for Details -->
-    <div *ngIf="isLoading && selectedPaymentMethod" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <p class="mt-2 text-muted">Memuat detail pembayaran...</p>
+    <div *ngIf="isLoading && selectedPaymentMethod" class="loading-state">
+      <div class="loading-spinner" role="status" aria-label="Loading"></div>
+      <p class="loading-text">Memuat detail pembayaran...</p>
     </div>
 
-  </div>
 </div>
 
 <!-- Edit Payment Modal -->

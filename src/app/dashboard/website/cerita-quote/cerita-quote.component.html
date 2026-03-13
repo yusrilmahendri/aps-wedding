@@ -1,486 +1,464 @@
 <!-- Main Container -->
 <div class="cerita-quote-container">
 
-  <!-- Forms Section -->
+  <!-- ===== FORMS SECTION ===== -->
   <section class="forms-section">
-    <div class="container-fluid">
-      <div class="row g-4">
 
-        <!-- Cerita Form -->
-        <div class="col-12 col-lg-6">
-          <div class="section-header">
-            <h1 class="section-title">
-              <i class="fas fa-book-open me-2"></i>
-              Tambah Cerita
-            </h1>
-            <p class="section-subtitle">Ceritakan momen spesial pernikahan Anda</p>
-          </div>
+    <!-- Tab Navigation for Forms -->
+    <div class="tab-nav form-tab-nav">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeFormTab === 'cerita'"
+        (click)="activeFormTab = 'cerita'"
+        aria-label="Tambah Cerita"
+      >
+        <i class="fas fa-book-open"></i>
+        <span>Cerita</span>
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeFormTab === 'quote'"
+        (click)="activeFormTab = 'quote'"
+        aria-label="Tambah Quote"
+      >
+        <i class="fas fa-quote-left"></i>
+        <span>Quote</span>
+      </button>
+    </div>
 
-          <div class="form-cards-container">
-            <div
-              class="form-card-wrapper"
-              *ngFor="let cerita of ceritaFormArray.controls; let i = index"
-            >
-              <div class="form-card elevated">
-                <div class="form-card-header">
-                  <span class="card-counter">{{ i + 1 }}</span>
-                  <button
-                    type="button"
-                    class="btn-action"
-                    [ngClass]="{ 'btn-add': i === 0, 'btn-remove': i !== 0 }"
-                    (click)="i === 0 ? addCerita() : removeCerita(i)"
-                    [attr.aria-label]="i === 0 ? 'Tambah Cerita' : 'Hapus Cerita'"
-                  >
-                    <i class="fas" [ngClass]="{ 'fa-plus': i === 0, 'fa-trash': i !== 0 }"></i>
-                  </button>
-                </div>
+    <div class="forms-grid">
 
-                <form [formGroup]="getCeritaFormGroup(i)" class="form-content">
-                  <!-- Date Input -->
-                  <div class="form-group">
-                    <label for="tanggal-{{ i }}" class="form-label">
-                     Tanggal
-                    </label>
-                    <div class="input-wrapper">
-                      <input
-                        type="text"
-                        id="tanggal-{{ i }}"
-                        class="form-control"
-                        placeholder="Pilih tanggal"
-                        formControlName="tanggal"
-                        [bsConfig]="bsConfig"
-                        bsDatepicker
-                        (bsValueChange)="onDateChange($event, i)"
-                        readonly
-                      />
-                      <i class="fas fa-calendar input-icon"></i>
-                    </div>
-                    <div
-                      *ngIf="getCeritaFormGroup(i).get('tanggal')?.invalid && getCeritaFormGroup(i).get('tanggal')?.touched"
-                      class="error-message"
-                    >
-                      <i class="fas fa-exclamation-circle me-1"></i>
-                      Tanggal wajib diisi
-                    </div>
-                  </div>
-
-                  <!-- Title Input -->
-                  <div class="form-group">
-                    <label for="judul-{{ i }}" class="form-label">
-                     Judul Cerita
-                    </label>
-                    <input
-                      type="text"
-                      id="judul-{{ i }}"
-                      class="form-control"
-                      placeholder="Tuliskan judul cerita yang menarik..."
-                      formControlName="judul"
-                    />
-                    <div
-                      *ngIf="getCeritaFormGroup(i).get('judul')?.invalid && getCeritaFormGroup(i).get('judul')?.touched"
-                      class="error-message"
-                    >
-                      <i class="fas fa-exclamation-circle me-1"></i>
-                      Judul wajib diisi
-                    </div>
-                  </div>
-
-                  <!-- Content Textarea -->
-                  <div class="form-group">
-                    <label for="isiCerita-{{ i }}" class="form-label">
-                     Isi Cerita
-                    </label>
-                    <textarea
-                      id="isiCerita-{{ i }}"
-                      class="form-control"
-                      rows="4"
-                      placeholder="Ceritakan momen spesial Anda (maksimal 500 karakter)..."
-                      formControlName="isiCerita"
-                      maxlength="500"
-                    ></textarea>
-                    <div class="char-counter">
-                      {{ getCeritaFormGroup(i).get('isiCerita')?.value?.length || 0 }}/500
-                    </div>
-                    <div
-                      *ngIf="getCeritaFormGroup(i).get('isiCerita')?.invalid && getCeritaFormGroup(i).get('isiCerita')?.touched"
-                      class="error-message"
-                    >
-                      <i class="fas fa-exclamation-circle me-1"></i>
-                      Isi cerita wajib diisi
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-actions">
-              <button
-                type="button"
-                class="btn btn-primary btn-lg"
-                (click)="onSubmitCerita()"
-                [disabled]="ceritaForm.invalid || isSubmittingCerita"
-              >
-                <span *ngIf="!isSubmittingCerita">
-                  <i class="fas fa-save me-2"></i>Simpan Cerita
-                </span>
-                <span *ngIf="isSubmittingCerita">
-                  <i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...
-                </span>
-              </button>
-            </div>
-          </div>
+      <!-- Cerita Form Panel -->
+      <div class="form-panel" [class.active]="activeFormTab === 'cerita'">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <i class="fas fa-book-open"></i>
+            Tambah Cerita
+          </h2>
+          <p class="panel-subtitle">Ceritakan momen spesial pernikahan Anda</p>
         </div>
 
-        <!-- Quote Form -->
-        <div class="col-12 col-lg-6">
-          <div class="section-header">
-            <h1 class="section-title">
-              <i class="fas fa-quote-left me-2"></i>
-              Quote Pernikahan
-            </h1>
-            <p class="section-subtitle">Bagikan kata-kata indah tentang cinta</p>
-          </div>
+        <div class="form-cards-stack">
+          <div
+            class="form-card"
+            *ngFor="let cerita of ceritaFormArray.controls; let i = index"
+          >
+            <div class="form-card-header">
+              <span class="card-counter">{{ i + 1 }}</span>
+              <button
+                type="button"
+                class="btn-action"
+                [ngClass]="{ 'btn-add': i === 0, 'btn-remove': i !== 0 }"
+                (click)="i === 0 ? addCerita() : removeCerita(i)"
+                [attr.aria-label]="i === 0 ? 'Tambah cerita baru' : 'Hapus cerita ke-' + (i + 1)"
+              >
+                <i class="fas" [ngClass]="{ 'fa-plus': i === 0, 'fa-trash': i !== 0 }"></i>
+              </button>
+            </div>
 
-          <div class="form-card elevated">
-            <form [formGroup]="quoteForm" class="form-content">
-              <!-- Source Name -->
-              <div class="form-group">
-                <label for="namaSumber" class="form-label">
-                  <i class="fas fa-user me-2"></i>Nama Sumber
-                </label>
-                <input
-                  type="text"
-                  id="namaSumber"
-                  class="form-control"
-                  placeholder="Siapa yang mengucapkan quote ini?"
-                  formControlName="name"
-                />
+            <form [formGroup]="getCeritaFormGroup(i)" class="form-body">
+              <!-- Date -->
+              <div class="field">
+                <label for="tanggal-{{ i }}" class="field-label">Tanggal</label>
+                <div class="input-with-icon">
+                  <input
+                    type="text"
+                    id="tanggal-{{ i }}"
+                    class="field-input"
+                    placeholder="Pilih tanggal"
+                    formControlName="tanggal"
+                    [bsConfig]="bsConfig"
+                    bsDatepicker
+                    (bsValueChange)="onDateChange($event, i)"
+                    readonly
+                  />
+                  <i class="fas fa-calendar field-icon"></i>
+                </div>
                 <div
-                  *ngIf="quoteForm.get('name')?.invalid && quoteForm.get('name')?.touched"
-                  class="error-message"
+                  *ngIf="getCeritaFormGroup(i).get('tanggal')?.invalid && getCeritaFormGroup(i).get('tanggal')?.touched"
+                  class="field-error"
+                  role="alert"
                 >
-                  <i class="fas fa-exclamation-circle me-1"></i>
-                  Nama sumber wajib diisi
+                  Tanggal wajib diisi
                 </div>
               </div>
 
-              <!-- Quote Content -->
-              <div class="form-group">
-                <label for="quote" class="form-label">
-                  <i class="fas fa-quote-right me-2"></i>Quote
-                </label>
-                <textarea
-                  id="quote"
-                  class="form-control"
-                  rows="4"
-                  placeholder="Tulis quote yang menginspirasi..."
-                  formControlName="quote"
-                ></textarea>
+              <!-- Title -->
+              <div class="field">
+                <label for="judul-{{ i }}" class="field-label">Judul Cerita</label>
+                <input
+                  type="text"
+                  id="judul-{{ i }}"
+                  class="field-input"
+                  placeholder="Tuliskan judul cerita..."
+                  formControlName="judul"
+                />
                 <div
-                  *ngIf="quoteForm.get('quote')?.invalid && quoteForm.get('quote')?.touched"
-                  class="error-message"
+                  *ngIf="getCeritaFormGroup(i).get('judul')?.invalid && getCeritaFormGroup(i).get('judul')?.touched"
+                  class="field-error"
+                  role="alert"
                 >
-                  <i class="fas fa-exclamation-circle me-1"></i>
-                  Quote wajib diisi
+                  Judul wajib diisi
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="field">
+                <label for="isiCerita-{{ i }}" class="field-label">Isi Cerita</label>
+                <textarea
+                  id="isiCerita-{{ i }}"
+                  class="field-input"
+                  rows="4"
+                  placeholder="Ceritakan momen spesial Anda..."
+                  formControlName="isiCerita"
+                  maxlength="500"
+                ></textarea>
+                <span class="char-count">
+                  {{ getCeritaFormGroup(i).get('isiCerita')?.value?.length || 0 }}/500
+                </span>
+                <div
+                  *ngIf="getCeritaFormGroup(i).get('isiCerita')?.invalid && getCeritaFormGroup(i).get('isiCerita')?.touched"
+                  class="field-error"
+                  role="alert"
+                >
+                  Isi cerita wajib diisi
                 </div>
               </div>
             </form>
-
-            <!-- Submit Button -->
-            <div class="form-actions">
-              <button
-                type="button"
-                class="btn btn-primary btn-lg"
-                (click)="onSubmitQuote()"
-                [disabled]="quoteForm.invalid || isSubmittingQuote"
-              >
-                <span *ngIf="!isSubmittingQuote">
-                  <i class="fas fa-save me-2"></i>Simpan Quote
-                </span>
-                <span *ngIf="isSubmittingQuote">
-                  <i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...
-                </span>
-              </button>
-            </div>
           </div>
+        </div>
+
+        <div class="panel-actions">
+          <button
+            type="button"
+            class="btn-submit"
+            (click)="onSubmitCerita()"
+            [disabled]="ceritaForm.invalid || isSubmittingCerita"
+          >
+            <span *ngIf="!isSubmittingCerita">
+              <i class="fas fa-save"></i> Simpan Cerita
+            </span>
+            <span *ngIf="isSubmittingCerita">
+              <i class="fas fa-spinner fa-spin"></i> Menyimpan...
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quote Form Panel -->
+      <div class="form-panel" [class.active]="activeFormTab === 'quote'">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <i class="fas fa-quote-left"></i>
+            Quote Pernikahan
+          </h2>
+          <p class="panel-subtitle">Bagikan kata-kata indah tentang cinta</p>
+        </div>
+
+        <div class="form-card">
+          <form [formGroup]="quoteForm" class="form-body">
+            <!-- Source Name -->
+            <div class="field">
+              <label for="namaSumber" class="field-label">Nama Sumber</label>
+              <input
+                type="text"
+                id="namaSumber"
+                class="field-input"
+                placeholder="Siapa yang mengucapkan quote ini?"
+                formControlName="name"
+              />
+              <div
+                *ngIf="quoteForm.get('name')?.invalid && quoteForm.get('name')?.touched"
+                class="field-error"
+                role="alert"
+              >
+                Nama sumber wajib diisi
+              </div>
+            </div>
+
+            <!-- Quote -->
+            <div class="field">
+              <label for="quote" class="field-label">Quote</label>
+              <textarea
+                id="quote"
+                class="field-input"
+                rows="4"
+                placeholder="Tulis quote yang menginspirasi..."
+                formControlName="quote"
+              ></textarea>
+              <div
+                *ngIf="quoteForm.get('quote')?.invalid && quoteForm.get('quote')?.touched"
+                class="field-error"
+                role="alert"
+              >
+                Quote wajib diisi
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel-actions">
+          <button
+            type="button"
+            class="btn-submit"
+            (click)="onSubmitQuote()"
+            [disabled]="quoteForm.invalid || isSubmittingQuote"
+          >
+            <span *ngIf="!isSubmittingQuote">
+              <i class="fas fa-save"></i> Simpan Quote
+            </span>
+            <span *ngIf="isSubmittingQuote">
+              <i class="fas fa-spinner fa-spin"></i> Menyimpan...
+            </span>
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Data Section -->
+  <!-- ===== DATA SECTION ===== -->
   <section class="data-section">
-    <div class="container-fluid">
 
-      <!-- Cerita Data -->
-      <div class="data-block">
-        <div class="data-header">
-          <h2 class="data-title">
-            <i class="fas fa-book me-2"></i>
-            Data Cerita
-          </h2>
-          <div class="data-counter" *ngIf="!isLoadingCeritaData">
-            {{ ceritaData.length }} cerita tersimpan
-          </div>
-        </div>
+    <!-- Tab Navigation for Data -->
+    <div class="tab-nav data-tab-nav">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeDataTab === 'cerita'"
+        (click)="activeDataTab = 'cerita'"
+      >
+        <i class="fas fa-book"></i>
+        <span>Data Cerita</span>
+        <span class="tab-badge" *ngIf="!isLoadingCeritaData">{{ ceritaData.length }}</span>
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeDataTab === 'quote'"
+        (click)="activeDataTab = 'quote'"
+      >
+        <i class="fas fa-quote-left"></i>
+        <span>Data Quote</span>
+        <span class="tab-badge" *ngIf="!isLoadingQuoteData">{{ quoteData.length }}</span>
+      </button>
+    </div>
 
-        <!-- Loading Skeleton for Cerita -->
-        <div *ngIf="isLoadingCeritaData" class="row g-3">
-          <div class="col-12 col-md-6" *ngFor="let item of [1,2,3,4]">
-            <div class="data-card skeleton">
-              <div class="skeleton-header">
-                <div class="skeleton-line skeleton-title"></div>
-                <div class="skeleton-actions">
-                  <div class="skeleton-btn"></div>
-                  <div class="skeleton-btn"></div>
-                </div>
-              </div>
-              <div class="skeleton-content">
-                <div class="skeleton-line"></div>
-                <div class="skeleton-line"></div>
-                <div class="skeleton-line short"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Cerita Data Panel -->
+    <div class="data-panel" [hidden]="activeDataTab !== 'cerita'">
 
-        <!-- Cerita Data Cards -->
-        <div *ngIf="!isLoadingCeritaData" class="row g-3">
-          <div class="col-12 col-md-6" *ngFor="let cerita of ceritaData; trackBy: trackByCeritaId">
-            <div class="data-card" [class.editing]="editingCeritaId === cerita.id">
-
-              <!-- Card Header -->
-              <div class="data-card-header">
-                <span class="card-type">Cerita</span>
-                <div class="card-actions" *ngIf="editingCeritaId !== cerita.id">
-                  <button
-                    type="button"
-                    class="btn-icon btn-edit"
-                    (click)="startEditCerita(cerita)"
-                    [disabled]="isDeletingCerita"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn-icon btn-delete"
-                    (click)="deleteCerita(cerita)"
-                    [disabled]="isDeletingCerita"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Edit Form -->
-              <form
-                *ngIf="editingCeritaId === cerita.id && editCeritaForm"
-                [formGroup]="editCeritaForm"
-                (ngSubmit)="submitEditCerita(cerita)"
-                class="edit-form"
-              >
-                <div class="form-group">
-                  <label class="form-label">Tanggal</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="tanggal_cerita"
-                    [bsConfig]="bsConfig"
-                    bsDatepicker
-                    readonly
-                  />
-                  <div *ngIf="editCeritaForm.get('tanggal_cerita')?.invalid && editCeritaForm.get('tanggal_cerita')?.touched" class="error-message">
-                    Tanggal wajib diisi
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Judul</label>
-                  <input type="text" class="form-control" formControlName="title" />
-                  <div *ngIf="editCeritaForm.get('title')?.invalid && editCeritaForm.get('title')?.touched" class="error-message">
-                    Judul wajib diisi
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Isi Cerita</label>
-                  <textarea class="form-control" rows="3" formControlName="lead_cerita"></textarea>
-                  <div *ngIf="editCeritaForm.get('lead_cerita')?.invalid && editCeritaForm.get('lead_cerita')?.touched" class="error-message">
-                    Isi cerita wajib diisi
-                  </div>
-                </div>
-
-                <div class="edit-actions">
-                  <button type="button" class="btn btn-secondary" (click)="cancelEditCerita()">
-                    <i class="fas fa-times me-1"></i>Batal
-                  </button>
-                  <button type="submit" class="btn btn-primary" [disabled]="isUpdatingCerita">
-                    <span *ngIf="!isUpdatingCerita">
-                      <i class="fas fa-check me-1"></i>Simpan
-                    </span>
-                    <span *ngIf="isUpdatingCerita">
-                      <i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...
-                    </span>
-                  </button>
-                </div>
-              </form>
-
-              <!-- Display Mode -->
-              <div *ngIf="editingCeritaId !== cerita.id" class="card-content">
-                <div class="content-item">
-                  <span class="content-label">
-                    <i class="fas fa-calendar me-1"></i>Tanggal:
-                  </span>
-                  <span class="content-value">{{ cerita.tanggal_cerita }}</span>
-                </div>
-                <div class="content-item">
-                  <span class="content-label">
-                    <i class="fas fa-heading me-1"></i>Judul:
-                  </span>
-                  <span class="content-value">{{ cerita.title }}</span>
-                </div>
-                <div class="content-item">
-                  <span class="content-label">
-                    <i class="fas fa-align-left me-1"></i>Cerita:
-                  </span>
-                  <span class="content-value">{{ cerita.lead_cerita }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty State -->
-        <div *ngIf="!isLoadingCeritaData && ceritaData.length === 0" class="empty-state">
-          <i class="fas fa-book-open empty-icon"></i>
-          <h3 class="empty-title">Belum ada cerita</h3>
-          <p class="empty-subtitle">Tambahkan cerita pertama Anda menggunakan form di atas</p>
+      <!-- Loading Skeleton -->
+      <div *ngIf="isLoadingCeritaData" class="card-grid">
+        <div class="data-card skeleton" *ngFor="let item of [1,2,3]">
+          <div class="skeleton-bar title-bar"></div>
+          <div class="skeleton-bar"></div>
+          <div class="skeleton-bar short-bar"></div>
         </div>
       </div>
 
-      <!-- Quote Data -->
-      <div class="data-block">
-        <div class="data-header">
-          <h2 class="data-title">
-            <i class="fas fa-quote-left me-2"></i>
-            Data Quote
-          </h2>
-          <div class="data-counter" *ngIf="!isLoadingQuoteData">
-            {{ quoteData.length }} quote tersimpan
-          </div>
-        </div>
-
-        <!-- Loading Skeleton for Quotes -->
-        <div *ngIf="isLoadingQuoteData" class="row g-3">
-          <div class="col-12 col-md-6" *ngFor="let item of [1,2,3,4]">
-            <div class="data-card skeleton">
-              <div class="skeleton-header">
-                <div class="skeleton-line skeleton-title"></div>
-                <div class="skeleton-actions">
-                  <div class="skeleton-btn"></div>
-                  <div class="skeleton-btn"></div>
-                </div>
-              </div>
-              <div class="skeleton-content">
-                <div class="skeleton-line"></div>
-                <div class="skeleton-line short"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quote Data Cards -->
-        <div *ngIf="!isLoadingQuoteData" class="row g-3">
-          <div class="col-12 col-md-6" *ngFor="let quote of quoteData; trackBy: trackByQuoteId">
-            <div class="data-card" [class.editing]="editingQuoteId === quote.id">
-
-              <!-- Card Header -->
-              <div class="data-card-header">
-                <span class="card-type">Quote</span>
-                <div class="card-actions" *ngIf="editingQuoteId !== quote.id">
-                  <button
-                    type="button"
-                    class="btn-icon btn-edit"
-                    (click)="startEditQuote(quote)"
-                    [disabled]="isDeletingQuote"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn-icon btn-delete"
-                    (click)="deleteQuote(quote)"
-                    [disabled]="isDeletingQuote"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Edit Form -->
-              <form
-                *ngIf="editingQuoteId === quote.id && editQuoteForm"
-                [formGroup]="editQuoteForm"
-                (ngSubmit)="submitEditQuote(quote)"
-                class="edit-form"
+      <!-- Cerita Cards -->
+      <div *ngIf="!isLoadingCeritaData && ceritaData.length > 0" class="card-grid">
+        <div
+          class="data-card"
+          *ngFor="let cerita of ceritaData; trackBy: trackByCeritaId"
+          [class.is-editing]="editingCeritaId === cerita.id"
+        >
+          <!-- Header -->
+          <div class="data-card-top">
+            <span class="card-label">Cerita</span>
+            <div class="card-actions" *ngIf="editingCeritaId !== cerita.id">
+              <button
+                type="button"
+                class="action-btn edit"
+                (click)="startEditCerita(cerita)"
+                [disabled]="isDeletingCerita"
+                aria-label="Edit cerita"
               >
-                <div class="form-group">
-                  <label class="form-label">Nama Sumber</label>
-                  <input type="text" class="form-control" formControlName="name" />
-                  <div *ngIf="editQuoteForm.get('name')?.invalid && editQuoteForm.get('name')?.touched" class="error-message">
-                    Nama sumber wajib diisi
-                  </div>
-                </div>
+                <i class="fas fa-pen"></i>
+              </button>
+              <button
+                type="button"
+                class="action-btn delete"
+                (click)="deleteCerita(cerita)"
+                [disabled]="isDeletingCerita"
+                aria-label="Hapus cerita"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
 
-                <div class="form-group">
-                  <label class="form-label">Quote</label>
-                  <textarea class="form-control" rows="3" formControlName="quote"></textarea>
-                  <div *ngIf="editQuoteForm.get('quote')?.invalid && editQuoteForm.get('quote')?.touched" class="error-message">
-                    Quote wajib diisi
-                  </div>
-                </div>
-
-                <div class="edit-actions">
-                  <button type="button" class="btn btn-secondary" (click)="cancelEditQuote()">
-                    <i class="fas fa-times me-1"></i>Batal
-                  </button>
-                  <button type="submit" class="btn btn-primary" [disabled]="isUpdatingQuote">
-                    <span *ngIf="!isUpdatingQuote">
-                      <i class="fas fa-check me-1"></i>Simpan
-                    </span>
-                    <span *ngIf="isUpdatingQuote">
-                      <i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...
-                    </span>
-                  </button>
-                </div>
-              </form>
-
-              <!-- Display Mode -->
-              <div *ngIf="editingQuoteId !== quote.id" class="card-content">
-                <div class="content-item">
-                  <span class="content-label">
-                    <i class="fas fa-user me-1"></i>Sumber:
-                  </span>
-                  <span class="content-value">{{ quote.name }}</span>
-                </div>
-                <div class="content-item">
-                  <span class="content-label">
-                    <i class="fas fa-quote-right me-1"></i>Quote:
-                  </span>
-                  <span class="content-value">"{{ quote.quote }}"</span>
-                </div>
+          <!-- Edit Mode -->
+          <form
+            *ngIf="editingCeritaId === cerita.id && editCeritaForm"
+            [formGroup]="editCeritaForm"
+            (ngSubmit)="submitEditCerita(cerita)"
+            class="edit-form"
+          >
+            <div class="field">
+              <label class="field-label">Tanggal</label>
+              <input
+                type="text"
+                class="field-input"
+                formControlName="tanggal_cerita"
+                [bsConfig]="bsConfig"
+                bsDatepicker
+                readonly
+              />
+              <div *ngIf="editCeritaForm.get('tanggal_cerita')?.invalid && editCeritaForm.get('tanggal_cerita')?.touched" class="field-error">
+                Tanggal wajib diisi
               </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Judul</label>
+              <input type="text" class="field-input" formControlName="title" />
+              <div *ngIf="editCeritaForm.get('title')?.invalid && editCeritaForm.get('title')?.touched" class="field-error">
+                Judul wajib diisi
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Isi Cerita</label>
+              <textarea class="field-input" rows="3" formControlName="lead_cerita"></textarea>
+              <div *ngIf="editCeritaForm.get('lead_cerita')?.invalid && editCeritaForm.get('lead_cerita')?.touched" class="field-error">
+                Isi cerita wajib diisi
+              </div>
+            </div>
+
+            <div class="edit-actions">
+              <button type="button" class="btn-cancel" (click)="cancelEditCerita()">
+                <i class="fas fa-times"></i> Batal
+              </button>
+              <button type="submit" class="btn-submit compact" [disabled]="isUpdatingCerita">
+                <span *ngIf="!isUpdatingCerita"><i class="fas fa-check"></i> Simpan</span>
+                <span *ngIf="isUpdatingCerita"><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Read Mode -->
+          <div *ngIf="editingCeritaId !== cerita.id" class="card-body">
+            <div class="info-row">
+              <span class="info-label"><i class="fas fa-calendar"></i> Tanggal</span>
+              <span class="info-value">{{ cerita.tanggal_cerita }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><i class="fas fa-heading"></i> Judul</span>
+              <span class="info-value">{{ cerita.title }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><i class="fas fa-align-left"></i> Cerita</span>
+              <span class="info-value">{{ cerita.lead_cerita }}</span>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Empty State -->
-        <div *ngIf="!isLoadingQuoteData && quoteData.length === 0" class="empty-state">
-          <i class="fas fa-quote-left empty-icon"></i>
-          <h3 class="empty-title">Belum ada quote</h3>
-          <p class="empty-subtitle">Tambahkan quote pertama Anda menggunakan form di atas</p>
+      <!-- Empty -->
+      <div *ngIf="!isLoadingCeritaData && ceritaData.length === 0" class="empty-state">
+        <i class="fas fa-book-open"></i>
+        <p>Belum ada cerita. Tambahkan cerita pertama Anda.</p>
+      </div>
+    </div>
+
+    <!-- Quote Data Panel -->
+    <div class="data-panel" [hidden]="activeDataTab !== 'quote'">
+
+      <!-- Loading Skeleton -->
+      <div *ngIf="isLoadingQuoteData" class="card-grid">
+        <div class="data-card skeleton" *ngFor="let item of [1,2,3]">
+          <div class="skeleton-bar title-bar"></div>
+          <div class="skeleton-bar"></div>
+          <div class="skeleton-bar short-bar"></div>
         </div>
+      </div>
+
+      <!-- Quote Cards -->
+      <div *ngIf="!isLoadingQuoteData && quoteData.length > 0" class="card-grid">
+        <div
+          class="data-card"
+          *ngFor="let quote of quoteData; trackBy: trackByQuoteId"
+          [class.is-editing]="editingQuoteId === quote.id"
+        >
+          <!-- Header -->
+          <div class="data-card-top">
+            <span class="card-label">Quote</span>
+            <div class="card-actions" *ngIf="editingQuoteId !== quote.id">
+              <button
+                type="button"
+                class="action-btn edit"
+                (click)="startEditQuote(quote)"
+                [disabled]="isDeletingQuote"
+                aria-label="Edit quote"
+              >
+                <i class="fas fa-pen"></i>
+              </button>
+              <button
+                type="button"
+                class="action-btn delete"
+                (click)="deleteQuote(quote)"
+                [disabled]="isDeletingQuote"
+                aria-label="Hapus quote"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit Mode -->
+          <form
+            *ngIf="editingQuoteId === quote.id && editQuoteForm"
+            [formGroup]="editQuoteForm"
+            (ngSubmit)="submitEditQuote(quote)"
+            class="edit-form"
+          >
+            <div class="field">
+              <label class="field-label">Nama Sumber</label>
+              <input type="text" class="field-input" formControlName="name" />
+              <div *ngIf="editQuoteForm.get('name')?.invalid && editQuoteForm.get('name')?.touched" class="field-error">
+                Nama sumber wajib diisi
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Quote</label>
+              <textarea class="field-input" rows="3" formControlName="quote"></textarea>
+              <div *ngIf="editQuoteForm.get('quote')?.invalid && editQuoteForm.get('quote')?.touched" class="field-error">
+                Quote wajib diisi
+              </div>
+            </div>
+
+            <div class="edit-actions">
+              <button type="button" class="btn-cancel" (click)="cancelEditQuote()">
+                <i class="fas fa-times"></i> Batal
+              </button>
+              <button type="submit" class="btn-submit compact" [disabled]="isUpdatingQuote">
+                <span *ngIf="!isUpdatingQuote"><i class="fas fa-check"></i> Simpan</span>
+                <span *ngIf="isUpdatingQuote"><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Read Mode -->
+          <div *ngIf="editingQuoteId !== quote.id" class="card-body">
+            <div class="info-row">
+              <span class="info-label"><i class="fas fa-user"></i> Sumber</span>
+              <span class="info-value">{{ quote.name }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label"><i class="fas fa-quote-right"></i> Quote</span>
+              <span class="info-value">"{{ quote.quote }}"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="!isLoadingQuoteData && quoteData.length === 0" class="empty-state">
+        <i class="fas fa-quote-left"></i>
+        <p>Belum ada quote. Tambahkan quote pertama Anda.</p>
       </div>
     </div>
   </section>

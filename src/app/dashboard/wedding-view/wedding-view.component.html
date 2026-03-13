@@ -110,7 +110,7 @@
             </div>
             </div>
 
-          <section #sectionRef class="love-section">
+          <section #sectionRef class="love-section" *ngIf="isQuoteVisible()">
             <h1 class="love-title fade-item">We Found Love</h1>
             <!-- CINEMATIC SLIDER -->
             <div class="slider-wrapper fade-item">
@@ -131,39 +131,39 @@
             </div>
           </section>
 
-          <section class="full-section" id="section-2">
+          <section class="full-section" id="section-2" *ngIf="isCoupleVisible()">
               <wc-couple-view
               [weddingData]="weddingData">
             </wc-couple-view>
           </section>
 
-          <section class="full-section" id="section-3">
+          <section class="full-section" id="section-3" *ngIf="isCalendarVisible()">
             <wc-akad-view
               [events]="weddingData?.events"
               [weddingData]="weddingData">
             </wc-akad-view>
           </section>
 
-          <section class="full-section" id="section-4">
+          <section class="full-section" id="section-4" *ngIf="isBirthdayVisible()">
             <wc-resepsi-view
             [events]="weddingData?.events"
             [weddingData]="weddingData">
           </wc-resepsi-view>
           </section>
 
-          <section class="full-section" id="section-5">
+          <section class="full-section" id="section-5" *ngIf="isChatVisible()">
             <wc-story-view
               [stories]="weddingData?.stories">
             </wc-story-view>
           </section>
 
-          <section class="full-section" id="section-6">
+          <section class="full-section" id="section-6" *ngIf="isGalleryVisible()">
             <wc-gallery-view
               [galleryItems]="weddingData?.gallery">
             </wc-gallery-view>
           </section>
 
-          <section class="full-section" id="section-7">
+          <section class="full-section" id="section-7" *ngIf="isGiftsVisible()">
             <wc-gift-view
               [weddingData]="weddingData || undefined">
             </wc-gift-view>
@@ -176,7 +176,7 @@
           </section>
 
 
-          <section class="full-section mt-3" id="section-9">
+          <section class="full-section mt-3" id="section-9" *ngIf="isMessagesVisible()">
             <wc-message-view
               [guestWishes]="weddingData?.guest_wishes || []"></wc-message-view>
           </section>

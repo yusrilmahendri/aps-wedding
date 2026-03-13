@@ -121,8 +121,8 @@
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #ff6f84;
+    box-shadow: 0 0 0 3px rgba(237, 64, 89, 0.1);
   }
 
   &:invalid:not(:placeholder-shown) {
@@ -162,8 +162,8 @@
 
         &.open,
         &:focus-within {
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          border-color: #ff6f84;
+          box-shadow: 0 0 0 3px rgba(237, 64, 89, 0.1);
         }
       }
 
@@ -182,7 +182,7 @@
           }
 
           &.active {
-            background: #667eea;
+            background: #ff6f84;
             color: white;
           }
         }
@@ -202,8 +202,8 @@
   transition: all 0.2s ease;
 
   &:focus-within {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #ff6f84;
+    box-shadow: 0 0 0 3px rgba(237, 64, 89, 0.1);
   }
 }
 
@@ -233,7 +233,7 @@
 .dr-prefix-text {
   font-size: 16px;
   font-weight: 500;
-  color: #667eea;
+  color: #ff6f84;
   white-space: nowrap;
 }
 
@@ -295,12 +295,12 @@
 
 .dr-btn-secondary {
   background: white;
-  color: #FFA0AE;
-  border: 1.5px solid #FFA0AE;
+  color: #ff6f84;
+  border: 1.5px solid #ff6f84;
 
   &:hover:not(:disabled) {
-    background: #f8fafc;
-    border-color: #FFA0AE;
+    background: #ff6f84;
+    color: white;
   }
 
   &:active {
@@ -309,14 +309,14 @@
 }
 
 .dr-btn-primary {
-  background: #ffa0ae;
+  background: #ff6f84;
   color: white;
   border: 1.5px solid transparent;
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, #ffa0ae 0%, #ffa0ae 100%);
+    background: #d9364d;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(237, 64, 89, 0.3);
   }
 
   &:active {

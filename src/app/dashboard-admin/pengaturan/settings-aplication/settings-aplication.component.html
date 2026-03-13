@@ -1,87 +1,105 @@
 <div class="container">
   <div class="row g-4">
-    <!-- Left Form -->
-    <form class="col-12 col-md-6 d-flex form-container" autocomplete="off" novalidate>
-      <h2>Salam Pembuka</h2>
-
-      <div class="mb-4">
-        <label for="trial-days" class="form-label">Waktu Trial Undangan (hari)</label>
-        <select id="trial-days" name="trial-days" class="form-select" aria-label="Waktu Trial Undangan (hari)">
-          <option disabled selected>Contoh: 2</option>
-        </select>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+      <p class="mt-3 text-muted">Memuat pengaturan kontak...</p>
+    </div>
 
-      <div class="mb-4">
-        <label for="salampembuka-undangan" class="form-label">Salam Pembuka Undangan</label>
-        <textarea id="salampembuka-undangan" name="salampembuka-undangan" rows="4" class="form-control">Assalamu'alaikum Warahmatullahi Wabarakatuh.
-
-Dengan memohon Rahmat dan Ridho Allah SWT, Kami akan menyelenggarakan resepsi pernikahan Putra-Putri kami :</textarea>
-      </div>
-
-      <div class="mb-4">
-        <label for="salampembuka-whatsapp-atas" class="form-label">Salam Pembuka WhatsApp (atas)</label>
-        <textarea id="salampembuka-whatsapp-atas" name="salampembuka-whatsapp-atas" rows="4"
-          class="form-control">Assalamualaikum Wr Wb.
-Dengan segala kerendahan hati dan syukur atas Karunia Allah SWT.
-Kami bermaksud mengundangBapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami :</textarea>
-      </div>
-
-      <div class="mb-5">
-        <label for="salampembuka-whatsapp-bawah" class="form-label">Salam Pembuka WhatsApp (bawah)</label>
-        <textarea id="salampembuka-whatsapp-bawah" name="salampembuka-whatsapp-bawah" rows="4"
-          class="form-control">Assalamualaikum Wr Wb.
-Dengan segala kerendahan hati dan syukur atas Karunia Allah SWT.
-Kami bermaksud mengundangBapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami :</textarea>
-      </div>
-
-      <button type="submit" class="btn btn-simpan">Simpan</button>
-    </form>
-
-    <!-- Right Form -->
-    <form class="col-12 col-md-6 d-flex form-container" autocomplete="off" novalidate>
+    <!-- Contact Admin Form -->
+    <form
+      *ngIf="!isLoading"
+      [formGroup]="contactForm"
+      (ngSubmit)="onSubmit()"
+      class="col-12 d-flex form-container"
+      autocomplete="off"
+      novalidate>
       <h2>Contact Admin</h2>
 
+      <!-- Host Email -->
       <div class="mb-3">
         <label for="host-email" class="form-label">Host Email</label>
-        <input id="host-email" name="host-email" type="email" value="zayyin.alfar1@gmail.com"
-          placeholder="zayyin.alfar1@gmail.com" class="form-control" aria-describedby="host-email-desc" />
-        <div id="host-email-desc" class="form-text italic">
-          Kosongkan jika tidak membutuhkan notifikasi email.
+        <input
+          id="host-email"
+          formControlName="host_email"
+          type="email"
+          placeholder="admin@example.com"
+          class="form-control"
+          [class.is-invalid]="f['host_email'].invalid && f['host_email'].touched" />
+        <div class="invalid-feedback" *ngIf="f['host_email'].invalid && f['host_email'].touched">
+          <div *ngIf="f['host_email'].errors?.['email']">Email tidak valid</div>
         </div>
       </div>
 
+      <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input id="email" name="email" type="email" value="zayyin.alfar1@gmail.com"
-          placeholder="zayyin.alfar1@gmail.com" class="form-control" />
+        <input
+          id="email"
+          formControlName="email"
+          type="email"
+          placeholder="contact@example.com"
+          class="form-control"
+          [class.is-invalid]="f['email'].invalid && f['email'].touched" />
+        <div class="invalid-feedback" *ngIf="f['email'].invalid && f['email'].touched">
+          <div *ngIf="f['email'].errors?.['email']">Email tidak valid</div>
+        </div>
       </div>
 
+      <!-- Nama -->
       <div class="mb-3">
-        <label for="email-password" class="form-label">Kata Sandi Email</label>
-        <input id="email-password" name="email-password" type="password" value="***********" placeholder="***********"
-          class="form-control" />
+        <label for="nama" class="form-label">Nama</label>
+        <input
+          id="nama"
+          formControlName="nama"
+          type="text"
+          placeholder="Nama Admin"
+          class="form-control"
+          [class.is-invalid]="f['nama'].invalid && f['nama'].touched" />
+        <div class="invalid-feedback" *ngIf="f['nama'].invalid && f['nama'].touched">
+          <div *ngIf="f['nama'].errors?.['maxlength']">Nama maksimal 255 karakter</div>
+        </div>
       </div>
 
+      <!-- No WhatsApp -->
       <div class="mb-3">
-        <label for="payment-method" class="form-label">Pilih Pembayaran</label>
-        <select id="payment-method" name="payment-method" class="form-select" aria-label="Pilih Pembayaran">
-          <option disabled selected>Pilih salah satu</option>
-        </select>
+        <label for="no-whatsapp" class="form-label">No WhatsApp</label>
+        <input
+          id="no-whatsapp"
+          formControlName="whatsapp"
+          type="text"
+          placeholder="08123456789"
+          class="form-control"
+          [class.is-invalid]="f['whatsapp'].invalid && f['whatsapp'].touched" />
+        <div class="invalid-feedback" *ngIf="f['whatsapp'].invalid && f['whatsapp'].touched">
+          <div *ngIf="f['whatsapp'].errors?.['maxlength']">Nomor WhatsApp maksimal 255 karakter</div>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label for="whatsapp-token" class="form-label">Token What’sApp Gateway</label>
-        <input id="whatsapp-token" name="whatsapp-token" type="text" value="720f91719af7632f1783305a6fbb1c0b65729755"
-          placeholder="720f91719af7632f1783305a6fbb1c0b65729755" class="form-control fst-italic text-secondary" />
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2 justify-content-end mt-4">
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="onDelete()"
+          [disabled]="isSubmitting || !contactData"
+          *ngIf="contactData">
+          <span *ngIf="!isSubmitting">Hapus</span>
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+        </button>
+        <button
+          type="submit"
+          class="btn btn-simpan"
+          [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Simpan</span>
+          <span *ngIf="isSubmitting">
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            Menyimpan...
+          </span>
+        </button>
       </div>
-
-      <div class="mb-5">
-        <label for="whatsapp-message" class="form-label">Pesan What’sApp</label>
-        <input id="whatsapp-message" name="whatsapp-message" type="text" value="Hello Admin Ganteng ,Saya Mau bertanya."
-          placeholder="Hello Admin Ganteng ,Saya Mau bertanya." class="form-control" />
-      </div>
-
-      <button type="submit" class="btn btn-simpan">Simpan</button>
     </form>
   </div>
 </div>

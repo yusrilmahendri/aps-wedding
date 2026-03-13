@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DashboardService, DashboardServiceType } from '../../dashboard.service';
 import { Notyf } from 'notyf';
 
+const FORM_DATA_KEY = 'formData';
+
 @Component({
   selector: 'wc-modal-upload-galeri',
   templateUrl: './modal-upload-galeri.component.html',
@@ -33,26 +35,39 @@ export class ModalUploadGaleriComponent implements OnInit {
     });
   }
 
+  private getUserId(): string | null {
+    const savedData = localStorage.getItem(FORM_DATA_KEY);
+    if (!savedData) return null;
+
+    try {
+      const parsed = JSON.parse(savedData);
+
+      return parsed?.response?.user?.id?.toString()
+        || parsed?.registrasi?.response?.user?.id?.toString()
+        || (parsed as any)['user_id']?.toString()
+        || null;
+    } catch {
+      return null;
+    }
+  }
+
   ngOnInit(): void {
-    const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
-    const galeriData = existingFormData.informasiMempelai.updatedData || this.formData;
+    const existingFormData = JSON.parse(localStorage.getItem(FORM_DATA_KEY) || '{}');
+    const galeriData = existingFormData.informasiMempelai?.updatedData || this.formData;
 
     this.uploadForm = this.fb.group({
-      photo: [galeriData.photo || ''],
+      photo: [galeriData?.photo || ''],
       status: [1],
-      user_id: ['',Validators.required]
+      user_id: ['', Validators.required]
     });
 
-    if (galeriData.photo) {
+    if (galeriData?.photo) {
       this.imagePreviews['photo'] = `data:image/png;base64,${galeriData.photo}`;
     }
-    const step1LocalStorage = localStorage.getItem('formData');
-    if (step1LocalStorage) {
-      const allDataFromSteps = JSON.parse(step1LocalStorage);
-      const userID = allDataFromSteps?.registrasi?.response?.user?.id;
-      this.uploadForm.patchValue({
-        user_id: userID
-      });
+
+    const userId = this.getUserId();
+    if (userId) {
+      this.uploadForm.patchValue({ user_id: userId });
     }
   }
 
@@ -69,15 +84,15 @@ export class ModalUploadGaleriComponent implements OnInit {
     if (!file) return;
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    const maxSize = 2 * 1024 * 1024; // 2MB
+    const maxSize = 2 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Format gambar tidak didukung. Gunakan PNG atau JPG.');
+      this.notyf.error('Format gambar tidak didukung. Gunakan PNG atau JPG.');
       return;
     }
 
     if (file.size > maxSize) {
-      alert('Ukuran file maksimal 2MB.');
+      this.notyf.error('Ukuran file maksimal 2MB.');
       return;
     }
 
@@ -96,7 +111,7 @@ export class ModalUploadGaleriComponent implements OnInit {
 
       Object.keys(this.uploadForm.value).forEach((key) => {
         const value = this.uploadForm.get(key)?.value;
-        if (key.includes('photo') && typeof value === 'string') {
+        if (key.includes('photo') && typeof value === 'string' && value) {
           const byteCharacters = atob(value);
           const byteNumbers = new Array(byteCharacters.length);
           for (let i = 0; i < byteCharacters.length; i++) {
@@ -115,6 +130,7 @@ export class ModalUploadGaleriComponent implements OnInit {
       this.dashboardSvc.create(DashboardServiceType.MNL_STEP_THREE, payload).subscribe({
         next: (res) => {
           this.notyf.success(res?.message || 'Data berhasil disimpan.');
+          // Note: Backend now saves photo to gallery table automatically
           setTimeout(() => this.nextStep(), 1000);
         },
         error: (err) => {
@@ -123,6 +139,7 @@ export class ModalUploadGaleriComponent implements OnInit {
       });
     } else {
       this.notyf.error('Harap isi foto terlebih dahulu');
+      this.uploadForm.markAllAsTouched();
     }
   }
 
@@ -134,7 +151,6 @@ export class ModalUploadGaleriComponent implements OnInit {
     }
   }
 
-
   nextStep(): void {
     const updatedData = {
       ...this.formData,
@@ -144,8 +160,12 @@ export class ModalUploadGaleriComponent implements OnInit {
     this.closeModal();
     this.next.emit(updatedData);
     this.formDataChange.emit(updatedData);
-    const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
-    existingFormData.informasiMempelai.updateData = { updatedData };
-    localStorage.setItem('formData', JSON.stringify(existingFormData));
+
+    const existingFormData = JSON.parse(localStorage.getItem(FORM_DATA_KEY) || '{}');
+    existingFormData.informasiMempelai = {
+      ...(existingFormData.informasiMempelai || {}),
+      ...this.uploadForm.value
+    };
+    localStorage.setItem(FORM_DATA_KEY, JSON.stringify(existingFormData));
   }
 }

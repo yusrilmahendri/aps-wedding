@@ -1,107 +1,108 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
-// Mobile-first responsive design with standardized 15px max padding
+// --------------------------------------------------------
+// wc-dashboard (admin)  |  Mobile-first responsive styles
+// --------------------------------------------------------
+
 :host {
-  // Design system variables
+  display: block;
+  overflow-x: hidden;
   --primary-green: #2e7d32;
   --primary-orange: #f57c00;
   --primary-pink: #d81b60;
   --accent-pink: #ec7db9;
-  --accent-pink-dark: #d668a1;
   --text-primary: #2c0f07;
   --text-secondary: #495057;
-  --text-muted: #6c757d;
   --bg-primary: #f8f8f8;
   --bg-white: #ffffff;
   --bg-light: #f8f9fa;
   --border-light: #e9ecef;
   --border-color: #dee2e6;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
-  --border-radius-sm: 8px;
-  --border-radius-md: 12px;
-  --border-radius-lg: 16px;
-  --transition-base: all 0.3s ease;
-
-  // Standardized spacing (15px maximum)
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 15px;
-  --spacing-lg: 15px;
-  --spacing-xl: 15px;
-  --spacing-2xl: 15px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
-// Base styles with mobile-first approach
+// ---- Colour utilities ----
+.text-green  { color: var(--primary-green); }
+.text-orange { color: var(--primary-orange); }
+.text-pink   { color: var(--primary-pink); }
+
+// =========================================================
+// BASE  (mobile < 576px)
+// =========================================================
+
 .dashboard-wrapper {
   background-color: var(--bg-primary);
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
-  padding: var(--spacing-md) 0;
+  min-width: 0;
+  overflow-x: hidden;
+  width: 100%;
 }
 
-// Dashboard Statistics Section
-.dashboard-stats {
-  margin-bottom: var(--spacing-lg);
+.dashboard-content {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+// ---- Stats grid ----
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .dashboard-card {
   background: var(--bg-white);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  transition: var(--transition-base);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
   border: 1px solid var(--border-light);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .card-content {
   display: flex;
   align-items: center;
-  width: 100%;
-  position: relative;
-  gap: var(--spacing-sm);
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .left-border {
   width: 4px;
-  height: 50px;
+  height: 40px;
   border-radius: 2px;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  flex-shrink: 0;
 
-  &.green { background-color: var(--primary-green); }
+  &.green  { background-color: var(--primary-green); }
   &.orange { background-color: var(--primary-orange); }
-  &.pink { background-color: var(--primary-pink); }
+  &.pink   { background-color: var(--primary-pink); }
 }
 
 .card-details {
   flex: 1;
-  margin-left: var(--spacing-sm);
+  min-width: 0;
 
   .title {
-    font-size: 0.875rem;
+    display: block;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-secondary);
-    display: block;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 0.25rem;
     line-height: 1.4;
   }
 
   .amount {
-    font-size: 1.25rem;
+    display: block;
+    font-size: 1.1rem;
     font-weight: 600;
     line-height: 1.2;
-    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -109,54 +110,201 @@
   flex-shrink: 0;
 
   .icon {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     opacity: 0.8;
   }
 }
 
-// Color utilities
-.text-green { color: var(--primary-green); }
-.text-orange { color: var(--primary-orange); }
-.text-pink { color: var(--primary-pink); }
-
-// Invoice Section
+// ---- Invoice section ----
 .invoice-section {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 1rem;
 }
 
 .invoice-container {
   background: var(--bg-white);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-light);
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .invoice-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
+  margin-bottom: 0.75rem;
 
   h2 {
     font-weight: 600;
     font-size: 1.25rem;
     color: var(--accent-pink);
     border-left: 4px solid var(--accent-pink);
-    padding-left: var(--spacing-xs);
+    padding-left: 0.5rem;
     margin: 0;
     line-height: 1.3;
   }
 }
 
-// Desktop Table Styles
+// ---- Toolbar (search + limit) ----
+.invoice-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.toolbar-search {
+  position: relative;
+  flex: 1;
+
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg-white);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: #adb5bd;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 0 3px rgba(236, 125, 185, 0.15);
+    }
+  }
+}
+
+.toolbar-limit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .limit-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .limit-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg-white);
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 0 3px rgba(236, 125, 185, 0.15);
+    }
+  }
+}
+
+// ---- Empty state ----
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+
+  &__icon {
+    font-size: 2.5rem;
+    color: var(--border-color);
+    margin-bottom: 0.75rem;
+  }
+
+  &__text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+// ---- Pagination ----
+.pagination-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.375rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &:hover:not(:disabled):not(.active) {
+    background-color: var(--bg-light);
+    border-color: var(--accent-pink);
+  }
+
+  &.active {
+    background-color: var(--accent-pink);
+    border-color: var(--accent-pink);
+    color: white;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Desktop table: hidden on mobile by default
+.table-wrap--desktop {
+  display: none;
+}
+
 .invoice-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   overflow: hidden;
 
   thead {
@@ -165,226 +313,189 @@
     th {
       font-weight: 600;
       font-size: 0.875rem;
-      padding: var(--spacing-sm);
+      padding: 0.75rem;
       text-align: left;
       color: var(--text-primary);
       border-bottom: 1px solid var(--border-color);
       white-space: nowrap;
-
-      &:first-child { border-top-left-radius: var(--border-radius-md); }
-      &:last-child { border-top-right-radius: var(--border-radius-md); }
     }
   }
 
-  tbody {
-    tr {
-      transition: var(--transition-base);
+  tbody tr {
+    transition: background-color 0.2s ease;
 
-      &:hover {
-        background-color: rgba(236, 125, 185, 0.05);
-      }
+    &:hover {
+      background-color: rgba(236, 125, 185, 0.05);
+    }
 
-      td {
-        padding: var(--spacing-sm);
-        vertical-align: middle;
-        font-weight: 400;
-        font-size: 0.875rem;
-        border-bottom: 1px solid var(--border-light);
+    td {
+      padding: 0.75rem;
+      vertical-align: middle;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border-light);
 
-        a {
-          color: #2a52be;
-          text-decoration: none;
-          transition: var(--transition-base);
+      a {
+        color: #2a52be;
+        text-decoration: none;
 
-          &:hover {
-            text-decoration: underline;
-            color: #1e3a8a;
-          }
+        &:hover {
+          text-decoration: underline;
+          color: #1e3a8a;
         }
       }
     }
   }
 }
 
-// Status badges - Clean template approach
+.cell-truncate {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ---- Status badge ----
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 0.375rem;
   border-radius: 20px;
-  padding: 0.375rem 0.875rem;
+  padding: 0.375rem 0.75rem;
   font-weight: 500;
   font-size: 0.75rem;
   color: white;
-  min-width: 90px;
-  justify-content: center;
   white-space: nowrap;
-  font-family: "Poppins", sans-serif;
 
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    display: inline-block;
     flex-shrink: 0;
-    margin-right: 6px;
   }
 
-  &.expired {
-    background-color: #6c757d;
-    .dot { background-color: #adb5bd; }
-  }
-
-  &.aktif {
-    background-color: #28a745;
-    .dot { background-color: #a8e6a3; }
-  }
-
-  &.waiting {
-    background-color: #fd7e14;
-    .dot { background-color: #ffc380; }
-  }
-
-  &.unpaid {
-    background-color: #17a2b8;
-    .dot { background-color: #7dd3fc; }
-  }
-
-  &.pending {
-    background-color: #6c757d;
-    .dot { background-color: #adb5bd; }
-  }
+  &.expired  { background-color: #6c757d; .dot { background-color: #adb5bd; } }
+  &.aktif    { background-color: #28a745; .dot { background-color: #a8e6a3; } }
+  &.waiting  { background-color: #fd7e14; .dot { background-color: #ffc380; } }
+  &.unpaid   { background-color: #17a2b8; .dot { background-color: #7dd3fc; } }
+  &.pending  { background-color: #6c757d; .dot { background-color: #adb5bd; } }
 }
 
-// Confirmation Button
+// ---- Konfirmasi button ----
 .btn-konfirmasi {
   font-weight: 600;
   font-size: 0.875rem;
-  border-radius: var(--border-radius-sm);
-  padding: 8px 5px;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
   min-width: 100px;
   cursor: pointer;
   border: 2px solid #c4c4d1;
   background-color: transparent;
   color: #c4c4d1;
-  transition: var(--transition-base);
+  transition: background-color 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
 
   &.active {
     border-color: #58cae7;
     color: #58cae7;
-    background-color: transparent;
 
     &:hover {
       background-color: rgba(88, 202, 231, 0.1);
-      transform: translateY(-1px);
-    }
-  }
-
-  &:not(.active) {
-    &:hover {
-      background-color: var(--bg-light);
     }
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-
-    &:hover {
-      transform: none;
-    }
   }
 
-  &.mobile {
+  &--mobile {
     width: 100%;
-    padding: 12px 15px;
+    padding: 0.75rem 1rem;
     font-size: 0.9rem;
-    min-height: 44px; // Touch-friendly
+    min-height: 44px;
   }
 }
 
-// Mobile Cards Layout
+// ---- Mobile cards ----
 .mobile-cards {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 0.75rem;
 }
 
 .invoice-card {
   background: var(--bg-white);
   border: 1px solid var(--border-light);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-base);
-  margin-top: 10px;
-
-  &:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
-  }
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .invoice-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-sm);
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 
   .invoice-number {
     font-weight: 600;
     font-size: 1rem;
     color: var(--text-primary);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
 .invoice-card-body {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0.75rem;
 }
 
 .invoice-detail {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+  &:last-child { margin-bottom: 0; }
 
   .label {
     font-weight: 500;
     color: var(--text-secondary);
     font-size: 0.875rem;
+    flex-shrink: 0;
   }
 
   .value {
-    font-weight: 400;
-    color: var(--text-primary);
+    flex: 1;
     font-size: 0.875rem;
+    color: var(--text-primary);
     text-align: right;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     a {
       color: #2a52be;
       text-decoration: none;
+      display: inline;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
-      &:hover {
-        text-decoration: underline;
-      }
+      &:hover { text-decoration: underline; }
     }
   }
 }
 
-// Loading Overlay Styles
+// ---- Loading overlay ----
 .loading-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(2px);
   z-index: 9999;
@@ -395,10 +506,10 @@
 
 .loading-container {
   text-align: center;
-  padding: var(--spacing-xl);
+  padding: 1rem;
   background: var(--bg-white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   border: 1px solid var(--border-light);
   min-width: 200px;
 }
@@ -410,7 +521,7 @@
   border-top: 4px solid var(--accent-pink);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto var(--spacing-sm);
+  margin: 0 auto 0.75rem;
 }
 
 .loading-text {
@@ -418,7 +529,6 @@
   font-size: 0.875rem;
   font-weight: 500;
   margin: 0;
-  line-height: 1.4;
 }
 
 .content-loading {
@@ -427,49 +537,20 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
+  0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-// Responsive Breakpoints with Mobile-First Approach (15px max padding)
-
-// Small Mobile (320px and up)
-@media (min-width: 320px) {
-  .dashboard-card {
-    padding: 10px;
-  }
-
-  .left-border {
-    height: 40px;
-  }
-
-  .card-details {
-    .title {
-      font-size: 0.8rem;
-    }
-
-    .amount {
-      font-size: 1.1rem;
-    }
-  }
-
-  .card-icon .icon {
-    font-size: 1.25rem;
-  }
-
-  .invoice-container {
-    padding: 12px;
-  }
-}
-
-// Mobile (480px and up)
-@media (min-width: 480px) {
-  .dashboard-wrapper {
-    padding: var(--spacing-md) 0;
+// =========================================================
+// BREAKPOINT >= 576px  (larger phones)
+// =========================================================
+@media screen and (min-width: 576px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .dashboard-card {
-    padding: var(--spacing-md);
+    padding: 1rem;
   }
 
   .left-border {
@@ -477,219 +558,148 @@
   }
 
   .card-details {
-    .title {
-      font-size: 0.875rem;
-    }
-
-    .amount {
-      font-size: 1.25rem;
-    }
+    .title  { font-size: 0.875rem; }
+    .amount { font-size: 1.25rem; }
   }
 
   .card-icon .icon {
     font-size: 1.5rem;
   }
 
-  .invoice-header h2 {
-    font-size: 1.375rem;
-  }
-
-  .mobile-cards {
-    gap: var(--spacing-md);
-  }
-
-  .invoice-card {
-    padding: var(--spacing-lg);
-  }
-
   .invoice-container {
-    padding: var(--spacing-lg);
+    padding: 1rem;
+  }
+
+  .invoice-toolbar {
+    flex-direction: row;
+    align-items: center;
   }
 }
 
-// Tablet (768px and up) - Maintain 15px max padding
-@media (min-width: 768px) {
-  .dashboard-wrapper {
-    padding: var(--spacing-lg) 0;
+// =========================================================
+// BREAKPOINT >= 768px  (tablets  --  switch to desktop table)
+// =========================================================
+@media screen and (min-width: 768px) {
+  .table-wrap--desktop {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .dashboard-stats {
-    margin-bottom: var(--spacing-xl);
+  .mobile-cards {
+    display: none;
   }
 
   .dashboard-card {
-    padding: var(--spacing-lg);
-
     &:hover {
       transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
   }
 
-  .left-border {
-    height: 60px;
-  }
+  .left-border { height: 60px; }
 
   .card-details {
-    .title {
-      font-size: 1rem;
-    }
-
-    .amount {
-      font-size: 1.5rem;
-    }
+    .title  { font-size: 1rem; }
+    .amount { font-size: 1.5rem; }
   }
 
-  .card-icon .icon {
-    font-size: 1.75rem;
-  }
+  .card-icon .icon { font-size: 1.75rem; }
 
-  .invoice-container {
-    padding: var(--spacing-xl);
-  }
-
-  .invoice-header {
-    margin-bottom: var(--spacing-lg);
-
-    h2 {
-      font-size: 1.5rem;
-    }
-  }
+  .invoice-header h2 { font-size: 1.5rem; }
 
   .invoice-table {
-    thead th {
-      font-size: 1rem;
-      padding: var(--spacing-md);
-    }
-
-    tbody td {
-      font-size: 0.9rem;
-      padding: var(--spacing-md);
-    }
+    thead th { font-size: 1rem; padding: 1rem; }
+    tbody td { font-size: 0.9rem; padding: 1rem; }
   }
 
   .status-badge {
     font-size: 0.8rem;
-    padding: 8px 15px;
-    min-width: 90px;
+    padding: 0.5rem 0.875rem;
   }
 
   .btn-konfirmasi {
     font-size: 0.9rem;
-    padding: 4px 12px;
+    padding: 0.375rem 0.875rem;
     min-width: 110px;
+  }
+
+  .pagination-bar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .pagination-info {
+    font-size: 0.875rem;
+  }
+
+  .page-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
   }
 }
 
-// Desktop (1024px and up) - Maintain 15px max padding
-@media (min-width: 1024px) {
-  .dashboard-card {
-    padding: var(--spacing-lg);
-
-    &:hover {
-      transform: translateY(-6px);
-    }
+// =========================================================
+// BREAKPOINT >= 1024px  (desktop)
+// =========================================================
+@media screen and (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .card-details {
-    .title {
-      font-size: 1.125rem;
-    }
-
-    .amount {
-      font-size: 1.75rem;
-    }
+    .title  { font-size: 1.125rem; }
+    .amount { font-size: 1.75rem; }
   }
 
-  .card-icon .icon {
-    font-size: 2rem;
-  }
+  .card-icon .icon { font-size: 2rem; }
 
-  .invoice-header h2 {
-    font-size: 1.75rem;
-  }
+  .invoice-header h2 { font-size: 1.75rem; }
 
   .invoice-table {
-    thead th {
-      font-size: 1.125rem;
-      padding: var(--spacing-lg);
-    }
-
-    tbody td {
-      font-size: 1rem;
-      padding: var(--spacing-lg);
-    }
+    thead th { font-size: 1.125rem; }
+    tbody td { font-size: 1rem; }
   }
 
-  .status-badge {
-    font-size: 0.875rem;
-    min-width: 90px;
+  .cell-truncate {
+    max-width: 280px;
   }
+
+  .status-badge { font-size: 0.875rem; }
 
   .btn-konfirmasi {
     font-size: 1rem;
-    padding: 4px 12px;
     min-width: 120px;
   }
 }
 
-// Large Desktop (1200px and up) - Maintain 15px max padding
-@media (min-width: 1200px) {
-  .dashboard-wrapper {
-    padding: var(--spacing-xl) 0;
-  }
-
+// =========================================================
+// BREAKPOINT >= 1200px  (large desktop)
+// =========================================================
+@media screen and (min-width: 1200px) {
   .invoice-container {
-    padding: var(--spacing-xl);
     border-radius: 20px;
   }
 
-  .invoice-header {
-    h2 {
-      font-size: 2rem;
-    }
-  }
+  .invoice-header h2 { font-size: 2rem; }
 
-  .dashboard-card {
-    &:hover {
-      transform: translateY(-8px);
-    }
+  .cell-truncate {
+    max-width: none;
   }
 }
 
-// Extra Large Desktop (1400px and up)
-@media (min-width: 1400px) {
-  .container-fluid {
-    max-width: 1320px;
-    margin: 0 auto;
-  }
-}
-
-// High-DPI Display Support
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .dashboard-card {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  }
-
-  .invoice-container {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  }
-}
-
-// Dark Mode Support (if needed in future)
-@media (prefers-color-scheme: dark) {
-  // Dark mode styles can be added here if needed
-}
-
-// Reduced Motion Support
+// ---- Accessibility: reduced motion ----
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-// Print Styles
+// ---- Print ----
 @media print {
   .dashboard-wrapper {
     background: white;

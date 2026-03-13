@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SeoService } from '../services/seo.service';
+import { Subject } from 'rxjs';
+
+export interface InvitationFormData {
+  registrasi: Record<string, any>;
+  informasiMempelai: Record<string, any>;
+  cerita: Record<string, any>;
+  pembayaran: Record<string, any>;
+  step: number;
+}
 
 @Component({
   selector: 'wc-generate-undangan',
   templateUrl: './generate-undangan.component.html',
   styleUrls: ['./generate-undangan.component.scss'],
 })
-export class GenerateUndanganComponent implements OnInit {
+export class GenerateUndanganComponent implements OnInit, OnDestroy {
 
   titles: string[] = ['Isi Data Akun', 'Informasi Mempelai', 'Konfirmasi Data', 'Pembayaran'];
 
-  formData: any = {
+  formData: InvitationFormData = {
     registrasi: {},
     informasiMempelai: {},
     cerita: {},
@@ -17,12 +27,81 @@ export class GenerateUndanganComponent implements OnInit {
     step: 1,
   };
 
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private seoService: SeoService
+  ) {}
+
   ngOnInit(): void {
-    const saved = localStorage.getItem('formData');
-    if (saved) {
-      this.formData = JSON.parse(saved);
-    }
+    this.setSeoTags();
+    this.restoreState();
     console.log('all formdata:', this.formData);
+  }
+
+  /**
+   * Restore step and form data from localStorage
+   * This ensures users stay on the same step after page refresh
+   */
+  private restoreState(): void {
+    const savedData = localStorage.getItem('formData');
+    if (!savedData) {
+      console.log('[restoreState] No formData in localStorage');
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(savedData);
+      console.log('[restoreState] Restoring state from localStorage:', parsed);
+
+      // Restore step (default to 1 if not found or invalid)
+      const savedStep = parsed?.step;
+      if (savedStep && savedStep >= 1 && savedStep <= 4) {
+        this.formData.step = savedStep;
+        console.log('[restoreState] Restored step:', savedStep);
+      }
+
+      // Restore form data for each step
+      if (parsed.registrasi) {
+        this.formData.registrasi = parsed.registrasi;
+        console.log('[restoreState] Restored registrasi data, has response:', !!parsed.registrasi?.response);
+        if (parsed.registrasi?.response) {
+          console.log('[restoreState] response.user_id:', parsed.registrasi.response.user_id);
+          console.log('[restoreState] response.user?.id:', parsed.registrasi.response.user?.id);
+        }
+      }
+      if (parsed.informasiMempelai) {
+        this.formData.informasiMempelai = parsed.informasiMempelai;
+      }
+      if (parsed.cerita) {
+        this.formData.cerita = parsed.cerita;
+      }
+      if (parsed.pembayaran) {
+        this.formData.pembayaran = parsed.pembayaran;
+      }
+    } catch (error) {
+      console.error('[restoreState] Error restoring state from localStorage:', error);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setSeoTags(): void {
+    // Set SEO meta tags for generate invitation page
+    this.seoService.setMetaTags({
+      title: 'Buat Undangan Digital Pernikahan Gratis - Sena Digital',
+      description: 'Buat undangan digital pernikahan Anda sendiri dengan mudah dan gratis. Pilih template, customize desain, dan bagikan ke tamu undangan Anda.',
+      keywords: 'buat undangan digital, create wedding invitation, undangan gratis, buat undangan pernikahan, undangan online gratis',
+      url: 'https://sena-digital.com/buat-undangan',
+      image: 'https://sena-digital.com/assets/images/sena-digital-og-image.jpg',
+      type: 'website'
+    });
+
+    // Add Service structured data
+    this.seoService.addStructuredData(this.seoService.getServiceSchema());
   }
 
   get title(): string {
@@ -33,12 +112,7 @@ export class GenerateUndanganComponent implements OnInit {
     return (this.formData.step / this.titles.length) * 100;
   }
 
-
   nextStep(data: any): void {
-    this.formData = {
-      ...this.formData,
-      registrasi: data?.formData || this.formData?.registrasi,
-    };
     const step = this.formData.step;
 
     if (step === 1) {
@@ -49,19 +123,16 @@ export class GenerateUndanganComponent implements OnInit {
       this.formData.cerita = data;
     }
 
-    // Naikkan step
+    // Increment step
     this.formData.step = step + 1;
+
+    // Save to localStorage for persistence
     localStorage.setItem('formData', JSON.stringify(this.formData));
   }
-
 
   prevStep(): void {
     if (this.formData.step > 1) {
       this.formData.step--;
-      localStorage.setItem('formData', JSON.stringify(this.formData));
-
     }
   }
-
-
 }

@@ -114,14 +114,14 @@
       <div class="rp-form-group">
         <label class="rp-label">Jumlah Pembayaran</label>
         <div class="rp-readonly-field">
-          <span>Rp. {{ manualBill | number }}</span>
+          <span style="font-weight: 600; color: #1a1a1a; font-size: 18px;">Rp. {{ manualBill | number }}</span>
         </div>
       </div>
 
-      <div class="rp-form-group">
+      <div class="rp-form-group" style="visibility: hidden;">
         <label class="rp-label">Mode</label>
         <div class="rp-readonly-field">
-          <span>{{ midtransData.metode_production === 'production' ? 'Production' : 'Sandbox (Testing)' }}</span>
+          <span style="font-weight: 600;">{{ midtransData.metode_production === 'production' ? '🟢 Production' : '🟡 Sandbox (Testing)' }}</span>
         </div>
       </div>
 
@@ -130,25 +130,27 @@
         <span>Menunggu konfirmasi pembayaran... Kami memverifikasi secara otomatis.</span>
       </div>
       <div *ngIf="midtransPaymentStatus === 'paid'" class="rp-status-info rp-status-paid" role="status" aria-live="polite" data-testid="status-paid">
-        <span>Pembayaran berhasil! Undangan Anda sedang diproses.</span>
+        <span>✓ Pembayaran berhasil! Klik tombol "Lanjut" untuk melanjutkan ke dashboard.</span>
       </div>
       <div *ngIf="midtransPaymentStatus === 'failed'" class="rp-status-info rp-status-failed" role="alert" aria-live="assertive" data-testid="status-failed">
-        <span>Pembayaran gagal. Silakan coba lagi.</span>
+        <span>Pembayaran gagal atau dibatalkan. Silakan coba lagi.</span>
       </div>
 
       <div class="rp-midtrans-action">
         <button
           type="button"
-          class="rp-btn rp-btn-midtrans"
-          (click)="onPayWithMidtrans()"
-          [disabled]="isPayingMidtrans || midtransPaymentStatus === 'paid'"
-          aria-label="Bayar dengan Midtrans"
+          class="rp-btn"
+          [ngClass]="midtransPaymentStatus === 'paid' ? 'rp-btn-primary' : 'rp-btn-midtrans'"
+          (click)="midtransPaymentStatus === 'paid' ? onNextClicked() : onPayWithMidtrans()"
+          [disabled]="isPayingMidtrans && midtransPaymentStatus !== 'paid'"
+          [attr.aria-label]="midtransPaymentStatus === 'paid' ? 'Lanjut ke langkah berikutnya' : 'Bayar dengan Midtrans'"
           data-testid="btn-pay-midtrans"
         >
-          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid'">Bayar Sekarang</span>
-          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'pending'">Memverifikasi...</span>
-          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'idle'">Memuat Pembayaran...</span>
-          <span *ngIf="midtransPaymentStatus === 'paid'">Pembayaran Lunas</span>
+          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid' && !hasSnapToken">💳 Bayar Sekarang</span>
+          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid' && hasSnapToken">🔄 Lanjutkan Pembayaran</span>
+          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'pending'">⏳ Memverifikasi Pembayaran...</span>
+          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'idle'">🔄 Memuat Halaman Pembayaran...</span>
+          <span *ngIf="midtransPaymentStatus === 'paid'">➜ Lanjut ke Dashboard</span>
         </button>
       </div>
     </div>
@@ -170,7 +172,7 @@
     <button type="button" class="rp-btn rp-btn-secondary" (click)="onBack()">
       Kembali
     </button>
-    <button type="button" class="rp-btn rp-btn-primary" (click)="onNextClicked()" [disabled]="!selectedMethod">
+    <button type="button" class="rp-btn rp-btn-primary" (click)="onNextClicked()" [disabled]="!selectedMethod" *ngIf="selectedMethod === 1 || selectedMethod === 4">
       Lanjut
     </button>
   </div>

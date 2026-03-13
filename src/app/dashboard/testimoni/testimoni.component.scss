@@ -1,27 +1,306 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
-body {
-  font-family: "Poppins", sans-serif;
-  background-color: #f7f7f7;
+// =============================================
+// Enhanced Color Palette
+// =============================================
+$accent: #ec4899;
+$accent-light: rgba(236, 72, 153, 0.1);
+$accent-dark: #db2777;
+$success: #10b981;
+$success-light: rgba(16, 185, 129, 0.1);
+$success-dark: #059669;
+$danger: #ef4444;
+$danger-light: rgba(239, 68, 68, 0.1);
+$danger-dark: #dc2626;
+
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-disabled: #94a3b8;
+$border: #e5e7eb;
+$border-light: #f3f4f6;
+$bg-card: #ffffff;
+$bg-page: #fafafa;
+$bg-form: #fdf2f8;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+$transition: 0.2s ease;
+
+// =============================================
+// Container
+// =============================================
+.testimoni-container {
+  min-height: 100vh;
+  background: $bg-page;
+  padding: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.border-pink {
-  border-left: 4px solid #f472b6 !important;
+
+// =============================================
+// Form Section
+// =============================================
+.form-section {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+
+  @media (min-width: 576px) {
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 600px;
+    padding: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 700px;
+  }
 }
-.btn-sky {
-  background-color: #38bdf8;
-  color: white;
+
+.review-form {
+  background: $bg-form;
+  border: 1px solid rgba(236, 72, 153, 0.15);
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  box-shadow: $shadow-md;
+
+  @media (min-width: 576px) {
+    padding: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 3rem;
+  }
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) {
+    margin-bottom: 1.25rem;
+  }
+}
+
+.title-bar {
+  width: 4px;
+  height: 32px;
+  background: $accent;
+  border-radius: 2px;
+
+  @media (min-width: 768px) {
+    height: 36px;
+  }
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $accent;
+  margin: 0;
+  font-family: 'Raleway', sans-serif;
+
+  @media (min-width: 576px) {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.form-subtitle {
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.4),
-    0 4px 6px -4px rgba(56, 189, 248, 0.3);
-  transition: background-color 0.3s ease;
+  color: $text-primary;
+  margin: 0 0 1.5rem;
+
+  @media (min-width: 576px) {
+    font-size: 1.063rem;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
 }
-.btn-sky:hover,
-.btn-sky:focus {
-  background-color: #0ea5e9;
-  color: white;
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  @media (min-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
 }
-.form-control:focus {
-  border-color: #f472b6;
-  box-shadow: 0 0 0 0.25rem rgba(244, 114, 182, 0.25);
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    font-size: 0.938rem;
+  }
+}
+
+.required {
+  color: $danger;
+  font-weight: 700;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid $border;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  color: $text-primary;
+  background: $bg-card;
+  transition: border-color $transition, box-shadow $transition;
+  font-family: 'Roboto', sans-serif;
+
+  &:focus {
+    outline: none;
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
+  }
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+
+  &.input-error {
+    border-color: $danger;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+    }
+  }
+
+  @media (min-width: 576px) {
+    padding: 13px 17px;
+    font-size: 0.938rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+
+  @media (min-width: 768px) {
+    min-height: 150px;
+  }
+}
+
+.error-message {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.813rem;
+  color: $danger;
+  font-weight: 500;
+
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+  }
+}
+
+.char-counter {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: $text-secondary;
+  text-align: right;
+
+  @media (min-width: 768px) {
+    font-size: 0.813rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+
+  @media (min-width: 768px) {
+    margin-top: 2.5rem;
+  }
+}
+
+.btn-submit {
+  padding: 14px 36px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $success;
+  color: #fff;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  min-height: 48px;
+
+  &:hover:not(:disabled) {
+    background: $success-dark;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media (min-width: 576px) {
+    padding: 15px 40px;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 16px 48px;
+    font-size: 1.063rem;
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

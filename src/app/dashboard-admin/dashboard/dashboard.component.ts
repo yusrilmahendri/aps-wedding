@@ -21,6 +21,16 @@ export class DashboardComponent implements OnInit {
   total_users: any;
   pending_req: any;
 
+  // Search & pagination
+  allRows: Array<any> = [];
+  filteredRows: Array<any> = [];
+  displayedRows: Array<any> = [];
+  searchTerm = '';
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
+  pageSizeOptions = [5, 10, 25, 50];
+
   // Modal and form properties
   modalRef?: BsModalRef;
   confirmPaymentForm: FormGroup;
@@ -91,6 +101,9 @@ export class DashboardComponent implements OnInit {
         originalData: user
       }));
 
+      this.allRows = [...this.rows];
+      this.applyFilter();
+
       this.isLoading = false;
     });
   }
@@ -128,6 +141,64 @@ export class DashboardComponent implements OnInit {
           ariaLabel: 'Status Belum selesai'
         };
     }
+  }
+
+  onSearchChange(term: string) {
+    this.searchTerm = term;
+    this.currentPage = 1;
+    this.applyFilter();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.applyFilter();
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updateDisplayedRows();
+  }
+
+  applyFilter() {
+    const term = this.searchTerm.toLowerCase().trim();
+    this.filteredRows = term
+      ? this.allRows.filter(row =>
+          row.invoice.toLowerCase().includes(term) ||
+          row.pengguna.toLowerCase().includes(term) ||
+          row.domain.toLowerCase().includes(term) ||
+          row.statusData.text.toLowerCase().includes(term)
+        )
+      : [...this.allRows];
+
+    this.totalPages = Math.max(1, Math.ceil(this.filteredRows.length / this.pageSize));
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    this.updateDisplayedRows();
+  }
+
+  updateDisplayedRows() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.displayedRows = this.filteredRows.slice(start, start + this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+    let endPage = startPage + maxVisible - 1;
+
+    if (endPage > this.totalPages) {
+      endPage = this.totalPages;
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   onConfirmClicked(row: any, template: TemplateRef<any>) {

@@ -1,1 +1,62 @@
-<p>hubungi-kami works!</p>
+<div class="container">
+  <div class="row g-4">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Memuat informasi kontak...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !contactData" class="col-12">
+      <div class="form-container text-center py-5">
+        <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+        <h3 class="text-muted">Informasi Kontak Belum Tersedia</h3>
+        <p class="text-muted">Administrator belum mengatur informasi kontak.</p>
+      </div>
+    </div>
+
+    <!-- Contact Information Display -->
+    <div *ngIf="!isLoading && contactData" class="col-12 form-container">
+      <h2>Hubungi Kami</h2>
+      <p class="text-muted mb-4">Informasi kontak untuk menghubungi administrator</p>
+
+      <!-- Email -->
+      <div class="mb-4" *ngIf="contactData.email">
+        <label class="form-label">Email</label>
+        <div class="contact-info clickable" (click)="openEmail(contactData.email)" title="Klik untuk mengirim email">
+          <i class="fas fa-envelope me-2 text-primary"></i>
+          <span class="contact-link">{{ contactData.email }}</span>
+        </div>
+      </div>
+
+      <!-- Nama -->
+      <div class="mb-4" *ngIf="contactData.nama">
+        <label class="form-label">Nama</label>
+        <div class="contact-info">
+          <i class="fas fa-user me-2 text-primary"></i>
+          <span>{{ contactData.nama }}</span>
+        </div>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="mb-4" *ngIf="contactData.whatsapp">
+        <label class="form-label">No WhatsApp</label>
+        <div class="contact-info clickable" (click)="openWhatsApp(contactData.whatsapp)" title="Klik untuk membuka WhatsApp">
+          <i class="fab fa-whatsapp me-2 text-success"></i>
+          <span class="contact-link">{{ contactData.whatsapp }}</span>
+        </div>
+      </div>
+
+      <!-- WhatsApp Message (if available) -->
+      <div class="mb-4" *ngIf="contactData.whatsapp_message">
+        <label class="form-label">Pesan WhatsApp</label>
+        <div class="contact-info message-box">
+          <i class="fas fa-comment-dots me-2 text-info"></i>
+          <span>{{ contactData.whatsapp_message }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

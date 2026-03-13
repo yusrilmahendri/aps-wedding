@@ -40,18 +40,22 @@
       <label for="domain" class="dr-label">Nama Domain / URL Undangan</label>
       <div class="dr-domain-wrapper">
         <div class="dr-domain-prefix">
-          <span class="dr-prefix-text">horuzt.com/</span>
+          <span class="dr-prefix-text">sena-digital-invitation.com/</span>
         </div>
         <input
           type="text"
           class="dr-domain-input"
           id="domain"
           formControlName="domain"
-          placeholder="akudandia">
+          placeholder="akudandia"
+          (input)="onDomainInput()">
       </div>
       <div class="dr-error-message"
         *ngIf="formRegis.get('domain')?.invalid && formRegis.get('domain')?.touched">
         Nama domain minimal 3 karakter.
+      </div>
+      <div class="dr-error-message" *ngIf="domainError">
+        {{ domainError }}
       </div>
     </div>
 
@@ -62,10 +66,14 @@
         class="dr-input"
         id="email"
         formControlName="email"
-        placeholder="Email">
+        placeholder="Email"
+        (input)="onEmailInput()">
       <div class="dr-error-message"
         *ngIf="formRegis.get('email')?.invalid && formRegis.get('email')?.touched">
         Masukkan email yang valid.
+      </div>
+      <div class="dr-error-message" *ngIf="emailError">
+        {{ emailError }}
       </div>
     </div>
 

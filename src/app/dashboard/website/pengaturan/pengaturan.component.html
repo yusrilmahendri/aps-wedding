@@ -1,72 +1,65 @@
-<div class="container-fluid px-2 px-md-4 py-2">
-  <div class="row g-4 flex-wrap">
+<div class="pengaturan-container">
+  <div class="settings-grid">
     <!-- Domain dan Token -->
-    <div class="col-12 col-md-6 position-relative mb-4 mb-md-0 d-flex flex-column">
-      <div class="card d-flex flex-column justify-content-between">
+    <div class="settings-grid__item">
+      <div class="card">
         <div class="section-bar"></div>
         <h2>Domain dan Token</h2>
-        <form [formGroup]="domainTokenForm" (ngSubmit)="saveDomainToken()" class="w-100">
+        <form [formGroup]="domainTokenForm" (ngSubmit)="saveDomainToken()">
           <label for="domain" class="form-label visually-hidden">Domain</label>
-          <div class="input-group mb-3">
-            <span class="input-group-text pink-bg">undangan.horuzt.com/</span>
-            <input type="text" id="domain" class="form-control" placeholder="Domain here..." aria-label="Domain here"
+          <div class="domain-input-group">
+            <span class="domain-prefix">undangan.sena-digital-invitation.com/</span>
+            <input type="text" id="domain" class="form-control" placeholder="Domain here..." aria-label="Domain"
               formControlName="domain" [disabled]="isLoadingDomain" />
           </div>
 
           <label for="token" class="form-label fw-semibold">Token</label>
           <input type="text" id="token" class="form-control mb-1" placeholder="Masukkan Token WhatsApp gateway Anda"
             aria-describedby="tokenHelp" formControlName="token" [disabled]="isLoadingDomain" />
-          <div id="tokenHelp" class="form-text fst-italic text-muted mb-4">
+          <div id="tokenHelp" class="form-text fst-italic text-muted mb-3">
             Kosongkan jika tidak memiliki token WhatsApp gateway atau
             <a href="#">klik disini.</a>
           </div>
 
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-sky" [disabled]="isLoadingDomain || !domainTokenForm.valid">
-              <span *ngIf="isLoadingDomain" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              {{ isLoadingDomain ? 'Menyimpan...' : 'Simpan' }}
-            </button>
-          </div>
+          <button type="submit" class="btn btn-sky" [disabled]="isLoadingDomain || !domainTokenForm.valid">
+            <span *ngIf="isLoadingDomain" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isLoadingDomain ? 'Menyimpan...' : 'Simpan' }}
+          </button>
         </form>
       </div>
     </div>
 
     <!-- Musik -->
-    <div class="col-12 col-md-6 position-relative mb-4 mb-md-0 d-flex flex-column">
-      <div class="card h-100 d-flex flex-column justify-content-between">
+    <div class="settings-grid__item">
+      <div class="card">
         <div class="section-bar"></div>
-        <h2 class="px-3">Musik</h2>
+        <h2>Musik</h2>
 
         <!-- Current Music Display -->
-        <div *ngIf="currentMusicUrl" class="mb-3 px-3 py-2">
+        <div *ngIf="currentMusicUrl" class="music-current">
           <h6 class="fw-semibold mb-2">Musik Saat Ini</h6>
-          <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between mb-3 gap-2">
-            <div class="text-break">
+          <div class="music-current__row">
+            <div class="music-current__info">
               <span class="fw-medium">{{ currentMusicName || 'musik.mp3' }}</span>
-              <br>
-              <small class="text-muted">{{ currentMusicUrl | slice:0:50 }}{{ currentMusicUrl.length > 50 ? '...' : ''
-                }}</small>
+              <small class="text-muted">{{ currentMusicUrl | slice:0:50 }}{{ currentMusicUrl.length > 50 ? '...' : '' }}</small>
             </div>
-            <div class="d-flex gap-2">
-              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCurrentMusic()"
-                title="Hapus musik">
-                <i class="fa fa-trash"></i>
-              </button>
-            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCurrentMusic()" title="Hapus musik">
+              <i class="fa fa-trash"></i>
+            </button>
           </div>
         </div>
 
         <!-- Upload Form -->
-        <form (ngSubmit)="submitMusic()" class="w-100 px-0 px-md-4">
-          <label for="music-upload" class="form-label fw-semibold mb-3">
+        <form (ngSubmit)="submitMusic()">
+          <label for="music-upload" class="form-label fw-semibold mb-2">
             {{ currentMusicUrl ? 'Ganti Musik (Max. 5 MB)' : 'Tambahkan Musik (Max. 5 MB)' }}
           </label>
 
-          <div class="d-flex align-items-center flex-wrap gap-2 gap-md-3 mb-4">
+          <div class="file-upload">
             <input type="file" id="music-upload" aria-describedby="musicHelp" class="form-control"
               [disabled]="isLoadingMusic" accept="audio/mp3,audio/wav,audio/ogg,audio/mpeg"
               (change)="uploadMusic($event)" />
-            <span class="fs-6">{{ selectedFileName || 'No file chosen' }}</span>
+            <span class="file-upload__name">{{ selectedFileName || 'No file chosen' }}</span>
           </div>
 
           <div id="musicHelp" class="form-text mb-3">
@@ -85,129 +78,121 @@
             </div>
           </div>
 
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-sky mb-3" [disabled]="isLoadingMusic || !formData">
-              <span *ngIf="isLoadingMusic" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              {{ isLoadingMusic ? 'Mengunggah...' : 'Sisipkan' }}
-            </button>
-          </div>
+          <button type="submit" class="btn btn-sky" [disabled]="isLoadingMusic || !formData">
+            <span *ngIf="isLoadingMusic" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isLoadingMusic ? 'Mengunggah...' : 'Sisipkan' }}
+          </button>
         </form>
       </div>
     </div>
 
     <!-- Salam Pembuka -->
-    <div class="col-12 col-md-6 position-relative mb-4 mb-md-0 d-flex flex-column">
-      <div class="card h-100 d-flex flex-column justify-content-between">
+    <div class="settings-grid__item">
+      <div class="card">
         <div class="section-bar"></div>
         <h2>Salam Pembuka</h2>
-        <form [formGroup]="salamForm" (ngSubmit)="saveSalam()" class="w-100">
+        <form [formGroup]="salamForm" (ngSubmit)="saveSalam()">
           <label for="salam-pembuka" class="form-label fw-semibold">Salam Pembuka Undangan</label>
-          <textarea id="salam-pembuka" rows="4" class="form-control mb-4" formControlName="salam_pembuka"
+          <textarea id="salam-pembuka" rows="4" class="form-control mb-3" formControlName="salam_pembuka"
             [disabled]="isLoadingSalam"></textarea>
 
           <label for="salam-atas" class="form-label fw-semibold">Salam Pembuka WhatsApp (atas)</label>
-          <textarea id="salam-atas" rows="4" class="form-control mb-4" formControlName="salam_atas"
+          <textarea id="salam-atas" rows="4" class="form-control mb-3" formControlName="salam_atas"
             [disabled]="isLoadingSalam"></textarea>
 
           <label for="salam-bawah" class="form-label fw-semibold">Salam Pembuka WhatsApp (bawah)</label>
-          <textarea id="salam-bawah" rows="4" class="form-control mb-5" formControlName="salam_bawah"
+          <textarea id="salam-bawah" rows="4" class="form-control mb-3" formControlName="salam_bawah"
             [disabled]="isLoadingSalam"></textarea>
 
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-sky" [disabled]="isLoadingSalam || !salamForm.valid">
-              <span *ngIf="isLoadingSalam" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              {{ isLoadingSalam ? 'Menyimpan...' : 'Simpan' }}
-            </button>
-          </div>
+          <button type="submit" class="btn btn-sky" [disabled]="isLoadingSalam || !salamForm.valid">
+            <span *ngIf="isLoadingSalam" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isLoadingSalam ? 'Menyimpan...' : 'Simpan' }}
+          </button>
         </form>
       </div>
     </div>
 
     <!-- Filter Undangan with toggles -->
-    <div class="col-12 col-md-6 position-relative mb-4 mb-md-0 d-flex flex-column">
-      <div class="card h-100 d-flex flex-column justify-content-between">
+    <div class="settings-grid__item">
+      <div class="card">
         <div class="section-bar"></div>
         <h2>Filter Undangan</h2>
-        <form [formGroup]="filterForm" (ngSubmit)="saveFilter()" class="w-100 px-0 px-md-4">
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-sampul"
-              aria-label="Halaman sampul" formControlName="halaman_sampul" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-sampul">Halaman sampul</label>
+        <form [formGroup]="filterForm" (ngSubmit)="saveFilter()">
+          <div class="toggle-list">
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-sampul"
+                aria-label="Halaman sampul" formControlName="halaman_sampul" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-sampul">Halaman sampul</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-mempelai"
+                aria-label="Halaman Mempelai" formControlName="halaman_mempelai" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-mempelai">Halaman Mempelai</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-acara"
+                aria-label="Halaman Acara" formControlName="halaman_acara" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-acara">Halaman Acara</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-ucapan"
+                aria-label="Halaman Ucapan" formControlName="halaman_ucapan" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-ucapan">Halaman Ucapan</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-galery"
+                aria-label="Halaman Gallery/Album" formControlName="halaman_galery" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-galery">Halaman Gallery/Album</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-cerita"
+                aria-label="Halaman Cerita" formControlName="halaman_cerita" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-cerita">Halaman Cerita</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-lokasi"
+                aria-label="Halaman Lokasi" formControlName="halaman_lokasi" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-lokasi">Halaman Lokasi</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-prokes"
+                aria-label="Halaman Prokes" formControlName="halaman_prokes" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-prokes">Halaman Prokes</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-send-gift"
+                aria-label="Halaman Kirim Hadiah" formControlName="halaman_send_gift" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-send-gift">Halaman Kirim Hadiah</label>
+            </div>
+
+            <div class="toggle-list__item">
+              <input class="form-check-input" type="checkbox" role="switch" id="halaman-qoute"
+                aria-label="Halaman Quote" formControlName="halaman_qoute" [disabled]="isLoadingFilter" />
+              <label class="form-check-label" for="halaman-qoute">Halaman Quote</label>
+            </div>
           </div>
 
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-mempelai"
-              aria-label="Halaman Mempelai" formControlName="halaman_mempelai" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-mempelai">Halaman Mempelai</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-acara" aria-label="Halaman Acara"
-              formControlName="halaman_acara" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-acara">Halaman Acara</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-ucapan"
-              aria-label="Halaman Ucapan" formControlName="halaman_ucapan" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-ucapan">Halaman Ucapan</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-galery"
-              aria-label="Halaman Gallery/Album" formControlName="halaman_galery" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-galery">Halaman Gallery/Album</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-cerita"
-              aria-label="Halaman Cerita" formControlName="halaman_cerita" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-cerita">Halaman Cerita</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-lokasi"
-              aria-label="Halaman Lokasi" formControlName="halaman_lokasi" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-lokasi">Halaman Lokasi</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-prokes"
-              aria-label="Halaman Prokes" formControlName="halaman_prokes" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-prokes">Halaman Prokes</label>
-          </div>
-
-          <div class="form-check form-switch mb-3 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-send-gift"
-              aria-label="Halaman Kirim Hadiah" formControlName="halaman_send_gift" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-send-gift">Halaman Kirim Hadiah</label>
-          </div>
-
-          <div class="form-check form-switch mb-5 d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="halaman-qoute" aria-label="Halaman Quote"
-              formControlName="halaman_qoute" [disabled]="isLoadingFilter" />
-            <label class="form-check-label" for="halaman-qoute">Halaman Quote</label>
-          </div>
-
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-sky" [disabled]="isLoadingFilter">
-              <span *ngIf="isLoadingFilter" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              {{ isLoadingFilter ? 'Menyimpan...' : 'Terapkan' }}
-            </button>
-          </div>
+          <button type="submit" class="btn btn-sky" [disabled]="isLoadingFilter">
+            <span *ngIf="isLoadingFilter" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isLoadingFilter ? 'Menyimpan...' : 'Terapkan' }}
+          </button>
         </form>
       </div>
     </div>
   </div>
 
   <!-- Loading Overlay -->
-  <div *ngIf="isInitialLoading"
-    class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75"
-    style="z-index: 9999;">
-    <div class="text-center">
-      <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+  <div *ngIf="isInitialLoading" class="loading-overlay">
+    <div class="loading-overlay__content">
+      <div class="loading-spinner"></div>
       <p>Memuat data pengaturan...</p>
     </div>
   </div>

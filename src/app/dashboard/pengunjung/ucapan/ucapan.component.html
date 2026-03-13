@@ -1,208 +1,242 @@
-<div class="container py-4">
-  <div class="row g-4 justify-content-start">
-    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-      <div class="card-custom">
-        <div class="side-bar" style="background-color: #c49a4a;"></div>
-        <div class="d-flex justify-content-between align-items-start">
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            Doa &amp; Ucapan Hari Ini
-          </p>
-          <i class="fas fa-envelope" style="color: #0f7f8f; font-size: 1.125rem;"></i>
+<div class="ucapan-container">
+
+  <!-- Statistics Cards -->
+  <section class="stats-section" aria-label="Ucapan statistics">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-bar stat-bar-today"></div>
+        <div class="stat-header">
+          <span class="stat-label">Doa &amp; Ucapan Hari Ini</span>
+          <i class="fas fa-envelope stat-icon stat-icon-info"></i>
         </div>
-        <p class="mt-3 mb-1 text-large" style="color: #c49a4a;">
+        <p class="stat-value stat-value-today">
           {{ statistics ? getAttendanceCount('hadir') : 0 }}
         </p>
-        <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-          orang memberi ucapan
-        </p>
+        <p class="stat-desc">orang memberi ucapan</p>
       </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-      <div class="card-custom">
-        <div class="side-bar" style="background-color: #0f7f8f;"></div>
-        <div class="d-flex justify-content-between align-items-start">
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            Total Doa &amp; Ucapan
-          </p>
-          <i class="fas fa-envelope" style="color: #0f7f8f; font-size: 1.125rem;"></i>
+      <div class="stat-card">
+        <div class="stat-bar stat-bar-total"></div>
+        <div class="stat-header">
+          <span class="stat-label">Total Doa &amp; Ucapan</span>
+          <i class="fas fa-envelope stat-icon stat-icon-info"></i>
         </div>
-        <p class="mt-3 mb-1 text-large" style="color: #0f7f8f;">
+        <p class="stat-value stat-value-total">
           {{ getTotalCount() }}
         </p>
-        <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-          orang memberi ucapan
-        </p>
+        <p class="stat-desc">orang memberi ucapan</p>
       </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-      <div class="card-custom">
-        <div class="side-bar" style="background-color: #10B981;"></div>
-        <div class="d-flex justify-content-between align-items-start">
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            Akan Hadir
-          </p>
-          <i class="fas fa-check-circle" style="color: #10B981; font-size: 1.125rem;"></i>
+      <div class="stat-card">
+        <div class="stat-bar stat-bar-success"></div>
+        <div class="stat-header">
+          <span class="stat-label">Akan Hadir</span>
+          <i class="fas fa-check-circle stat-icon stat-icon-success"></i>
         </div>
-        <p class="mt-3 mb-1 text-large" style="color: #10B981;">
+        <p class="stat-value stat-value-success">
           {{ getAttendanceCount('hadir') }}
         </p>
-        <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-          konfirmasi hadir
-        </p>
+        <p class="stat-desc">konfirmasi hadir</p>
       </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-      <div class="card-custom">
-        <div class="side-bar" style="background-color: #EF4444;"></div>
-        <div class="d-flex justify-content-between align-items-start">
-          <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-            Tidak Hadir
-          </p>
-          <i class="fas fa-times-circle" style="color: #EF4444; font-size: 1.125rem;"></i>
+      <div class="stat-card">
+        <div class="stat-bar stat-bar-danger"></div>
+        <div class="stat-header">
+          <span class="stat-label">Tidak Hadir</span>
+          <i class="fas fa-times-circle stat-icon stat-icon-danger"></i>
         </div>
-        <p class="mt-3 mb-1 text-large" style="color: #EF4444;">
+        <p class="stat-value stat-value-danger">
           {{ getAttendanceCount('tidak_hadir') }}
         </p>
-        <p class="mb-0" style="font-size: 0.875rem; font-weight: 400; color: #000;">
-          tidak bisa hadir
-        </p>
+        <p class="stat-desc">tidak bisa hadir</p>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
+  <!-- Main Data Section -->
+  <section class="data-section" aria-label="Ucapan data management">
 
-  <main class="container py-4">
-    <section
-      class="bg-white rounded-3 p-4 mt-4"
-      aria-label="Ucapan data table and controls"
-    >
-      <div
-        class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-3 gap-3"
-      >
-        <h2
-          class="text-pink-500 fw-semibold fs-5 border-start border-2 border-pink-400 ps-2 mb-0"
+    <!-- Section Header -->
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="title-bar"></span>
+        Data Doa &amp; Ucapan
+      </h2>
+    </div>
+
+    <!-- Controls Row -->
+    <div class="controls-wrapper">
+
+      <!-- Search -->
+      <div class="control-group search-group">
+        <label for="search" class="control-label">Cari</label>
+        <input
+          id="search"
+          type="text"
+          class="control-input"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Cari nama atau ucapan..."
+          aria-label="Search ucapan data"
+        />
+      </div>
+
+      <!-- Items Per Page -->
+      <div class="control-group limit-group">
+        <label for="itemsPerPage" class="control-label">Tampilkan</label>
+        <select
+          id="itemsPerPage"
+          class="control-select"
+          [(ngModel)]="itemsPerPage"
+          (ngModelChange)="onItemsPerPageChange($event)"
+          aria-label="Items per page"
         >
-          Data Doa & Ucapan
-        </h2>
-        <div class="d-flex align-items-center gap-3 w-100 w-sm-auto">
-          <!-- <button
-            type="button"
-            class="btn btn-pink d-flex align-items-center gap-2"
-            (click)="doDeleteAll()"
-            [disabled]="isLoading || dataList.length === 0">
-            <i class="fas fa-trash-alt"></i> Hapus Semua
-          </button> -->
-          <label for="search" class="fw-semibold small mb-0">Cari</label>
-          <input
-            id="search"
-            type="text"
-            class="form-control form-control-sm"
-            style="max-width: 180px"
-            [(ngModel)]="searchQuery"
-            placeholder="Cari nama atau ucapan..."
-            aria-label="Search ucapan data"
-          />
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+      <button
+        type="button"
+        class="filter-btn"
+        [class.filter-btn-active]="attendanceFilter === 'all'"
+        (click)="setAttendanceFilter('all')"
+        aria-label="Show all ucapan">
+        Semua ({{ getTotalCount() }})
+      </button>
+      <button
+        type="button"
+        class="filter-btn filter-btn-success"
+        [class.filter-btn-active]="attendanceFilter === 'hadir'"
+        (click)="setAttendanceFilter('hadir')"
+        aria-label="Show hadir only">
+        Hadir ({{ getAttendanceCount('hadir') }})
+      </button>
+      <button
+        type="button"
+        class="filter-btn filter-btn-danger"
+        [class.filter-btn-active]="attendanceFilter === 'tidak_hadir'"
+        (click)="setAttendanceFilter('tidak_hadir')"
+        aria-label="Show tidak hadir only">
+        Tidak Hadir ({{ getAttendanceCount('tidak_hadir') }})
+      </button>
+      <button
+        type="button"
+        class="filter-btn filter-btn-warning"
+        [class.filter-btn-active]="attendanceFilter === 'mungkin'"
+        (click)="setAttendanceFilter('mungkin')"
+        aria-label="Show mungkin only">
+        Mungkin ({{ getAttendanceCount('mungkin') }})
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Memuat data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="apiError && !isLoading" class="error-state" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ apiError }}</p>
+    </div>
+
+    <!-- Data Display -->
+    <div *ngIf="!isLoading && !apiError">
+
+      <!-- Mobile Card View -->
+      <div class="cards-view">
+        <div *ngIf="paginatedDataList.length === 0" class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>Tidak ada data yang ditemukan</p>
+        </div>
+
+        <div class="ucapan-card" *ngFor="let item of paginatedDataList; let i = index">
+          <div class="card-header">
+            <div class="card-info">
+              <h3 class="card-name">{{ item.nama }}</h3>
+              <span class="card-date">{{ formatDate(item.created_at) }}</span>
+            </div>
+            <span
+              class="card-badge"
+              [class.badge-success]="item.kehadiran === 'hadir'"
+              [class.badge-danger]="item.kehadiran === 'tidak_hadir'"
+              [class.badge-warning]="item.kehadiran === 'mungkin'"
+            >
+              {{ item.kehadiran_label }}
+            </span>
+          </div>
+          <div class="card-body">
+            <p class="card-message">{{ item.pesan }}</p>
+          </div>
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn-delete"
+              (click)="doDelete(item)"
+              [disabled]="isLoading"
+              aria-label="Delete ucapan">
+              <i class="fas fa-trash"></i>
+              Hapus
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Filter buttons -->
-      <div class="d-flex flex-wrap gap-2 mb-3">
-        <button
-          type="button"
-          class="btn btn-sm"
-          [class.btn-primary]="attendanceFilter === 'all'"
-          [class.btn-outline-primary]="attendanceFilter !== 'all'"
-          (click)="setAttendanceFilter('all')">
-          Semua ({{ getTotalCount() }})
-        </button>
-        <button
-          type="button"
-          class="btn btn-sm"
-          [class.btn-success]="attendanceFilter === 'hadir'"
-          [class.btn-outline-success]="attendanceFilter !== 'hadir'"
-          (click)="setAttendanceFilter('hadir')">
-          Hadir ({{ getAttendanceCount('hadir') }})
-        </button>
-        <button
-          type="button"
-          class="btn btn-sm"
-          [class.btn-danger]="attendanceFilter === 'tidak_hadir'"
-          [class.btn-outline-danger]="attendanceFilter !== 'tidak_hadir'"
-          (click)="setAttendanceFilter('tidak_hadir')">
-          Tidak Hadir ({{ getAttendanceCount('tidak_hadir') }})
-        </button>
-        <button
-          type="button"
-          class="btn btn-sm"
-          [class.btn-warning]="attendanceFilter === 'mungkin'"
-          [class.btn-outline-warning]="attendanceFilter !== 'mungkin'"
-          (click)="setAttendanceFilter('mungkin')">
-          Mungkin ({{ getAttendanceCount('mungkin') }})
-        </button>
-      </div>
-
-      <!-- Loading state -->
-      <div *ngIf="isLoading" class="text-center py-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="mt-2">Memuat data...</div>
-      </div>
-
-      <!-- Error state -->
-      <div *ngIf="apiError && !isLoading" class="alert alert-danger" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        {{ apiError }}
-      </div>
-
-      <!-- Table -->
-      <div class="table-responsive" *ngIf="!isLoading && !apiError">
-        <table class="table align-middle text-black mb-0" style="border-spacing: 0 0.25rem; border-collapse: separate;">
+      <!-- Desktop Table View -->
+      <div class="table-view">
+        <table class="data-table">
           <thead>
             <tr>
-              <th style="width: 40px;">No.</th>
+              <th style="width: 50px;">No.</th>
               <th style="width: 180px;">Nama</th>
-              <th style="width: 120px;">Status</th>
+              <th style="width: 130px;">Status</th>
               <th>Ucapan</th>
-              <th style="width: 120px;">Tanggal</th>
+              <th style="width: 130px;">Tanggal</th>
               <th style="width: 100px;" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngIf="filteredDataList.length === 0">
-              <td colspan="6" class="text-center py-4 text-muted">
-                <i class="fas fa-inbox fa-2x mb-2 opacity-25"></i>
-                <div>Tidak ada data yang ditemukan</div>
+            <tr *ngIf="paginatedDataList.length === 0">
+              <td colspan="6" class="empty-cell">
+                <i class="fas fa-inbox"></i>
+                <span>Tidak ada data yang ditemukan</span>
               </td>
             </tr>
-            <tr *ngFor="let item of filteredDataList; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td class="fw-semibold">{{ item.nama }}</td>
+            <tr *ngFor="let item of paginatedDataList; let i = index">
+              <td>{{ startIndex + i }}</td>
+              <td class="td-name">{{ item.nama }}</td>
               <td>
-                <span class="badge rounded-pill px-2 py-1 text-white"
-                      [style.background-color]="getAttendanceColor(item.kehadiran)"
-                      style="font-size: 0.75rem;">
+                <span
+                  class="table-badge"
+                  [class.badge-success]="item.kehadiran === 'hadir'"
+                  [class.badge-danger]="item.kehadiran === 'tidak_hadir'"
+                  [class.badge-warning]="item.kehadiran === 'mungkin'"
+                >
                   {{ item.kehadiran_label }}
                 </span>
               </td>
-              <td>
-                <div class="text-truncate" style="max-width: 300px;" [title]="item.pesan">
+              <td class="td-message">
+                <div class="message-truncate" [title]="item.pesan">
                   {{ item.pesan }}
                 </div>
               </td>
-              <td class="small text-muted">
+              <td class="td-date">
                 {{ formatDate(item.created_at) }}
               </td>
               <td class="text-center">
                 <button
                   type="button"
-                  class="btn btn-outline-pink btn-sm"
+                  class="btn-icon-delete"
                   (click)="doDelete(item)"
-                  [disabled]="isLoading">
+                  [disabled]="isLoading"
+                  aria-label="Delete ucapan">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
@@ -211,19 +245,43 @@
         </table>
       </div>
 
-      <div
-        class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-4 gap-3 text-black-50 small"
-        *ngIf="!isLoading && !apiError"
-      >
-        <div class="d-flex align-items-center gap-1">
-          <span>Menampilkan {{ filteredDataList.length }} dari {{ getTotalCount() }} data</span>
+      <!-- Pagination -->
+      <div class="pagination-wrapper" *ngIf="totalPages > 1">
+        <div class="pagination-info">
+          Menampilkan {{ startIndex }} - {{ endIndex }} dari {{ filteredDataList.length }} data
         </div>
-        <div class="d-flex align-items-center gap-2">
-          <small>Filter: {{ attendanceFilter === 'all' ? 'Semua' :
-            (attendanceFilter === 'hadir' ? 'Hadir' :
-            (attendanceFilter === 'tidak_hadir' ? 'Tidak Hadir' : 'Mungkin')) }}</small>
+        <div class="pagination-controls">
+          <button
+            type="button"
+            class="page-btn"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+            aria-label="Previous page">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <button
+            *ngFor="let page of visiblePageNumbers"
+            type="button"
+            class="page-btn page-number"
+            [class.page-active]="page === currentPage"
+            (click)="goToPage(page)"
+            [attr.aria-label]="'Go to page ' + page"
+            [attr.aria-current]="page === currentPage ? 'page' : null">
+            {{ page }}
+          </button>
+
+          <button
+            type="button"
+            class="page-btn"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+            aria-label="Next page">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</div>
 

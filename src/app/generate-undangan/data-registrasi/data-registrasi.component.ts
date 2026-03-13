@@ -22,6 +22,8 @@ export class DataRegistrasiComponent implements OnInit {
   modalRef?: BsModalRef;
   paketOptions: any;
   selectedPrice: string = '';
+  emailError: string | null = null;
+  domainError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -136,7 +138,18 @@ export class DataRegistrasiComponent implements OnInit {
         this.notyf.success(res?.message || 'Data berhasil disimpan.');
       },
       error: (err) => {
-        this.notyf.error(err?.message || 'Ada kesalahan dalam sistem.');
+        const validationErrors = err?.error?.errors;
+
+        if (validationErrors) {
+          if (validationErrors.domain?.[0]) {
+            this.domainError = 'Domain sudah diambil';
+          }
+          if (validationErrors.email?.[0]) {
+            this.emailError = 'Email sudah diambil';
+          }
+        } else {
+          this.notyf.error(err?.error?.message || 'Ada kesalahan dalam sistem.');
+        }
       }
     })
   }
@@ -148,6 +161,14 @@ export class DataRegistrasiComponent implements OnInit {
 
   onCancel(){
     this.router.navigate(['/']);
+  }
+
+  onEmailInput(): void {
+    this.emailError = null;
+  }
+
+  onDomainInput(): void {
+    this.domainError = null;
   }
 
 }

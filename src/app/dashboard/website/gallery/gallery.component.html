@@ -1,260 +1,292 @@
 <div class="gallery-container">
-  <!-- Header Section -->
   <!-- Upload Form Section -->
-  <div class="upload-section mb-5">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <form [formGroup]="galleryForm" (ngSubmit)="onSubmit()">
-          <div class="row g-4">
-            <!-- Photo Upload Section -->
-            <div class="col-lg-6">
-              <div class="upload-card">
-                <h6 class="upload-title">
-                  <i class="fas fa-camera text-pink me-2"></i>
-                  Tambah Foto
-                </h6>
+  <div class="upload-section">
+    <div class="upload-card">
+      <form [formGroup]="galleryForm" (ngSubmit)="onSubmit()">
+        <div class="upload-grid">
+          <!-- Photo Upload Section -->
+          <div class="upload-item">
+            <h6 class="upload-item__title">
+              <i class="fas fa-camera"></i>
+              <span>Tambah Foto</span>
+              <small class="text-muted ms-2">(Opsional)</small>
+            </h6>
 
-                <div class="upload-area" [class.dragover]="isDraggingOver" (dragover)="onDragOver($event)"
-                  (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+            <div class="upload-area" [class.upload-area--dragover]="isDraggingOver" (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+              <div class="upload-area__content">
+                <i class="fas fa-cloud-upload-alt upload-area__icon"></i>
+                <p class="upload-area__text">Seret file ke sini atau</p>
 
-                  <div class="upload-content">
-                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                    <p class="upload-text">Seret file ke sini atau</p>
+                <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="image/*"
+                  class="upload-area__input" />
 
-                    <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="image/*"
-                      style="display: none;" />
+                <button type="button" class="btn-browse" (click)="browseFiles()">
+                  <i class="fas fa-folder-open"></i>
+                  <span>Pilih File</span>
+                </button>
 
-                    <button type="button" class="btn btn-outline-primary" (click)="browseFiles()">
-                      <i class="fas fa-folder-open me-2"></i>
-                      Pilih File
-                    </button>
-
-                    <small class="text-muted d-block mt-2">
-                      Format: JPG, PNG, GIF | Maksimal: 5MB
-                    </small>
-                  </div>
-                </div>
-
-
-                <!-- Preview image upload -->
-                <div *ngIf="previewUrl" class="mt-3 text-center">
-                  <img [src]="previewUrl" alt="Preview Foto" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                  <div class="small text-muted mt-1">Preview Foto yang akan diupload</div>
-                </div>
-
-                <div *ngIf="uploadStatus" class="upload-status mt-3"
-                  [class.text-success]="!uploadStatus.includes('Error')"
-                  [class.text-danger]="uploadStatus.includes('Error')">
-                  <i class="fas" [class.fa-check-circle]="!uploadStatus.includes('Error')"
-                    [class.fa-exclamation-circle]="uploadStatus.includes('Error')" class="me-2"></i>
-                  {{ uploadStatus }}
-                </div>
-
-                <!-- Hidden form control -->
-                <input type="text" formControlName="photo" style="display: none;" />
+                <small class="upload-area__hint">
+                  Format: JPG, PNG, GIF | Maksimal: 5MB<br>
+                  <strong>Catatan:</strong> Minimal isi satu field (foto atau video)
+                </small>
               </div>
             </div>
 
-            <!-- Video URL Section -->
-            <div class="col-lg-6">
-              <div class="upload-card">
-                <h6 class="upload-title">
-                  <i class="fas fa-video text-danger me-2"></i>
-                  Tambah Video
-                </h6>
-
-                <div class="video-input-area">
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fab fa-youtube text-danger"></i>
-                    </span>
-                    <input type="url" class="form-control" placeholder="Masukkan URL video..."
-                      formControlName="url_video" />
-                  </div>
-                </div>
-              </div>
+            <!-- Preview image upload -->
+            <div *ngIf="previewUrl" class="upload-preview">
+              <img [src]="previewUrl" alt="Preview Foto" class="upload-preview__img">
+              <div class="upload-preview__caption">Preview Foto yang akan diupload</div>
             </div>
+
+            <div *ngIf="uploadStatus" class="upload-status"
+              [class.upload-status--success]="!uploadStatus.includes('Error')"
+              [class.upload-status--error]="uploadStatus.includes('Error')">
+              <i class="fas" [class.fa-check-circle]="!uploadStatus.includes('Error')"
+                [class.fa-exclamation-circle]="uploadStatus.includes('Error')"></i>
+              <span>{{ uploadStatus }}</span>
+            </div>
+
+            <!-- Hidden form control -->
+            <input type="text" formControlName="photo" class="upload-area__input" />
           </div>
 
-          <!-- Submit Button -->
-          <div class="row mt-4">
-            <div class="col-12 text-end">
-              <button type="button" class="btn btn-outline-secondary me-2"
-                (click)="galleryForm.reset(); uploadStatus = null">
-                <i class="fas fa-times me-2"></i>
-                Reset
-              </button>
-              <button type="submit" class="btn btn-primary" [disabled]="!galleryForm.valid">
-                <i class="fas fa-save me-2"></i>
-                Simpan Galeri
-              </button>
+          <!-- Video URL Section -->
+          <div class="upload-item">
+            <h6 class="upload-item__title">
+              <i class="fas fa-video"></i>
+              <span>Tambah Video</span>
+              <small class="text-muted ms-2">(Opsional)</small>
+            </h6>
+
+            <div class="video-input">
+              <span class="video-input__prefix">
+                <i class="fab fa-youtube"></i>
+              </span>
+              <input type="url" class="video-input__field" placeholder="Masukkan URL video..."
+                formControlName="url_video" />
             </div>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <!-- Submit Actions -->
+        <div class="upload-actions">
+          <button type="button" class="btn-reset" (click)="handleCancelClicked()">
+            <i class="fas fa-times"></i>
+            <span>Reset</span>
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="!galleryForm.valid">
+            <i class="fas fa-save"></i>
+            <span>Simpan Galeri</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Gallery Data Table Section -->
-  <div class="table-section">
-    <div class="card shadow-sm">
-      <div class="card-header bg-white">
-        <div class="row align-items-center">
-          <div class="col-md-6">
-            <h5 class="card-title mb-0">
-              <i class="fas fa-list text-success me-2"></i>
-              Data Galeri
-            </h5>
+  <!-- Gallery Data Section -->
+  <div class="gallery-section">
+    <!-- Section Header -->
+    <div class="gallery-section__header">
+      <div class="header-content">
+        <h5 class="gallery-title">
+          <i class="fas fa-list"></i>
+          <span>Data Galeri</span>
+        </h5>
+        <div class="page-size-control">
+          <label class="page-size-control__label">Tampilkan:</label>
+          <select class="page-size-control__select" [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span class="page-size-control__label">data</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Memuat data...</p>
+    </div>
+
+    <!-- Mobile Cards (< 576px) -->
+    <div *ngIf="!isLoading" class="gallery-cards">
+      <!-- No Data Card -->
+      <div *ngIf="galleryData.length === 0" class="empty-state">
+        <i class="fas fa-image empty-state__icon"></i>
+        <p class="empty-state__text">Belum ada data galeri</p>
+        <small class="empty-state__hint">Upload foto atau video untuk mulai mengisi galeri</small>
+      </div>
+
+      <!-- Data Cards -->
+      <div *ngFor="let item of paginatedData; let i = index" class="gallery-card">
+        <div class="gallery-card__preview">
+          <img *ngIf="item.photo_url" [src]="item.photo_url" class="gallery-card__img" [alt]="'Foto ' + (i + 1)"
+            (click)="onPreviewGallery(item)">
+          <div *ngIf="!item.photo_url && item.url_video" class="gallery-card__video" (click)="onPreviewGallery(item)">
+            <i class="fab fa-youtube"></i>
           </div>
-          <div class="col-md-6 text-md-end mt-2 mt-md-0">
-            <div class="d-flex align-items-center justify-content-md-end gap-2">
-              <label class="small text-muted mb-0">Tampilkan:</label>
-              <select class="form-select form-select-sm" style="width: auto;" [(ngModel)]="pageSize"
-                (change)="onPageSizeChange(pageSize)">
-                <option [value]="5">5</option>
-                <option [value]="10">10</option>
-                <option [value]="25">25</option>
-                <option [value]="50">50</option>
-                <option [value]="100">100</option>
-              </select>
-              <span class="small text-muted">data</span>
-            </div>
+          <div *ngIf="!item.photo_url && !item.url_video" class="gallery-card__empty">
+            <i class="fas fa-image"></i>
+          </div>
+        </div>
+        <div class="gallery-card__content">
+          <div class="gallery-card__row">
+            <span class="gallery-card__label">No:</span>
+            <span class="gallery-card__value">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
+          </div>
+          <div class="gallery-card__row">
+            <span class="gallery-card__label">Foto:</span>
+            <span class="gallery-card__value" *ngIf="item.photo_url">{{ item.photo_name || 'Foto ' + (i + 1) }}</span>
+            <span class="gallery-card__value gallery-card__value--muted" *ngIf="!item.photo_url">—</span>
+          </div>
+          <div class="gallery-card__row">
+            <span class="gallery-card__label">Video:</span>
+            <a *ngIf="item.url_video" [href]="item.url_video" target="_blank" class="gallery-card__link">{{ item.url_video }}</a>
+            <span class="gallery-card__value gallery-card__value--muted" *ngIf="!item.url_video">—</span>
+          </div>
+          <div class="gallery-card__row">
+            <span class="gallery-card__label">Tanggal:</span>
+            <span class="gallery-card__value">
+              {{ item.created_at | date:'dd/MM/yyyy' }}<br>
+              <small>{{ item.created_at | date:'HH:mm' }}</small>
+            </span>
+          </div>
+          <div class="gallery-card__row">
+            <span class="gallery-card__label">Status:</span>
+            <span class="gallery-card__badge">Aktif</span>
+          </div>
+          <div class="gallery-card__actions">
+            <button type="button" class="btn-action btn-action--preview" (click)="onPreviewGallery(item)" title="Preview">
+              <i class="fas fa-eye"></i>
+              <span>Preview</span>
+            </button>
+            <button type="button" class="btn-action btn-action--delete" (click)="onDeleteGallery(item)" title="Hapus">
+              <i class="fas fa-trash"></i>
+              <span>Hapus</span>
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="card-body p-0">
-        <!-- Loading Spinner -->
-        <div *ngIf="isLoading" class="text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="text-muted mt-2">Memuat data...</p>
-        </div>
+    <!-- Desktop Table (>= 576px) -->
+    <div *ngIf="!isLoading" class="gallery-table-wrapper">
+      <table class="gallery-table">
+        <thead>
+          <tr>
+            <th class="gallery-table__th gallery-table__th--center" style="width: 60px;">No</th>
+            <th class="gallery-table__th gallery-table__th--center" style="width: 100px;">Preview</th>
+            <th class="gallery-table__th">Foto/Video</th>
+            <th class="gallery-table__th">URL Video</th>
+            <th class="gallery-table__th gallery-table__th--center" style="width: 140px;">Tanggal</th>
+            <th class="gallery-table__th gallery-table__th--center" style="width: 100px;">Status</th>
+            <th class="gallery-table__th gallery-table__th--center" style="width: 140px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- No Data Row -->
+          <tr *ngIf="galleryData.length === 0">
+            <td colspan="7" class="gallery-table__td gallery-table__td--empty">
+              <i class="fas fa-image empty-icon"></i>
+              <p class="empty-text">Belum ada data galeri</p>
+              <small class="empty-hint">Upload foto atau video untuk mulai mengisi galeri</small>
+            </td>
+          </tr>
 
-        <!-- Table -->
-        <div *ngIf="!isLoading" class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th scope="col" class="text-center" style="width: 60px;">No</th>
-                <th scope="col" class="text-center" style="width: 100px;">Preview</th>
-                <th scope="col">Foto/Video</th>
-                <th scope="col">URL Video</th>
-                <th scope="col" class="text-center" style="width: 140px;">Tanggal</th>
-                <th scope="col" class="text-center" style="width: 100px;">Status</th>
-                <th scope="col" class="text-center" style="width: 140px;">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- No Data Row -->
-              <tr *ngIf="galleryData.length === 0 && !isLoading">
-                <td colspan="7" class="text-center py-4 text-muted">
-                  <i class="fas fa-image fa-3x mb-3 text-muted opacity-50"></i>
-                  <p class="mb-0">Belum ada data galeri</p>
-                  <small>Upload foto atau video untuk mulai mengisi galeri</small>
-                </td>
-              </tr>
+          <!-- Data Rows -->
+          <tr *ngFor="let item of paginatedData; let i = index" class="gallery-table__row">
+            <td class="gallery-table__td gallery-table__td--center">
+              {{ (currentPage - 1) * pageSize + i + 1 }}
+            </td>
+            <td class="gallery-table__td gallery-table__td--center">
+              <div class="table-preview">
+                <img *ngIf="item.photo_url" [src]="item.photo_url" class="table-preview__img" [alt]="'Foto ' + (i + 1)"
+                  (click)="onPreviewGallery(item)">
+                <div *ngIf="!item.photo_url && item.url_video" class="table-preview__video"
+                  (click)="onPreviewGallery(item)">
+                  <i class="fab fa-youtube"></i>
+                </div>
+                <div *ngIf="!item.photo_url && !item.url_video" class="table-preview__empty">
+                  <i class="fas fa-image"></i>
+                </div>
+              </div>
+            </td>
+            <td class="gallery-table__td">
+              <span *ngIf="item.photo_url" class="table-text">
+                {{ item.photo_name || 'Foto ' + (i + 1) }}
+              </span>
+              <span *ngIf="!item.photo_url" class="table-text table-text--muted">
+                <i class="fas fa-minus"></i>
+              </span>
+            </td>
+            <td class="gallery-table__td">
+              <a *ngIf="item.url_video" [href]="item.url_video" target="_blank" class="table-link">
+                {{ item.url_video }}
+              </a>
+              <span *ngIf="!item.url_video" class="table-text table-text--muted">
+                <i class="fas fa-minus"></i>
+              </span>
+            </td>
+            <td class="gallery-table__td gallery-table__td--center">
+              <small>{{ item.created_at | date:'dd/MM/yyyy' }}</small>
+              <br>
+              <small class="table-date-time">{{ item.created_at | date:'HH:mm' }}</small>
+            </td>
+            <td class="gallery-table__td gallery-table__td--center">
+              <span class="table-badge">Aktif</span>
+            </td>
+            <td class="gallery-table__td gallery-table__td--center">
+              <div class="table-actions">
+                <button type="button" class="table-btn table-btn--preview" (click)="onPreviewGallery(item)" title="Preview">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button type="button" class="table-btn table-btn--delete" (click)="onDeleteGallery(item)" title="Hapus">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <!-- Data Rows -->
-              <tr *ngFor="let item of paginatedData; let i = index">
-                <td class="text-center">
-                  {{ (currentPage - 1) * pageSize + i + 1 }}
-                </td>
-                <td class="text-center">
-                  <div class="preview-container">
-                    <img *ngIf="item.photo_url" [src]="item.photo_url" class="preview-image" [alt]="'Foto ' + (i + 1)"
-                      (click)="onPreviewGallery(item)">
-                    <div *ngIf="!item.photo_url && item.url_video" class="video-preview"
-                      (click)="onPreviewGallery(item)">
-                      <i class="fab fa-youtube text-danger"></i>
-                    </div>
-                    <div *ngIf="!item.photo_url && !item.url_video" class="no-preview">
-                      <i class="fas fa-image text-muted"></i>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span *ngIf="item.photo_url" class="text-truncate d-inline-block" style="max-width: 200px;">
-                    {{ item.photo_name || 'Foto ' + (i + 1) }}
-                  </span>
-                  <span *ngIf="!item.photo_url" class="text-muted">
-                    <i class="fas fa-minus"></i>
-                  </span>
-                </td>
-                <td>
-                  <a *ngIf="item.url_video" [href]="item.url_video" target="_blank"
-                    class="text-decoration-none text-truncate d-inline-block" style="max-width: 200px;">
-                    <!-- <i class="fab fa-youtube text-danger me-1"></i> -->
-                    {{ item.url_video }}
-                  </a>
-                  <span *ngIf="!item.url_video" class="text-muted">
-                    <i class="fas fa-minus"></i>
-                  </span>
-                </td>
-                <td class="text-center">
-                  <small>{{ item.created_at | date:'dd/MM/yyyy' }}</small>
-                  <br>
-                  <small class="text-muted">{{ item.created_at | date:'HH:mm' }}</small>
-                </td>
-                <td class="text-center">
-                  <span class="badge bg-success">Aktif</span>
-                </td>
-                <td class="text-center">
-                  <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="onPreviewGallery(item)"
-                      title="Preview">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDeleteGallery(item)"
-                      title="Hapus">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div *ngIf="!isLoading && galleryData.length > 0" class="card-footer bg-white">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <small class="text-muted">
-                Menampilkan {{ from || ((currentPage - 1) * pageSize + 1) }} -
-                {{ to || Math.min(currentPage * pageSize, totalItems) }}
-                dari {{ totalItems }} data
-              </small>
-            </div>
-            <div class="col-md-6">
-              <nav aria-label="Gallery pagination">
-                <ul class="pagination pagination-sm justify-content-md-end justify-content-center mb-0">
-                  <li class="page-item" [class.disabled]="currentPage === 1">
-                    <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
-                      <i class="fas fa-chevron-left"></i>
-                    </button>
-                  </li>
-
-                  <li *ngFor="let page of [].constructor(totalPages); let i = index" class="page-item"
-                    [class.active]="currentPage === i + 1">
-                    <button class="page-link" (click)="onPageChange(i + 1)">
-                      {{ i + 1 }}
-                    </button>
-                  </li>
-
-                  <li class="page-item" [class.disabled]="currentPage === totalPages">
-                    <button class="page-link" (click)="onPageChange(currentPage + 1)"
-                      [disabled]="currentPage === totalPages">
-                      <i class="fas fa-chevron-right"></i>
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </div>
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && galleryData.length > 0" class="pagination-wrapper">
+      <div class="pagination-info">
+        <small>
+          Menampilkan {{ from || ((currentPage - 1) * pageSize + 1) }} -
+          {{ to || Math.min(currentPage * pageSize, totalItems) }}
+          dari {{ totalItems }} data
+        </small>
       </div>
+      <nav class="pagination-nav" aria-label="Gallery pagination">
+        <ul class="pagination">
+          <li class="pagination__item" [class.pagination__item--disabled]="currentPage === 1">
+            <button class="pagination__btn" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+          </li>
+
+          <li *ngFor="let page of [].constructor(totalPages); let i = index" class="pagination__item"
+            [class.pagination__item--active]="currentPage === i + 1">
+            <button class="pagination__btn" (click)="onPageChange(i + 1)">
+              {{ i + 1 }}
+            </button>
+          </li>
+
+          <li class="pagination__item" [class.pagination__item--disabled]="currentPage === totalPages">
+            <button class="pagination__btn" (click)="onPageChange(currentPage + 1)"
+              [disabled]="currentPage === totalPages">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>

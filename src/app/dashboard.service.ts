@@ -3,6 +3,13 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import {
+  AdminContactSetting,
+  AdminContactSettingResponse,
+  AdminContactSettingUpdateRequest,
+  AdminContactSettingDeleteResponse,
+  UserContactSettingResponse
+} from './interfaces/admin-contact-setting.interface';
 
 
 // === DashboardServiceType Enum - API Endpoint Categories ===
@@ -16,6 +23,7 @@ export enum DashboardServiceType {
   USER_LOGOUT,
   USER_REGISTER,
   USER_PROFILE,
+  PROFILE_API,
 
   // === Manual Registration Endpoints ===
   // Manages multi-step registration process for users.
@@ -150,6 +158,16 @@ export enum DashboardServiceType {
   ADMIN_PROFILE_PHOTO_DELETE,
   ADMIN_PROFILE_CHANGE_PASSWORD,
 
+  // === Admin Contact Settings Endpoints ===
+  // Admin contact settings management.
+  ADMIN_CONTACT_SETTINGS_GET,
+  ADMIN_CONTACT_SETTINGS_UPDATE,
+  ADMIN_CONTACT_SETTINGS_DELETE,
+
+  // === User Contact Settings Endpoints ===
+  // User-facing contact settings retrieval.
+  USER_CONTACT_SETTINGS_GET,
+
   // === Theme Management Endpoints ===
   // Admin and public theme/category management.
   THEME_ADMIN_CATEGORIES_LIST,
@@ -270,6 +288,9 @@ export class DashboardService {
 
       case DashboardServiceType.USER_PROFILE:
         return `${this.BASE_URL_API}/v1/user-profile`;
+
+      case DashboardServiceType.PROFILE_API:
+        return `${this.BASE_URL_API}/profile`;
 
       //MANUAL REGIS
       case DashboardServiceType.MNL_STEP_ONE:
@@ -523,6 +544,18 @@ export class DashboardService {
       case DashboardServiceType.ADMIN_PROFILE_CHANGE_PASSWORD:
         return `${this.BASE_URL_API}/admin/profile/change-password`;
 
+      // Admin Contact Settings API
+      case DashboardServiceType.ADMIN_CONTACT_SETTINGS_GET:
+        return `${this.BASE_URL_API}/v1/admin/contact-settings`;
+      case DashboardServiceType.ADMIN_CONTACT_SETTINGS_UPDATE:
+        return `${this.BASE_URL_API}/v1/admin/contact-settings`;
+      case DashboardServiceType.ADMIN_CONTACT_SETTINGS_DELETE:
+        return `${this.BASE_URL_API}/v1/admin/contact-settings`;
+
+      // User Contact Settings API
+      case DashboardServiceType.USER_CONTACT_SETTINGS_GET:
+        return `${this.BASE_URL_API}/v1/user/contact-settings`;
+
       // Theme Management API - Admin Category Management (New API)
       case DashboardServiceType.THEME_ADMIN_CATEGORIES_LIST:
         return `${this.BASE_URL_API}/admin/categories`;
@@ -681,6 +714,34 @@ export class DashboardService {
    */
   changeAdminPassword(data: PasswordChangeRequest): Observable<PasswordChangeResponse> {
     return this.httpSvc.post<PasswordChangeResponse>(this.getUrl(DashboardServiceType.ADMIN_PROFILE_CHANGE_PASSWORD), data);
+  }
+
+  /**
+   * Get admin contact settings
+   */
+  getAdminContactSettings(): Observable<AdminContactSettingResponse> {
+    return this.httpSvc.get<AdminContactSettingResponse>(this.getUrl(DashboardServiceType.ADMIN_CONTACT_SETTINGS_GET));
+  }
+
+  /**
+   * Update admin contact settings
+   */
+  updateAdminContactSettings(data: AdminContactSettingUpdateRequest): Observable<AdminContactSettingResponse> {
+    return this.httpSvc.put<AdminContactSettingResponse>(this.getUrl(DashboardServiceType.ADMIN_CONTACT_SETTINGS_UPDATE), data);
+  }
+
+  /**
+   * Delete admin contact settings
+   */
+  deleteAdminContactSettings(): Observable<AdminContactSettingDeleteResponse> {
+    return this.httpSvc.delete<AdminContactSettingDeleteResponse>(this.getUrl(DashboardServiceType.ADMIN_CONTACT_SETTINGS_DELETE));
+  }
+
+  /**
+   * Get user-facing contact settings (read-only subset)
+   */
+  getUserContactSettings(): Observable<UserContactSettingResponse> {
+    return this.httpSvc.get<UserContactSettingResponse>(this.getUrl(DashboardServiceType.USER_CONTACT_SETTINGS_GET));
   }
 
   // === Generic HTTP Methods ===

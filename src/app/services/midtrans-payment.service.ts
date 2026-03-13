@@ -202,13 +202,27 @@ export class MidtransPaymentService {
         throw new Error('Snap.js is not available after script load');
       }
 
-      this.ngZone.run(() => {
-        window.snap!.pay(snapToken, {
-          onSuccess: (result) => callbacks.onSuccess(result),
-          onPending: (result) => callbacks.onPending(result),
-          onError: (result) => callbacks.onError(result),
-          onClose: () => callbacks.onClose(),
-        });
+      window.snap!.pay(snapToken, {
+        onSuccess: (result) => {
+          console.log('[SNAP] onSuccess callback triggered', result);
+          this.ngZone.run(() => callbacks.onSuccess(result));
+        },
+        onPending: (result) => {
+          console.log('[SNAP] onPending callback triggered', result);
+          this.ngZone.run(() => callbacks.onPending(result));
+        },
+        onError: (result) => {
+          console.log('[SNAP] onError callback triggered', result);
+          this.ngZone.run(() => callbacks.onError(result));
+        },
+        onClose: () => {
+          console.log('[SNAP] onClose callback triggered - START');
+          this.ngZone.run(() => {
+            console.log('[SNAP] onClose inside NgZone - executing callback');
+            callbacks.onClose();
+            console.log('[SNAP] onClose callback completed');
+          });
+        },
       });
     });
   }

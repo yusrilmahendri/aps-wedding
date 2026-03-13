@@ -80,7 +80,10 @@
       <button type="button" class="mg-btn mg-btn-secondary" (click)="closeModal()">
         Kembali
       </button>
-      <button type="button" class="mg-btn mg-btn-primary" (click)="onSubmitModal()">
+      <button type="button"
+              class="mg-btn mg-btn-primary"
+              [class]="{'mg-btn-disabled': uploadForm.invalid}"
+              (click)="onSubmitModal()">
         Lanjut
       </button>
     </div>
