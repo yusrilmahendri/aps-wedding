@@ -39,6 +39,7 @@
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
             ],
             "serviceWorker": true,
+            "ngswConfigPath": "src/ngsw-config.json",
             "scripts": [],
             "allowedCommonJsDependencies": [
               "qrcode"
@@ -65,7 +66,8 @@
                 }
               ],
               "outputHashing": "all",
-              "serviceWorker": true
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json"
             },
             "development": {
               "buildOptimizer": false,
