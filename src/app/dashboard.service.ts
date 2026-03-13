@@ -192,6 +192,12 @@ export enum DashboardServiceType {
   THEME_USER_SELECTED,
   DELETE_REKENING_ADMIN,
   UPDATE_REKENING_ADMIN,
+  ADM_GET_REKENING,
+
+  // === Tripay Payment Endpoints ===
+  // Admin CRUD for Tripay payment configuration.
+  ADM_GET_TRIPAY_LIST,
+  ADM_GET_TRIPAY_DETAIL,
 
   // === Midtrans Payment Endpoints ===
   // Snap token creation, status polling, and admin CRUD for Midtrans config.
@@ -363,6 +369,8 @@ export class DashboardService {
         return `${this.BASE_URL_API}/v1/user/delete-rekening`;
       case DashboardServiceType.DELETE_REKENING_ADMIN:
         return `${this.BASE_URL_API}/v1/admin/delete-rekening`;
+      case DashboardServiceType.ADM_GET_REKENING:
+        return `${this.BASE_URL_API}/v1/admin/get-rekening`;
 
       // New JSON-based CRUD endpoints for /api/rekenings
       case DashboardServiceType.REKENINGS_INDEX:
@@ -456,6 +464,10 @@ export class DashboardService {
 
       case DashboardServiceType.ADM_TRIPAY_PAYMENT:
         return `${this.BASE_URL_API}/v1/admin/send-tripay`;
+      case DashboardServiceType.ADM_GET_TRIPAY_LIST:
+        return `${this.BASE_URL_API}/v1/admin/tripay`;
+      case DashboardServiceType.ADM_GET_TRIPAY_DETAIL:
+        return `${this.BASE_URL_API}/v1/admin/tripay`;
       case DashboardServiceType.ADM_MIDTRANS_PAYMENT:
         return `${this.BASE_URL_API}/v1/admin/send-midtrans`;
       case DashboardServiceType.ADM_ADD_REKENING:

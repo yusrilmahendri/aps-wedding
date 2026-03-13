@@ -18,14 +18,56 @@
     {{ errorMessage }}
   </div>
 
-  <!-- Table -->
-  <div *ngIf="!isLoading && !errorMessage" class="card shadow-sm">
+  <!-- Mobile Card View -->
+  <div *ngIf="!isLoading && !errorMessage && billingRows.length > 0" class="bill-mobile-cards">
+    <div class="bill-card" *ngFor="let row of billingRows" data-cy="bill-card">
+      <div class="bill-card-header">
+        <div class="bill-card-invoice">{{ row.no_invoice }}</div>
+        <span class="badge text-white"
+          [ngClass]="{
+            'bg-success': row.status === 'lunas' || row.status === 'settlement' || row.status === 'paid' || row.status === 'capture',
+            'bg-warning text-dark': row.status === 'pending',
+            'bg-danger': row.status === 'deny' || row.status === 'cancel' || row.status === 'expire' || row.status === 'failure'
+          }"
+          data-cy="bill-status-mobile">
+          {{ row.statusLabel }}
+        </span>
+      </div>
+      <div class="bill-card-body">
+        <div class="bill-card-row">
+          <span class="bill-card-label">Kode Pesanan</span>
+          <span class="bill-card-value">{{ row.kode_pemesanan }}</span>
+        </div>
+        <div class="bill-card-row">
+          <span class="bill-card-label">Tanggal</span>
+          <span class="bill-card-value">{{ row.tanggal_transaksi }}</span>
+        </div>
+        <div class="bill-card-row">
+          <span class="bill-card-label">Paket</span>
+          <span class="bill-card-value">{{ row.paket }}</span>
+        </div>
+        <div class="bill-card-row bill-card-row-total">
+          <span class="bill-card-label">Total</span>
+          <span class="bill-card-value bill-card-price">{{ formatCurrency(row.harga) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (Mobile) -->
+  <div *ngIf="!isLoading && !errorMessage && billingRows.length === 0" class="bill-empty-state text-center">
+    <p class="text-muted" data-cy="bill-empty">Belum ada riwayat pembayaran.</p>
+  </div>
+
+  <!-- Table View (Tablet+) -->
+  <div *ngIf="!isLoading && !errorMessage" class="card shadow-sm bill-table-card">
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table align-middle mb-0" data-cy="bill-table">
           <thead class="table-light">
             <tr>
               <th>No Invoice</th>
+              <th>Kode Pesanan</th>
               <th>Tanggal</th>
               <th>Paket</th>
               <th>Status</th>
@@ -35,12 +77,13 @@
           <tbody>
             <tr *ngFor="let row of billingRows" data-cy="bill-row">
               <td><strong>{{ row.no_invoice }}</strong></td>
+              <td><small class="text-muted">{{ row.kode_pemesanan }}</small></td>
               <td>{{ row.tanggal_transaksi }}</td>
               <td>{{ row.paket }}</td>
               <td>
                 <span class="badge text-white"
                   [ngClass]="{
-                    'bg-success': row.status === 'settlement' || row.status === 'paid' || row.status === 'capture',
+                    'bg-success': row.status === 'lunas' || row.status === 'settlement' || row.status === 'paid' || row.status === 'capture',
                     'bg-warning text-dark': row.status === 'pending',
                     'bg-danger': row.status === 'deny' || row.status === 'cancel' || row.status === 'expire' || row.status === 'failure'
                   }"
@@ -48,7 +91,7 @@
                   {{ row.statusLabel }}
                 </span>
               </td>
-              <td>{{ formatCurrency(row.harga) }}</td>
+              <td class="bill-price-column">{{ formatCurrency(row.harga) }}</td>
             </tr>
           </tbody>
         </table>

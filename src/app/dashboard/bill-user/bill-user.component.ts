@@ -3,6 +3,8 @@ import { DashboardService } from 'src/app/dashboard.service';
 
 interface BillingRow {
   no_invoice: string;
+  kode_pemesanan: string;
+  midtrans_order_id: string;
   tanggal_transaksi: string;
   paket: string;
   status: string;
@@ -34,6 +36,8 @@ export class BillUserComponent implements OnInit {
         const raw: any[] = res?.data ?? [];
         this.billingRows = raw.map((item) => ({
           no_invoice: item.no_invoice || item.invoice_number || '-',
+          kode_pemesanan: item.kode_pemesanan || '-',
+          midtrans_order_id: item.midtrans_order_id || '-',
           tanggal_transaksi: item.tanggal_transaksi || item.created_at || '-',
           paket: item.paket || item.package_name || item.paket_undangan?.name_paket || '-',
           status: item.status || '-',
@@ -51,19 +55,20 @@ export class BillUserComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     switch ((status || '').toLowerCase()) {
+      case 'lunas':
       case 'settlement':
       case 'paid':
       case 'capture':
-        return 'Lunas';
+        return 'Sukses';
       case 'pending':
-        return 'Belum Bayar';
+        return 'Pending';
       case 'deny':
       case 'cancel':
       case 'expire':
       case 'failure':
         return 'Dibatalkan';
       default:
-        return status ? status.charAt(0).toUpperCase() + status.slice(1) : '-';
+        return 'Pending';
     }
   }
 

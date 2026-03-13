@@ -310,7 +310,7 @@ export class SettingsPaymentComponent implements OnInit {
   }
 
   private loadManualPaymentDetails(): void {
-    this.dashboardSvc.httpSvc.get('/api/v1/admin/get-rekening').subscribe({
+    this.dashboardSvc.list(DashboardServiceType.ADM_GET_REKENING).subscribe({
       next: (response: any) => {
         console.log('Manual payment API response:', response);
         this.mapManualPaymentDetails(response.data || []);
@@ -502,8 +502,8 @@ export class SettingsPaymentComponent implements OnInit {
       formData.append('photo_rek', this.selectedPhotoFile);
     }
 
-    // Call admin endpoint as per API contract
-    this.dashboardSvc.httpSvc.post('/api/v1/admin/send-rekening', formData).subscribe({
+    // Call admin endpoint using DashboardServiceType
+    this.dashboardSvc.create(DashboardServiceType.ADM_ADD_REKENING, formData).subscribe({
       next: (response: any) => {
         console.log('Create rekening response:', response);
         this.notyf.success(response?.message || 'Rekening berhasil ditambahkan');
@@ -856,8 +856,8 @@ export class SettingsPaymentComponent implements OnInit {
 
     const itemId = this.currentEditItem!.id;
 
-    // Use POST with method spoofing for FormData compatibility with Laravel
-    this.dashboardSvc.httpSvc.post(`/api/v1/admin/update-rekening/${itemId}`, formData).subscribe({
+    // Use uploadFileWithId for FormData compatibility with Laravel method spoofing
+    this.dashboardSvc.uploadFileWithId(DashboardServiceType.UPDATE_REKENING_ADMIN, itemId, formData).subscribe({
       next: (response: any) => {
         console.log('Update rekening response:', response);
         this.notyf.success(response?.message || 'Rekening berhasil diperbarui');
@@ -873,11 +873,10 @@ export class SettingsPaymentComponent implements OnInit {
   }
 
   private updateTripayPayment(formValues: any): void {
-    // Use PUT /api/v1/admin/tripay/{id} endpoint according to API contract
+    // Use DashboardService update method with service type
     const itemId = this.currentEditItem!.id;
-    const updateUrl = `/api/v1/admin/tripay/${itemId}`;
 
-    this.dashboardSvc.httpSvc.put(updateUrl, formValues).subscribe({
+    this.dashboardSvc.update(DashboardServiceType.ADM_GET_TRIPAY_DETAIL, `/${itemId}`, formValues).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Konfigurasi Tripay berhasil diperbarui');
         this.loadPaymentDetails();
@@ -893,9 +892,8 @@ export class SettingsPaymentComponent implements OnInit {
 
   private updateMidtransPayment(formValues: any): void {
     const itemId = this.currentEditItem!.id;
-    const updateUrl = `${this.dashboardSvc.getUrl(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL)}/${itemId}`;
 
-    this.dashboardSvc.httpSvc.put(updateUrl, formValues).subscribe({
+    this.dashboardSvc.update(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL, `/${itemId}`, formValues).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Konfigurasi Midtrans berhasil diperbarui');
         this.loadPaymentDetails();
@@ -935,8 +933,8 @@ export class SettingsPaymentComponent implements OnInit {
   private deleteManualPayment(): void {
     const itemId = this.currentEditItem!.id;
 
-    // Call admin delete endpoint as per API contract
-    this.dashboardSvc.httpSvc.delete(`/api/v1/admin/delete-rekening/${itemId}`).subscribe({
+    // Call admin delete endpoint using DashboardServiceType
+    this.dashboardSvc.deleteV2(DashboardServiceType.DELETE_REKENING_ADMIN, itemId).subscribe({
       next: (response: any) => {
         console.log('Delete rekening response:', response);
         this.notyf.success(response?.message || 'Rekening berhasil dihapus');
@@ -953,10 +951,9 @@ export class SettingsPaymentComponent implements OnInit {
 
   private deleteTripayPayment(): void {
     const itemId = this.currentEditItem!.id;
-    // Use DELETE /api/v1/admin/tripay/{id} endpoint according to API contract
-    const deleteUrl = `/api/v1/admin/tripay/${itemId}`;
 
-    this.dashboardSvc.httpSvc.delete(deleteUrl).subscribe({
+    // Use DashboardService deleteV2 method with service type
+    this.dashboardSvc.deleteV2(DashboardServiceType.ADM_GET_TRIPAY_DETAIL, itemId).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Konfigurasi Tripay berhasil dihapus');
         this.loadPaymentDetails();
@@ -972,9 +969,9 @@ export class SettingsPaymentComponent implements OnInit {
 
   private deleteMidtransPayment(): void {
     const itemId = this.currentEditItem!.id;
-    const deleteUrl = `${this.dashboardSvc.getUrl(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL)}/${itemId}`;
 
-    this.dashboardSvc.httpSvc.delete(deleteUrl).subscribe({
+    // Use DashboardService deleteV2 method with service type
+    this.dashboardSvc.deleteV2(DashboardServiceType.ADM_GET_MIDTRANS_DETAIL, itemId).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Konfigurasi Midtrans berhasil dihapus');
         this.loadPaymentDetails();
