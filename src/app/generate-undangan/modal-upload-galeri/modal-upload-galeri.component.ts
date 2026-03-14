@@ -20,6 +20,7 @@ export class ModalUploadGaleriComponent implements OnInit {
 
   uploadForm!: FormGroup;
   imagePreviews: { [key: string]: string } = {};
+  isSubmitting = false;
   private notyf: Notyf;
 
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
@@ -107,6 +108,7 @@ export class ModalUploadGaleriComponent implements OnInit {
 
   onSubmitModal() {
     if (this.uploadForm.valid) {
+      this.isSubmitting = true;
       const payload = new FormData();
 
       Object.keys(this.uploadForm.value).forEach((key) => {
@@ -134,6 +136,7 @@ export class ModalUploadGaleriComponent implements OnInit {
           setTimeout(() => this.nextStep(), 1000);
         },
         error: (err) => {
+          this.isSubmitting = false;
           this.notyf.error(err?.message || 'Ada kesalahan dalam sistem.');
         }
       });

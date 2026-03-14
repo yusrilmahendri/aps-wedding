@@ -307,9 +307,9 @@
   background: #ff6f84;
   color: white;
   border: 1.5px solid transparent;
+  gap: 6px;
 
-  &:hover:not(:disabled),
-  &:hover:not(.mg-btn-disabled) {
+  &:hover:not(:disabled) {
     background: #d9364d;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(237, 64, 89, 0.3);
@@ -318,6 +318,20 @@
   &:active {
     transform: translateY(0);
   }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 // Responsive Design

@@ -107,50 +107,67 @@
   </ng-container>
 
   <!-- Midtrans Payment Method -->
-  <ng-container *ngIf="selectedMethod === 3">
-    <div *ngFor="let midtransData of bill" class="rp-payment-section">
-      <h3 class="rp-section-title">{{ midtransData.methode_pembayaran }}</h3>
+  <ng-container *ngIf="selectedMethod === 3 && invoiceData">
+    <div class="rp-invoice-card">
+      <!-- Invoice Header -->
+      <div class="rp-invoice-header">
+        <h3 class="rp-invoice-title">Invoice Pembayaran</h3>
+        <div class="rp-invoice-number">{{ invoiceData.kode_pemesanan }}</div>
+      </div>
 
-      <div class="rp-form-group">
-        <label class="rp-label">Jumlah Pembayaran</label>
-        <div class="rp-readonly-field">
-          <span style="font-weight: 600; color: #1a1a1a; font-size: 18px;">Rp. {{ manualBill | number }}</span>
+      <!-- Invoice Items -->
+      <div class="rp-invoice-body">
+        <div class="rp-invoice-row">
+          <span class="rp-invoice-label">Paket Undangan</span>
+          <span class="rp-invoice-value">{{ invoiceData.paket }}</span>
+        </div>
+        <div class="rp-invoice-row">
+          <span class="rp-invoice-label">Email</span>
+          <span class="rp-invoice-value rp-invoice-value--secondary">{{ invoiceData.email }}</span>
+        </div>
+        <div class="rp-invoice-row">
+          <span class="rp-invoice-label">Nomor HP</span>
+          <span class="rp-invoice-value">{{ invoiceData.phone }}</span>
+        </div>
+        <div class="rp-invoice-row">
+          <span class="rp-invoice-label">Domain</span>
+          <span class="rp-invoice-value rp-invoice-value--domain">{{ invoiceData.domain }}</span>
         </div>
       </div>
 
-      <div class="rp-form-group" style="visibility: hidden;">
-        <label class="rp-label">Mode</label>
-        <div class="rp-readonly-field">
-          <span style="font-weight: 600;">{{ midtransData.metode_production === 'production' ? '🟢 Production' : '🟡 Sandbox (Testing)' }}</span>
+      <!-- Invoice Total -->
+      <div class="rp-invoice-footer">
+        <div class="rp-invoice-total">
+          <span class="rp-total-label">Total Pembayaran</span>
+          <span class="rp-total-amount">{{ formatCurrency(invoiceData.total) }}</span>
         </div>
       </div>
 
-      <!-- Payment status feedback -->
-      <div *ngIf="midtransPaymentStatus === 'pending'" class="rp-status-info rp-status-pending" role="status" aria-live="polite" data-testid="status-pending">
+      <!-- Payment Status Feedback -->
+      <div *ngIf="midtransPaymentStatus === 'pending'" class="rp-status-info rp-status-pending" role="status" aria-live="polite">
         <span>Menunggu konfirmasi pembayaran... Kami memverifikasi secara otomatis.</span>
       </div>
-      <div *ngIf="midtransPaymentStatus === 'paid'" class="rp-status-info rp-status-paid" role="status" aria-live="polite" data-testid="status-paid">
-        <span>✓ Pembayaran berhasil! Klik tombol "Lanjut" untuk melanjutkan ke dashboard.</span>
+      <div *ngIf="midtransPaymentStatus === 'paid'" class="rp-status-info rp-status-paid" role="status" aria-live="polite">
+        <span>Pembayaran berhasil! Klik tombol "Lanjut" untuk melanjutkan ke dashboard.</span>
       </div>
-      <div *ngIf="midtransPaymentStatus === 'failed'" class="rp-status-info rp-status-failed" role="alert" aria-live="assertive" data-testid="status-failed">
+      <div *ngIf="midtransPaymentStatus === 'failed'" class="rp-status-info rp-status-failed" role="alert" aria-live="assertive">
         <span>Pembayaran gagal atau dibatalkan. Silakan coba lagi.</span>
       </div>
 
-      <div class="rp-midtrans-action">
+      <!-- Pay Button -->
+      <div class="rp-invoice-action">
         <button
           type="button"
-          class="rp-btn"
-          [ngClass]="midtransPaymentStatus === 'paid' ? 'rp-btn-primary' : 'rp-btn-midtrans'"
+          class="rp-btn rp-btn-pay"
           (click)="midtransPaymentStatus === 'paid' ? onNextClicked() : onPayWithMidtrans()"
           [disabled]="isPayingMidtrans && midtransPaymentStatus !== 'paid'"
-          [attr.aria-label]="midtransPaymentStatus === 'paid' ? 'Lanjut ke langkah berikutnya' : 'Bayar dengan Midtrans'"
-          data-testid="btn-pay-midtrans"
-        >
-          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid' && !hasSnapToken">💳 Bayar Sekarang</span>
-          <span *ngIf="!isPayingMidtrans && midtransPaymentStatus !== 'paid' && hasSnapToken">🔄 Lanjutkan Pembayaran</span>
-          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'pending'">⏳ Memverifikasi Pembayaran...</span>
-          <span *ngIf="isPayingMidtrans && midtransPaymentStatus === 'idle'">🔄 Memuat Halaman Pembayaran...</span>
-          <span *ngIf="midtransPaymentStatus === 'paid'">➜ Lanjut ke Dashboard</span>
+          [attr.aria-label]="isPayingMidtrans ? 'Memproses pembayaran' : 'Bayar sekarang'">
+          <ng-container [ngSwitch]="true">
+            <span *ngSwitchCase="isPayingMidtrans && midtransPaymentStatus === 'pending'">Memverifikasi...</span>
+            <span *ngSwitchCase="isPayingMidtrans && midtransPaymentStatus === 'idle'">Memproses...</span>
+            <span *ngSwitchCase="midtransPaymentStatus === 'paid'">Lanjut ke Dashboard</span>
+            <span *ngSwitchDefault>Bayar Sekarang</span>
+          </ng-container>
         </button>
       </div>
     </div>

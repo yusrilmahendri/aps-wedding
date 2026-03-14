@@ -82,9 +82,10 @@
       </button>
       <button type="button"
               class="mg-btn mg-btn-primary"
-              [class]="{'mg-btn-disabled': uploadForm.invalid}"
+              [disabled]="uploadForm.invalid || isSubmitting"
               (click)="onSubmitModal()">
-        Lanjut
+        <span *ngIf="isSubmitting" class="btn-spinner"></span>
+        {{ isSubmitting ? 'Memproses...' : 'Lanjut' }}
       </button>
     </div>
   </form>

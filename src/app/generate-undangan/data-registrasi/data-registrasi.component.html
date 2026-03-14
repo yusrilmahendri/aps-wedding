@@ -110,8 +110,9 @@
       <button type="button" class="dr-btn dr-btn-secondary" (click)="onCancel()">
         Batal
       </button>
-      <button type="submit" class="dr-btn dr-btn-primary" [disabled]="formRegis.invalid">
-        Lanjut
+      <button type="submit" class="dr-btn dr-btn-primary" [disabled]="formRegis.invalid || isSubmitting">
+        <span *ngIf="isSubmitting" class="btn-spinner"></span>
+        {{ isSubmitting ? 'Memproses...' : 'Lanjut' }}
       </button>
     </div>
   </form>

@@ -69,6 +69,7 @@ export class InformasiMempelaiComponent implements OnInit {
     cover_photo: null
   };
   userId: any;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -272,6 +273,7 @@ export class InformasiMempelaiComponent implements OnInit {
   }
 
   onNextClicked() {
+    this.isSubmitting = true;
     const payload = new FormData();
 
     Object.keys(this.formGroup.value).forEach((key) => {
@@ -298,6 +300,7 @@ export class InformasiMempelaiComponent implements OnInit {
         setTimeout(() => this.onNext(), 1000);
       },
       error: (err) => {
+        this.isSubmitting = false;
         this.notyf.error(err?.message || 'Ada kesalahan dalam sistem.');
       }
     });

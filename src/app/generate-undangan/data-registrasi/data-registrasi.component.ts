@@ -24,6 +24,7 @@ export class DataRegistrasiComponent implements OnInit {
   selectedPrice: string = '';
   emailError: string | null = null;
   domainError: string | null = null;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -123,6 +124,7 @@ export class DataRegistrasiComponent implements OnInit {
   }
 
   saveRegistration(): void {
+    this.isSubmitting = true;
     const payload = new FormData();
     Object.keys(this.formRegis.value).forEach((key) => {
       payload.append(key, this.formRegis.get(key)?.value);
@@ -138,6 +140,8 @@ export class DataRegistrasiComponent implements OnInit {
         this.notyf.success(res?.message || 'Data berhasil disimpan.');
       },
       error: (err) => {
+        this.isSubmitting = false;
+        this.modalRef?.hide();
         const validationErrors = err?.error?.errors;
 
         if (validationErrors) {

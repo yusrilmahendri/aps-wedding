@@ -16,6 +16,7 @@ export class RegisCeritaComponent implements OnInit {
   @Output() next = new EventEmitter<any>();
 
   form!: FormGroup;
+  isSubmitting = false;
 
   bsConfig = {
     dateInputFormat: 'DD MMMM YYYY',
@@ -184,6 +185,7 @@ export class RegisCeritaComponent implements OnInit {
   }
 
   saveCerita() {
+    this.isSubmitting = true;
     const rawStories = this.stories.value;
     const status = this.form.get('status')?.value;
     const userId = this.form.get('user_id')?.value;
@@ -221,6 +223,7 @@ export class RegisCeritaComponent implements OnInit {
         this.setLocalStorageData(updatedLocal);
       },
       error: (err) => {
+        this.isSubmitting = false;
         this.notyf.error(err?.message || 'Ada kesalahan dalam sistem.');
         console.error('Error while submitting data:', err);
       }

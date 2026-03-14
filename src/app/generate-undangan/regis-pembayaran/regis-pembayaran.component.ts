@@ -20,6 +20,15 @@ interface PaymentState {
   timestamp: number;
 }
 
+interface InvoiceData {
+  kode_pemesanan: string;
+  paket: string;
+  email: string;
+  phone: string;
+  domain: string;
+  total: number;
+}
+
 @Component({
   selector: 'wc-regis-pembayaran',
   templateUrl: './regis-pembayaran.component.html',
@@ -37,6 +46,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   midtransPaymentStatus: 'idle' | 'pending' | 'paid' | 'failed' = 'idle';
   currentOrderId: string | null = null;
   private currentSnapToken: string | null = null;
+  invoiceData: InvoiceData | null = null;
 
   /**
    * Maximum age of payment state before it's considered stale.
@@ -90,6 +100,20 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
       this.invoiceAmount = this.manualBill;
       this.userId        = stored?.registrasi?.response?.user?.id ?? null;
       this.invitationId  = stored?.registrasi?.response?.invitation?.id ?? null;
+
+      // Populate invoice data
+      this.invoiceData = {
+        kode_pemesanan: stored?.registrasi?.response?.user?.kode_pemesanan
+          ?? stored?.registrasi?.formData?.kode_pemesanan
+          ?? '-',
+        paket: stored?.registrasi?.response?.invitation?.package_features_snapshot?.name_paket
+          ?? stored?.registrasi?.formData?.paket_name
+          ?? '-',
+        email: stored?.registrasi?.formData?.email ?? '-',
+        phone: stored?.registrasi?.formData?.phone ?? '-',
+        domain: stored?.registrasi?.formData?.domain ?? '-',
+        total: this.manualBill ?? 0
+      };
     }
 
     // Restore payment state if available (e.g., after page refresh)
@@ -507,5 +531,13 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopPolling();
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
   }
 }

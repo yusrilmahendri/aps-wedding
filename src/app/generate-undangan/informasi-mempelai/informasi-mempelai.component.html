@@ -3,19 +3,19 @@
     <!-- Calon Mempelai Pria Section -->
     <div class="im-section">
       <h2 class="im-section-title">Calon Mempelai Pria</h2>
-      
+
       <div class="im-profile-section">
         <div class="im-profile-upload">
           <div class="im-profile-image">
-            <img [src]="imagePreviews['photo_pria'] || '/assets/default-avatar-male.svg'" 
-                 alt="Profile Pria" 
+            <img [src]="imagePreviews['photo_pria'] || '/assets/default-avatar-male.svg'"
+                 alt="Profile Pria"
                  class="im-avatar">
           </div>
           <label for="photo_pria" class="im-upload-btn">Upload Foto</label>
-          <input type="file" 
+          <input type="file"
                  id="photo_pria"
-                 (change)="onFileSelected($event, 'photo_pria')" 
-                 accept="image/*" 
+                 (change)="onFileSelected($event, 'photo_pria')"
+                 accept="image/*"
                  class="im-file-input">
         </div>
       </div>
@@ -23,37 +23,37 @@
       <div class="im-form-fields">
         <div class="im-form-group">
           <label for="namaLengkapPria" class="im-label">Nama Lengkap</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaLengkapPria" 
-                 placeholder="contoh jasaonnlom" 
+          <input type="text"
+                 class="im-input"
+                 id="namaLengkapPria"
+                 placeholder="contoh jasaonnlom"
                  formControlName="name_lengkap_pria">
         </div>
 
         <div class="im-form-group">
           <label for="namaPanggilanPria" class="im-label">Nama Panggilan</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaPanggilanPria" 
-                 placeholder="yan" 
+          <input type="text"
+                 class="im-input"
+                 id="namaPanggilanPria"
+                 placeholder="yan"
                  formControlName="name_panggilan_pria">
         </div>
 
         <div class="im-form-group">
           <label for="namaAyahPria" class="im-label">Nama Ayah</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaAyahPria" 
-                 placeholder="Nama Ayah" 
+          <input type="text"
+                 class="im-input"
+                 id="namaAyahPria"
+                 placeholder="Nama Ayah"
                  formControlName="ayah_pria">
         </div>
 
         <div class="im-form-group">
           <label for="namaIbuPria" class="im-label">Nama Ibu</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaIbuPria" 
-                 placeholder="Nama Ibu" 
+          <input type="text"
+                 class="im-input"
+                 id="namaIbuPria"
+                 placeholder="Nama Ibu"
                  formControlName="ibu_pria">
         </div>
       </div>
@@ -62,19 +62,19 @@
     <!-- Calon Mempelai Wanita Section -->
     <div class="im-section">
       <h2 class="im-section-title">Calon Mempelai wanita</h2>
-      
+
       <div class="im-profile-section">
         <div class="im-profile-upload">
           <div class="im-profile-image">
-            <img [src]="imagePreviews['photo_wanita'] || '/assets/default-avatar-female.svg'" 
-                 alt="Profile Wanita" 
+            <img [src]="imagePreviews['photo_wanita'] || '/assets/default-avatar-female.svg'"
+                 alt="Profile Wanita"
                  class="im-avatar">
           </div>
           <label for="photo_wanita" class="im-upload-btn">Upload Foto</label>
-          <input type="file" 
+          <input type="file"
                  id="photo_wanita"
-                 (change)="onFileSelected($event, 'photo_wanita')" 
-                 accept="image/*" 
+                 (change)="onFileSelected($event, 'photo_wanita')"
+                 accept="image/*"
                  class="im-file-input">
         </div>
       </div>
@@ -82,37 +82,37 @@
       <div class="im-form-fields">
         <div class="im-form-group">
           <label for="namaLengkapWanita" class="im-label">Nama Lengkap</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaLengkapWanita" 
-                 placeholder="contoh jasaonnlom" 
+          <input type="text"
+                 class="im-input"
+                 id="namaLengkapWanita"
+                 placeholder="contoh jasaonnlom"
                  formControlName="name_lengkap_wanita">
         </div>
 
         <div class="im-form-group">
           <label for="namaPanggilanWanita" class="im-label">Nama Panggilan</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaPanggilanWanita" 
-                 placeholder="yan" 
+          <input type="text"
+                 class="im-input"
+                 id="namaPanggilanWanita"
+                 placeholder="yan"
                  formControlName="name_panggilan_wanita">
         </div>
 
         <div class="im-form-group">
           <label for="namaAyahWanita" class="im-label">Nama Ayah</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaAyahWanita" 
-                 placeholder="Nama Ayah" 
+          <input type="text"
+                 class="im-input"
+                 id="namaAyahWanita"
+                 placeholder="Nama Ayah"
                  formControlName="ayah_wanita">
         </div>
 
         <div class="im-form-group">
           <label for="namaIbuWanita" class="im-label">Nama Ibu</label>
-          <input type="text" 
-                 class="im-input" 
-                 id="namaIbuWanita" 
-                 placeholder="Nama Ibu" 
+          <input type="text"
+                 class="im-input"
+                 id="namaIbuWanita"
+                 placeholder="Nama Ibu"
                  formControlName="ibu_wanita">
         </div>
       </div>
@@ -121,19 +121,19 @@
     <!-- Foto Sampul Section -->
     <div class="im-section">
       <h2 class="im-section-title">foto sampul</h2>
-      
+
       <div class="im-profile-section">
         <div class="im-profile-upload">
           <div class="im-profile-image">
-            <img [src]="imagePreviews['cover_photo'] || '/assets/default-cover.svg'" 
-                 alt="Cover Photo" 
+            <img [src]="imagePreviews['cover_photo'] || '/assets/default-cover.svg'"
+                 alt="Cover Photo"
                  class="im-avatar">
           </div>
           <label for="cover_photo" class="im-upload-btn">Upload Foto</label>
-          <input type="file" 
+          <input type="file"
                  id="cover_photo"
-                 (change)="onFileSelected($event, 'cover_photo')" 
-                 accept="image/*" 
+                 (change)="onFileSelected($event, 'cover_photo')"
+                 accept="image/*"
                  class="im-file-input">
         </div>
       </div>
@@ -144,8 +144,9 @@
       <button type="button" class="im-btn im-btn-secondary" (click)="onBack()">
         Kembali
       </button>
-      <button type="button" class="im-btn im-btn-primary" [disabled]="formGroup.invalid" (click)="onNextClicked()">
-        Lanjut
+      <button type="button" class="im-btn im-btn-primary" [disabled]="formGroup.invalid || isSubmitting" (click)="onNextClicked()">
+        <span *ngIf="isSubmitting" class="btn-spinner"></span>
+        {{ isSubmitting ? 'Memproses...' : 'Lanjut' }}
       </button>
     </div>
   </form>
