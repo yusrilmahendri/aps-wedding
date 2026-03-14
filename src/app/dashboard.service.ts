@@ -208,6 +208,9 @@ export enum DashboardServiceType {
 
   // === Billing / Tagihan Endpoints ===
   USER_TAGIHAN,
+
+  // === Admin Invoice Monitoring ===
+  ADM_INVOICE_LIST,
 }
 
 // Testimonial Interfaces
@@ -627,6 +630,9 @@ export class DashboardService {
         return `${this.BASE_URL_API}/v1/admin/midtrans`;
       case DashboardServiceType.USER_TAGIHAN:
         return `${this.BASE_URL_API}/v1/user/tagihan`;
+
+      case DashboardServiceType.ADM_INVOICE_LIST:
+        return `${this.BASE_URL_API}/v1/admin/invoices`;
 
       default:
         return '';

@@ -1,185 +1,211 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { Component, OnInit } from '@angular/core';
 import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
 
+interface InvoiceRow {
+  id: number;
+  email: string;
+  phone: string;
+  domain: string;
+  kode_pemesanan: string;
+  midtrans_order_id: string;
+  paket: string;
+  harga: number;
+  payment_status: string;
+  payment_confirmed_at: string;
+  domain_expires_at: string;
+  created_at: string;
+
+  statusLabel: string;
+  statusClass: string;
+}
+
+interface InvoiceResponse {
+  success: boolean;
+  data: InvoiceRow[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
 
 @Component({
   selector: 'wc-pembayaran',
   templateUrl: './pembayaran.component.html',
   styleUrls: ['./pembayaran.component.scss']
 })
-
 export class PembayaranComponent implements OnInit {
+  rows: InvoiceRow[] = [];
+  displayedRows: InvoiceRow[] = [];
 
-  rows: Array<any> = [];
-  columns: Array<any> = [];
-  paketList: any[] = [];
-  isLoading: boolean = false;
+  isLoading = false;
+  searchTerm = '';
 
-  user: any
-  salary: any;
-  total_users: any;
-  pending_req: any;
+  pagination = {
+    currentPage: 1,
+    totalPages: 1,
+    perPage: 15,
+    total: 0
+  };
 
-  // Modal and form properties
-  modalRef?: BsModalRef;
-  confirmPaymentForm: FormGroup;
-  selectedUser: any = null;
+  perPageOptions = [10, 15, 25, 50, 100];
+
+  selectedInvoice: InvoiceRow | null = null;
+  isModalOpen = false;
+
   private notyf: Notyf;
 
-  constructor(
-    private dashboardSvc: DashboardService,
-    private modalService: BsModalService,
-    private fb: FormBuilder
-  ) {
-    // Initialize Notyf
+  constructor(private dashboardSvc: DashboardService) {
     this.notyf = new Notyf({
-      duration: 1000,
-      position: {
-        x: 'right',
-        y: 'top'
-      }
-    });
-
-    // Initialize form
-    this.confirmPaymentForm = this.fb.group({
-      user_id: ['', Validators.required],
-      kode_pemesanan: ['', Validators.required]
+      duration: 3000,
+      position: { x: 'right', y: 'top' }
     });
   }
 
   ngOnInit(): void {
-    this.getPaketUndangan();
-    this.columns = [
-      { name: 'No Invoice', prop: 'invoice' },
-      { name: 'Pengguna', prop: 'pengguna' },
-      { name: 'Domain', prop: 'domain' },
-      { name: 'Status', prop: 'status', type: 'html' }
-    ];
+    this.loadInvoices();
   }
 
-  getPaketUndangan() {
+  loadInvoices(page: number = 1): void {
     this.isLoading = true;
-    this.dashboardSvc.list(DashboardServiceType.MNL_MD_PACK_INVITATION,).subscribe(res => {
-      this.paketList = res?.data ?? [];
-      this.getDetailUser();
-    });
-  }
 
-  getDetailUser() {
-    this.dashboardSvc.getParam(DashboardServiceType.ADM_IDX_DASHBOARD, '').subscribe(res => {
-      const users = res?.users?.data ?? [];
-      const activeUsers = users.filter((user: any) => user.kd_status === 'SB');
-      this.salary = activeUsers.reduce((total: number, user: any) => {
-        const paket = this.paketList.find(p => p.id == user.paket_undangan_id);
-        const harga = paket ? parseFloat(paket.price) : 0;
-        return total + harga;
-      }, 0);
+    const params: any = {
+      page,
+      per_page: this.pagination.perPage
+    };
 
-      this.total_users = res?.total_users ?? 0;
-      this.pending_req = (res?.jumlah_belum_lunas_dan_pending?.BL ?? 0) +
-        (res?.jumlah_belum_lunas_dan_pending?.MK ?? 0);
-
-      this.rows = users.map((user: any) => ({
-        id: user.id,
-        invoice: user.kode_pemesanan ?? '–',
-        pengguna: user.email ?? '–',
-        domain: user.domain ?? '–',
-        statusCode: user.kd_status,
-        statusData: this.getStatusData(user.kd_status),
-        konfirmasiAktif: user.kd_status !== 'SB', // Disabled when already paid (SB)
-        originalData: user
-      }));
-
-      this.isLoading = false;
-    });
-  }
-
-  getStatusData(code: string | null): {text: string, class: string, ariaLabel: string} {
-    switch (code) {
-      case 'SB':
-        return {
-          text: 'Aktif',
-          class: 'aktif',
-          ariaLabel: 'Status Aktif'
-        };
-      case 'MK':
-        return {
-          text: 'Menunggu Konfirmasi',
-          class: 'waiting',
-          ariaLabel: 'Status Menunggu Konfirmasi'
-        };
-      case 'BL':
-        return {
-          text: 'Belum Lunas',
-          class: 'unpaid',
-          ariaLabel: 'Status Belum Lunas'
-        };
-      case 'EX':
-        return {
-          text: 'Expired',
-          class: 'expired',
-          ariaLabel: 'Status Expired'
-        };
-      default:
-        return {
-          text: 'Belum selesai',
-          class: 'pending',
-          ariaLabel: 'Status Belum selesai'
-        };
+    if (this.searchTerm) {
+      params.search = this.searchTerm;
     }
-  }
 
-  onConfirmClicked(row: any, template: TemplateRef<any>) {
-    this.selectedUser = row;
-
-    // Populate form with selected user data
-    this.confirmPaymentForm.patchValue({
-      user_id: row.id,
-      kode_pemesanan: row.invoice === '–' ? '' : row.invoice
-    });
-
-    // Open modal with custom class for styling
-    this.modalRef = this.modalService.show(template, {
-      class: 'modal-lg custom-payment-modal',
-      backdrop: 'static',
-      keyboard: false
-    });
-  }
-
-  onSubmitPaymentConfirmation() {
-    if (this.confirmPaymentForm.valid) {
-      const payload = this.confirmPaymentForm.value;
-
-      this.dashboardSvc.update(DashboardServiceType.RDM_CONFIRM_PAYMENT, '', payload).subscribe({
-        next: (res) => {
-          this.notyf.success('Berhasil konfirmasi pembayaran');
-          this.modalRef?.hide();
-          this.getDetailUser(); // Refresh data
-        },
-        error: (error) => {
-          console.error('Error confirming payment:', error);
-          this.notyf.error('Gagal konfirmasi pembayaran');
+    this.dashboardSvc.list(DashboardServiceType.ADM_INVOICE_LIST, params).subscribe({
+      next: (response: InvoiceResponse) => {
+        if (response?.success && response?.data) {
+          this.rows = this.mapInvoiceRows(response.data);
+          this.displayedRows = this.rows;
+          this.pagination = {
+            currentPage: response.meta.current_page,
+            totalPages: response.meta.last_page,
+            perPage: response.meta.per_page,
+            total: response.meta.total
+          };
         }
-      });
-    } else {
-      this.notyf.error('Mohon lengkapi semua field yang diperlukan');
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading invoices:', error);
+        this.notyf.error('Gagal memuat data invoice');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapInvoiceRows(data: any[]): InvoiceRow[] {
+    return data.map(item => ({
+      ...item,
+      statusLabel: this.getStatusLabel(item.payment_status),
+      statusClass: this.getStatusClass(item.payment_status)
+    }));
+  }
+
+  private getStatusLabel(status: string): string {
+    const statusMap: Record<string, string> = {
+      'paid': 'Lunas',
+      'pending': 'Pending',
+      'failed': 'Gagal',
+      'expired': 'Expired',
+      'refunded': 'Refund'
+    };
+    return statusMap[status] || status;
+  }
+
+  private getStatusClass(status: string): string {
+    const classMap: Record<string, string> = {
+      'paid': 'aktif',
+      'pending': 'waiting',
+      'failed': 'unpaid',
+      'expired': 'expired',
+      'refunded': 'pending'
+    };
+    return classMap[status] || 'pending';
+  }
+
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.pagination.currentPage = 1;
+    this.loadInvoices(1);
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pagination.perPage = size;
+    this.pagination.currentPage = 1;
+    this.loadInvoices(1);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.pagination.totalPages || page === this.pagination.currentPage) {
+      return;
     }
+    this.loadInvoices(page);
   }
 
-  onCancelModal() {
-    this.modalRef?.hide();
-    this.confirmPaymentForm.reset();
-    this.selectedUser = null;
+  openModal(invoice: InvoiceRow): void {
+    this.selectedInvoice = invoice;
+    this.isModalOpen = true;
   }
 
-  onEditClicked(row: any) {
-    console.log('Edit action:', row);
+  closeModal(): void {
+    this.isModalOpen = false;
+    setTimeout(() => {
+      this.selectedInvoice = null;
+    }, 300);
   }
 
-  onDeleteClicked(row: any) {
-    console.log('Delete action:', row);
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let startPage = Math.max(1, this.pagination.currentPage - Math.floor(maxVisible / 2));
+    let endPage = startPage + maxVisible - 1;
+
+    if (endPage > this.pagination.totalPages) {
+      endPage = this.pagination.totalPages;
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  get paginationInfo(): string {
+    const start = (this.pagination.currentPage - 1) * this.pagination.perPage + 1;
+    const end = Math.min(
+      this.pagination.currentPage * this.pagination.perPage,
+      this.pagination.total
+    );
+    return `Menampilkan ${start}–${end} dari ${this.pagination.total} data`;
+  }
+
+  get visibleData(): InvoiceRow[] {
+    return this.displayedRows;
+  }
+
+  get hasData(): boolean {
+    return this.displayedRows.length > 0;
+  }
+
+  get showPagination(): boolean {
+    return this.pagination.total > 0;
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
   }
 }

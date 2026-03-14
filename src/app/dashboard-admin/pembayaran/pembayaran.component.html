@@ -1,43 +1,86 @@
-  <!-- Invoice Section -->
+<div class="dashboard-wrapper">
+  <div class="loading-overlay" *ngIf="isLoading" aria-label="Loading data">
+    <div class="loading-container">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p class="loading-text">Memuat data invoice...</p>
+    </div>
+  </div>
+
+  <div class="dashboard-content" [class.content-loading]="isLoading">
     <section class="invoice-section" aria-label="Invoice management">
       <div class="invoice-container" role="region" aria-label="Invoice table container">
         <div class="invoice-header">
-          <h2>Invoice</h2>
+          <h2>Data Invoice</h2>
+        </div>
+
+        <div class="invoice-toolbar">
+          <div class="toolbar-search">
+            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+            <input type="text"
+                   class="search-input"
+                   placeholder="Cari email, domain, kode pemesanan..."
+                   [ngModel]="searchTerm"
+                   (ngModelChange)="onSearchChange($event)"
+                   aria-label="Cari data invoice">
+          </div>
+          <div class="toolbar-limit">
+            <label for="pageSize" class="limit-label">Tampilkan</label>
+            <select id="pageSize"
+                    class="limit-select"
+                    [ngModel]="pagination.perPage"
+                    (ngModelChange)="onPageSizeChange($event)"
+                    aria-label="Jumlah data per halaman">
+              <option *ngFor="let opt of perPageOptions" [ngValue]="opt">{{ opt }}</option>
+            </select>
+          </div>
         </div>
 
         <!-- Desktop Table -->
-        <div class="table-responsive d-none d-md-block">
+        <div class="table-wrap table-wrap--desktop">
           <table class="invoice-table" role="table" aria-label="Invoice data table">
             <thead>
               <tr>
-                <th scope="col">No Invoice</th>
-                <th scope="col">Pengguna</th>
+                <th scope="col">Kode Pesanan</th>
+                <th scope="col">Midtrans Order ID</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
                 <th scope="col">Domain</th>
+                <th scope="col">Paket</th>
+                <th scope="col">Masa Aktif</th>
                 <th scope="col">Status</th>
-                <th scope="col">Aksi</th>
+                <th scope="col" class="text-center">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of rows;">
-                <td>{{ row.invoice }}</td>
-                <td>{{ row.pengguna }}</td>
-                <td>
-                  <a href="/wedding/{{ row.domain }}" tabindex="-1" [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
+              <tr *ngFor="let row of visibleData">
+                <td><strong>{{ row.kode_pemesanan }}</strong></td>
+                <td class="cell-truncate" [title]="row.midtrans_order_id">{{ row.midtrans_order_id }}</td>
+                <td class="cell-truncate" [title]="row.email">{{ row.email }}</td>
+                <td>{{ row.phone }}</td>
+                <td class="cell-truncate">
+                  <a *ngIf="row.domain !== '-'"
+                     href="/wedding/{{ row.domain }}"
+                     tabindex="-1"
+                     [attr.aria-label]="'Domain ' + row.domain"
+                     target="_blank">{{ row.domain }}</a>
+                  <span *ngIf="row.domain === '-'">-</span>
                 </td>
+                <td class="cell-truncate" [title]="row.paket">{{ row.paket }}</td>
+                <td>{{ row.domain_expires_at }}</td>
                 <td>
                   <span class="status-badge"
-                        [ngClass]="row.statusData.class"
-                        [attr.aria-label]="row.statusData.ariaLabel">
+                        [ngClass]="row.statusClass"
+                        [attr.aria-label]="row.statusLabel">
                     <span class="dot" aria-hidden="true"></span>
-                    {{ row.statusData.text }}
+                    {{ row.statusLabel }}
                   </span>
                 </td>
-                <td>
-                  <button class="btn-konfirmasi" [disabled]="!row.konfirmasiAktif"
-                    [attr.aria-disabled]="!row.konfirmasiAktif" [ngClass]="{ 'active': row.konfirmasiAktif }"
-                    [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                    (click)="onConfirmClicked(row, confirmPaymentModal)">
-                    Konfirmasi
+                <td class="text-center">
+                  <button class="btn-view"
+                          (click)="openModal(row)"
+                          [attr.aria-label]="'Lihat detail ' + row.kode_pemesanan"
+                          aria-haspopup="dialog">
+                    <i class="fas fa-eye" aria-hidden="true"></i>
                   </button>
                 </td>
               </tr>
@@ -46,104 +89,234 @@
         </div>
 
         <!-- Mobile Cards -->
-        <div class="mobile-cards d-block d-md-none">
-          <div class="invoice-card" *ngFor="let row of rows; ">
+        <div class="mobile-cards">
+          <div class="invoice-card" *ngFor="let row of visibleData">
             <div class="invoice-card-header">
-              <span class="invoice-number">{{ row.invoice }}</span>
+              <span class="invoice-number">{{ row.kode_pemesanan }}</span>
               <span class="status-badge"
-                    [ngClass]="row.statusData.class"
-                    [attr.aria-label]="row.statusData.ariaLabel">
+                    [ngClass]="row.statusClass"
+                    [attr.aria-label]="row.statusLabel">
                 <span class="dot" aria-hidden="true"></span>
-                {{ row.statusData.text }}
+                {{ row.statusLabel }}
               </span>
             </div>
             <div class="invoice-card-body">
               <div class="invoice-detail">
-                <span class="label">Pengguna:</span>
-                <span class="value">{{ row.pengguna }}</span>
+                <span class="label">Midtrans Order ID:</span>
+                <span class="value text-truncate" [title]="row.midtrans_order_id">{{ row.midtrans_order_id }}</span>
+              </div>
+              <div class="invoice-detail">
+                <span class="label">Email:</span>
+                <span class="value text-truncate" [title]="row.email">{{ row.email }}</span>
+              </div>
+              <div class="invoice-detail">
+                <span class="label">Phone:</span>
+                <span class="value">{{ row.phone }}</span>
               </div>
               <div class="invoice-detail">
                 <span class="label">Domain:</span>
                 <span class="value">
-                  <a href="#" [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
+                  <a *ngIf="row.domain !== '-'"
+                     href="/wedding/{{ row.domain }}"
+                     [attr.aria-label]="'Domain ' + row.domain"
+                     target="_blank">{{ row.domain }}</a>
+                  <span *ngIf="row.domain === '-'">-</span>
                 </span>
+              </div>
+              <div class="invoice-detail">
+                <span class="label">Paket:</span>
+                <span class="value text-truncate" [title]="row.paket">{{ row.paket }}</span>
+              </div>
+              <div class="invoice-detail">
+                <span class="label">Masa Aktif:</span>
+                <span class="value">{{ row.domain_expires_at }}</span>
               </div>
             </div>
             <div class="invoice-card-footer">
-              <button class="btn-konfirmasi mobile" [disabled]="!row.konfirmasiAktif"
-                [attr.aria-disabled]="!row.konfirmasiAktif" [ngClass]="{ 'active': row.konfirmasiAktif }"
-                [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                (click)="onConfirmClicked(row, confirmPaymentModal)">
-                Konfirmasi
+              <button class="btn-view btn-view--mobile"
+                      (click)="openModal(row)"
+                      [attr.aria-label]="'Lihat detail ' + row.kode_pemesanan">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+                <span>Lihat Detail</span>
               </button>
             </div>
           </div>
         </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!hasData && !isLoading">
+          <i class="fas fa-inbox empty-state__icon" aria-hidden="true"></i>
+          <p class="empty-state__text" *ngIf="searchTerm">Tidak ada data yang cocok dengan "{{ searchTerm }}"</p>
+          <p class="empty-state__text" *ngIf="!searchTerm">Belum ada data invoice</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar" *ngIf="showPagination">
+          <span class="pagination-info">{{ paginationInfo }}</span>
+          <div class="pagination-controls" *ngIf="pagination.totalPages > 1">
+            <button class="page-btn"
+                    [disabled]="pagination.currentPage === 1"
+                    (click)="goToPage(1)"
+                    aria-label="Halaman pertama">
+              <i class="fas fa-angle-double-left" aria-hidden="true"></i>
+            </button>
+            <button class="page-btn"
+                    [disabled]="pagination.currentPage === 1"
+                    (click)="goToPage(pagination.currentPage - 1)"
+                    aria-label="Halaman sebelumnya">
+              <i class="fas fa-angle-left" aria-hidden="true"></i>
+            </button>
+            <button *ngFor="let p of pageNumbers"
+                    class="page-btn"
+                    [class.active]="p === pagination.currentPage"
+                    (click)="goToPage(p)"
+                    [attr.aria-label]="'Halaman ' + p"
+                    [attr.aria-current]="p === pagination.currentPage ? 'page' : null">
+              {{ p }}
+            </button>
+            <button class="page-btn"
+                    [disabled]="pagination.currentPage === pagination.totalPages"
+                    (click)="goToPage(pagination.currentPage + 1)"
+                    aria-label="Halaman berikutnya">
+              <i class="fas fa-angle-right" aria-hidden="true"></i>
+            </button>
+            <button class="page-btn"
+                    [disabled]="pagination.currentPage === pagination.totalPages"
+                    (click)="goToPage(pagination.totalPages)"
+                    aria-label="Halaman terakhir">
+              <i class="fas fa-angle-double-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
+  </div>
 
-      <!-- Payment Confirmation Modal -->
-  <ng-template #confirmPaymentModal>
+  <!-- Invoice Detail Modal Overlay -->
+  <div class="invoice-modal-overlay"
+       [class.active]="isModalOpen"
+       (click)="closeModal()"
+       [attr.aria-hidden]="!isModalOpen"></div>
+
+  <div class="invoice-modal"
+       [class.active]="isModalOpen"
+       (click)="$event.stopPropagation()"
+       role="dialog"
+       [attr.aria-labelledby]="'invoice-detail-title-' + selectedInvoice?.id"
+       [attr.aria-modal]="isModalOpen ? 'true' : 'false'">
     <div class="modal-header">
-      <h4 class="modal-title pull-left">Konfirmasi Pembayaran</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="onCancelModal()">
-        <span aria-hidden="true">&times;</span>
+      <h3 id="invoice-detail-title-{{ selectedInvoice?.id }}" class="modal-title">Detail Invoice</h3>
+      <button class="modal-close"
+              (click)="closeModal()"
+              aria-label="Tutup modal">
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="confirmPaymentForm" (ngSubmit)="onSubmitPaymentConfirmation()">
-        <div class="row">
-          <div class="col-12 mb-3">
-            <div class="user-info-card">
-              <h6 class="mb-2">Informasi Pengguna</h6>
-              <p class="mb-1"><strong>Email:</strong> {{ selectedUser?.pengguna }}</p>
-              <p class="mb-1"><strong>Domain:</strong> {{ selectedUser?.domain || 'Belum ada domain' }}</p>
-              <p class="mb-0"><strong>Kode Invoice:</strong> {{ selectedUser?.invoice }}</p>
-            </div>
+
+    <div class="modal-body" *ngIf="selectedInvoice">
+      <!-- Invoice Number Badge -->
+      <div class="detail-badge">
+        <span class="badge-label">Kode Pesanan</span>
+        <span class="badge-value">{{ selectedInvoice.kode_pemesanan }}</span>
+      </div>
+
+      <!-- Status Badge -->
+      <div class="detail-badge">
+        <span class="badge-label">Status</span>
+        <span class="status-badge-inline"
+              [ngClass]="selectedInvoice.statusClass">
+          <span class="dot" aria-hidden="true"></span>
+          {{ selectedInvoice.statusLabel }}
+        </span>
+      </div>
+
+      <!-- Invoice Details Grid -->
+      <div class="detail-grid">
+        <!-- User Information -->
+        <div class="detail-section">
+          <h4 class="section-title">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            Informasi Pengguna
+          </h4>
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ selectedInvoice.email }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">No. HP</span>
+            <span class="detail-value">{{ selectedInvoice.phone || '-' }}</span>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="user_id" class="form-label">User ID <span class="text-danger">*</span></label>
-            <input type="number" id="user_id" class="form-control" formControlName="user_id" readonly
-              placeholder="User ID">
-            <div class="invalid-feedback"
-              *ngIf="confirmPaymentForm.get('user_id')?.invalid && confirmPaymentForm.get('user_id')?.touched">
-              User ID wajib diisi
-            </div>
+        <!-- Domain Information -->
+        <div class="detail-section">
+          <h4 class="section-title">
+            <i class="fas fa-globe" aria-hidden="true"></i>
+            Informasi Domain
+          </h4>
+          <div class="detail-row">
+            <span class="detail-label">Domain</span>
+            <span class="detail-value">
+              <a *ngIf="selectedInvoice.domain !== '-'"
+                 href="/wedding/{{ selectedInvoice.domain }}"
+                 target="_blank"
+                 [attr.aria-label]="'Buka ' + selectedInvoice.domain">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                {{ selectedInvoice.domain }}
+              </a>
+              <span *ngIf="selectedInvoice.domain === '-'">-</span>
+            </span>
           </div>
+          <div class="detail-row">
+            <span class="detail-label">Masa Aktif</span>
+            <span class="detail-value">{{ selectedInvoice.domain_expires_at || '-' }}</span>
+          </div>
+        </div>
 
-          <div class="col-md-6 mb-3">
-            <label for="kode_pemesanan" class="form-label">Kode Pemesanan <span class="text-danger">*</span></label>
-            <input type="text" id="kode_pemesanan" class="form-control" formControlName="kode_pemesanan"
-              placeholder="Masukkan kode pemesanan">
-            <div class="invalid-feedback"
-              *ngIf="confirmPaymentForm.get('kode_pemesanan')?.invalid && confirmPaymentForm.get('kode_pemesanan')?.touched">
-              Kode pemesanan wajib diisi
-            </div>
+        <!-- Payment Information -->
+        <div class="detail-section">
+          <h4 class="section-title">
+            <i class="fas fa-credit-card" aria-hidden="true"></i>
+            Informasi Pembayaran
+          </h4>
+          <div class="detail-row">
+            <span class="detail-label">Midtrans Order ID</span>
+            <span class="detail-value detail-value--code">{{ selectedInvoice.midtrans_order_id || '-' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tanggal Dibuat</span>
+            <span class="detail-value">{{ selectedInvoice.created_at }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Dikonfirmasi</span>
+            <span class="detail-value">{{ selectedInvoice.payment_confirmed_at || '-' }}</span>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12">
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="checkbox" id="confirmCheck" required>
-              <label class="form-check-label" for="confirmCheck">
-                Saya yakin ingin mengkonfirmasi pembayaran untuk pengguna ini
-              </label>
-            </div>
+        <!-- Package Information -->
+        <div class="detail-section">
+          <h4 class="section-title">
+            <i class="fas fa-box" aria-hidden="true"></i>
+            Informasi Paket
+          </h4>
+          <div class="detail-row">
+            <span class="detail-label">Nama Paket</span>
+            <span class="detail-value">{{ selectedInvoice.paket }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Harga</span>
+            <span class="detail-value detail-value--price">{{ formatCurrency(selectedInvoice.harga) }}</span>
           </div>
         </div>
-      </form>
+      </div>
     </div>
+
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="onCancelModal()">
-        <i class="fas fa-times me-1"></i> Batal
-      </button>
-      <button type="button" class="btn btn-primary" [disabled]="confirmPaymentForm.invalid"
-        (click)="onSubmitPaymentConfirmation()">
-        <i class="fas fa-check me-1"></i> Konfirmasi Pembayaran
+      <button class="btn-close-modal"
+              (click)="closeModal()"
+              aria-label="Tutup modal">
+        Tutup
       </button>
     </div>
-  </ng-template>
+  </div>
+</div>
