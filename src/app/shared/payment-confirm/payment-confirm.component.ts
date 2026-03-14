@@ -4,6 +4,16 @@ import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from '../../dashboard.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SuccessConfirmPaymentComponent } from '../success-confirm-payment/success-confirm-payment.component';
+import { Observable } from 'rxjs';
+
+interface InvoiceData {
+  kode_pemesanan: string;
+  paket: string;
+  email: string;
+  phone: string;
+  domain: string;
+  total: number;
+}
 
 @Component({
   selector: 'wc-payment-confirm',
@@ -17,6 +27,7 @@ export class PaymentConfirmComponent implements OnInit {
   inputKodePayment: string = '';
   @Input() userId!: number;
   form!: FormGroup;
+  invoiceData: InvoiceData | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -51,6 +62,22 @@ export class PaymentConfirmComponent implements OnInit {
       }
 
       this.kodePayment = kodePemesanan;
+
+      // Populate invoice data from localStorage
+      const priceSnapshot = allDataFromSteps?.registrasi?.response?.invitation?.package_price_snapshot;
+      const formPrice = allDataFromSteps?.registrasi?.formData?.price;
+      const resolvedPrice = priceSnapshot ?? formPrice ?? null;
+
+      this.invoiceData = {
+        kode_pemesanan: kodePemesanan || '-',
+        paket: allDataFromSteps?.registrasi?.response?.invitation?.package_features_snapshot?.name_paket
+          ?? allDataFromSteps?.registrasi?.formData?.paket_name
+          ?? '-',
+        email: allDataFromSteps?.registrasi?.formData?.email ?? '-',
+        phone: allDataFromSteps?.registrasi?.formData?.phone ?? '-',
+        domain: allDataFromSteps?.registrasi?.formData?.domain ?? '-',
+        total: resolvedPrice !== null ? Number(resolvedPrice) : 0
+      };
     }
 
     this.form = this.fb.group({
@@ -68,19 +95,38 @@ export class PaymentConfirmComponent implements OnInit {
     });
   }
 
-  onConfirm() {
-    const payload = this.form.value;
-    this.dashboardSvc.update(DashboardServiceType.RDM_CONFIRM_PAYMENT, '', payload).subscribe(res => {
-      this.notyf.success('Berhasil konfirmasi pembayaran');
-      this.modalService.hide();
-      setTimeout(() => {
-        this.modalService.show(SuccessConfirmPaymentComponent, {
-          initialState: {
-            message: 'Konfirmasi berhasil!'
-          }
-        });
-      }, 300);
+  createInvoice(): Observable<any> {
+    return this.dashboardSvc.create(DashboardServiceType.USER_TAGIHAN, {
+      user_id: this.userId
     });
+  }
+
+  onConfirm() {
+    // First create invoice
+    this.createInvoice().subscribe({
+      next: (res) => {
+        this.notyf.success('Tagihan berhasil dibuat. Silakan transfer pembayaran.');
+        this.modalService.hide();
+        setTimeout(() => {
+          this.modalService.show(SuccessConfirmPaymentComponent, {
+            initialState: {
+              message: 'Konfirmasi berhasil! Silakan lakukan pembayaran.'
+            }
+          });
+        }, 300);
+      },
+      error: (err) => {
+        this.notyf.error(err.error?.message || 'Gagal membuat tagihan');
+      }
+    });
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
   }
 
 }

@@ -84,6 +84,90 @@
   }
 }
 
+// Invoice Section
+.pc-invoice-section {
+  margin: 20px 0;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.pc-invoice-header {
+  background: #f8fafc;
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.pc-invoice-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+}
+
+.pc-invoice-number {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.pc-invoice-body {
+  padding: 16px;
+}
+
+.pc-invoice-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.pc-invoice-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.pc-invoice-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: right;
+}
+
+.pc-invoice-footer {
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.pc-invoice-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pc-total-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.pc-total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #4ea0e4;
+}
+
 // Instructions Section
 .pc-instructions {
   margin-bottom: 32px;

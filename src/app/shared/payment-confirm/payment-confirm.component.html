@@ -22,6 +22,38 @@
            >
   </div>
 
+  <!-- Invoice Display -->
+  <div class="pc-invoice-section" *ngIf="invoiceData">
+    <div class="pc-invoice-header">
+      <p class="pc-invoice-title">Invoice</p>
+      <p class="pc-invoice-number">{{ invoiceData.kode_pemesanan }}</p>
+    </div>
+    <div class="pc-invoice-body">
+      <div class="pc-invoice-row">
+        <span class="pc-invoice-label">Paket Undangan</span>
+        <span class="pc-invoice-value">{{ invoiceData.paket }}</span>
+      </div>
+      <div class="pc-invoice-row">
+        <span class="pc-invoice-label">Email</span>
+        <span class="pc-invoice-value">{{ invoiceData.email }}</span>
+      </div>
+      <div class="pc-invoice-row">
+        <span class="pc-invoice-label">Nomor HP</span>
+        <span class="pc-invoice-value">{{ invoiceData.phone }}</span>
+      </div>
+      <div class="pc-invoice-row">
+        <span class="pc-invoice-label">Domain</span>
+        <span class="pc-invoice-value">{{ invoiceData.domain }}</span>
+      </div>
+    </div>
+    <div class="pc-invoice-footer">
+      <div class="pc-invoice-total">
+        <span class="pc-total-label">Total</span>
+        <span class="pc-total-amount">{{ formatCurrency(invoiceData.total) }}</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Instructions -->
   <div class="pc-instructions">
     <p>

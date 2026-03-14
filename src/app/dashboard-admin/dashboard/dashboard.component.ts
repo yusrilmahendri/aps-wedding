@@ -54,7 +54,8 @@ export class DashboardComponent implements OnInit {
     // Initialize form
     this.confirmPaymentForm = this.fb.group({
       user_id: ['', Validators.required],
-      kode_pemesanan: ['', Validators.required]
+      kode_pemesanan: ['', Validators.required],
+      confirmCheck: [false, Validators.requiredTrue]
     });
   }
 
@@ -241,6 +242,7 @@ export class DashboardComponent implements OnInit {
   onCancelModal() {
     this.modalRef?.hide();
     this.confirmPaymentForm.reset();
+    this.confirmPaymentForm.patchValue({ confirmCheck: false });
     this.selectedUser = null;
   }
 
