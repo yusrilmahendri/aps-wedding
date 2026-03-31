@@ -9,19 +9,101 @@
   <!-- Main Content -->
   <div *ngIf="!isLoading || selectedPaymentMethod" class="form-grid">
 
-    <!-- Payment Method Selection -->
+    <!-- Active Payment Method Selection (NEW) -->
+    <div class="form-grid__item active-method-section">
+      <div class="card active-method-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="fas fa-check-circle me-2"></i>
+            <span class="header-title">Metode Pembayaran Aktif untuk User</span>
+          </div>
+          <div class="header-badge">
+            <span class="badge bg-info">Hanya 1 Aktif</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-3">Pilih metode pembayaran yang akan ditampilkan kepada user saat registrasi:</p>
+
+          <div class="active-method-cards" *ngIf="!isLoadingActiveMethod">
+            <!-- Manual Card -->
+            <div
+              class="method-card manual-card"
+              [class.active]="isPaymentMethodActive(1)"
+              [class.disabled]="isLoadingActiveMethod"
+              (click)="setActivePaymentMethod(1)"
+            >
+              <div class="method-card__icon">
+                <i class="fas fa-university"></i>
+              </div>
+              <div class="method-card__content">
+                <h5 class="method-card__title">Manual</h5>
+                <p class="method-card__desc">Transfer Bank</p>
+              </div>
+              <div class="method-card__status" *ngIf="isPaymentMethodActive(1)">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            </div>
+
+            <!-- Midtrans Card -->
+            <div
+              class="method-card midtrans-card"
+              [class.active]="isPaymentMethodActive(3)"
+              [class.disabled]="isLoadingActiveMethod"
+              (click)="setActivePaymentMethod(3)"
+            >
+              <div class="method-card__icon">
+                <i class="fas fa-credit-card"></i>
+              </div>
+              <div class="method-card__content">
+                <h5 class="method-card__title">Midtrans</h5>
+                <p class="method-card__desc">Payment Gateway</p>
+              </div>
+              <div class="method-card__status" *ngIf="isPaymentMethodActive(3)">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            </div>
+
+            <!-- Trial Card -->
+            <div
+              class="method-card trial-card"
+              [class.active]="isPaymentMethodActive(4)"
+              [class.disabled]="isLoadingActiveMethod"
+              (click)="setActivePaymentMethod(4)"
+            >
+              <div class="method-card__icon">
+                <i class="fas fa-flask"></i>
+              </div>
+              <div class="method-card__content">
+                <h5 class="method-card__title">Trial</h5>
+                <p class="method-card__desc">Gratis / Demo</p>
+              </div>
+              <div class="method-card__status" *ngIf="isPaymentMethodActive(4)">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="isLoadingActiveMethod" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span>Menyimpan...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Method Selection (Configuration Only) -->
     <div class="form-grid__item">
         <div class="card payment-method-card">
           <div class="card-header">
             <div class="header-content">
-              <i class="fas fa-credit-card me-2"></i>
-              <span class="header-title">Metode Pembayaran Tagihan</span>
+              <i class="fas fa-cog me-2"></i>
+              <span class="header-title">Konfigurasi Metode Pembayaran</span>
             </div>
           </div>
           <div class="card-body">
             <div class="form-group">
               <label for="payment-method" class="form-label">
-                <i class="fas fa-list me-2"></i>Pilihan Pembayaran
+                <i class="fas fa-list me-2"></i>Pilih untuk Konfigurasi
               </label>
               <ngx-select
                 [items]="paymentMethods"
@@ -31,6 +113,10 @@
                 (select)="onPaymentMethodSelect($event)"
                 class="payment-select"
               ></ngx-select>
+              <div class="form-text text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                Pilih metode pembayaran untuk menambah atau mengedit konfigurasi
+              </div>
             </div>
           </div>
         </div>
@@ -136,49 +222,7 @@
               </div>
             </form>
 
-            <!-- Tripay Payment Form -->
-            <form *ngIf="selectedPaymentMethod.id === 2 && paymentForm" [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()">
-              <div class="form-group">
-                <label class="form-label required">
-                  Kode Merchant
-                </label>
-                <input type="text" class="form-control" formControlName="kode_merchant" placeholder="Kode merchant Tripay">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">
-                  API Key
-                </label>
-                <input type="text" class="form-control" formControlName="api_key" placeholder="API Key Tripay">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">
-                  Private Key
-                </label>
-                <input type="password" class="form-control" formControlName="private_key" placeholder="Private Key Tripay">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">
-                  URL Transaksi Tripay
-                </label>
-                <input type="url" class="form-control" formControlName="url_tripay" placeholder="https://...">
-              </div>
-
-              <div class="form-actions">
-                <button
-                  type="submit"
-                  class="btn btn-primary btn-lg w-100"
-                  [disabled]="!isFormValid() || isSubmitting"
-                >
-                  <i class="fas fa-save me-2"></i>
-                  {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
-                </button>
-              </div>
-            </form>
-
-            <!-- Midtrans Payment Form -->
+            <!-- Midtrans Payment Form (id was 3, now skipping id 2 which was Tripay) -->
             <form *ngIf="selectedPaymentMethod.id === 3 && paymentForm" [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()">
               <div class="form-group">
                 <label class="form-label required">
@@ -286,28 +330,6 @@
                       </div>
                     </td>
 
-                    <!-- Tripay Columns -->
-                    <td *ngIf="getTableColumns().includes('urlTripay')">
-                      <div class="url-info">
-                        <i class="fas fa-link text-primary me-2"></i>
-                        <span class="url-text">{{ getDisplayValue(detail.urlTripay) }}</span>
-                      </div>
-                    </td>
-
-                    <td *ngIf="getTableColumns().includes('apiKey')">
-                      <div class="key-info">
-                        <i class="fas fa-key text-warning me-2"></i>
-                        <span class="key-text">{{ detail.apiKey | slice:0:10 }}...</span>
-                      </div>
-                    </td>
-
-                    <td *ngIf="getTableColumns().includes('kodeMerchant')">
-                      <div class="merchant-info">
-                        <i class="fas fa-store text-info me-2"></i>
-                        <span>{{ detail.kodeMerchant }}</span>
-                      </div>
-                    </td>
-
                     <!-- Midtrans Columns -->
                     <td *ngIf="getTableColumns().includes('url')">
                       <div class="url-info">
@@ -406,44 +428,6 @@
                         <i class="fas fa-university text-warning me-2"></i>Bank
                       </span>
                       <span class="info-value">{{ detail.namaBank }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Tripay Payment Card -->
-                <div *ngIf="selectedPaymentMethod.id === 2" class="payment-card tripay-card">
-                  <div class="card-header-mobile">
-                    <div class="payment-method-badge-mobile">
-                      <i class="fas fa-link me-2"></i>
-                      {{ detail.metodePembayaran }}
-                    </div>
-                    <div class="action-buttons-mobile">
-                      <button class="btn btn-sm btn-outline-primary" title="Edit" (click)="openEditModal(detail)">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button class="btn btn-sm btn-outline-danger ms-1" title="Delete" (click)="openDeleteModal(detail)">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="card-body-mobile">
-                    <div class="info-row">
-                      <span class="info-label">
-                        <i class="fas fa-link text-primary me-2"></i>URL Tripay
-                      </span>
-                      <span class="info-value url-mobile">{{ detail.urlTripay }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">
-                        <i class="fas fa-key text-warning me-2"></i>API Key
-                      </span>
-                      <span class="info-value key-mobile">{{ detail.apiKey | slice:0:15 }}...</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">
-                        <i class="fas fa-store text-info me-2"></i>Kode Merchant
-                      </span>
-                      <span class="info-value">{{ detail.kodeMerchant }}</span>
                     </div>
                   </div>
                 </div>
@@ -596,50 +580,7 @@
             </div>
           </div>
 
-          <!-- Tripay Edit Form -->
-          <div *ngIf="selectedPaymentMethod?.id === 2">
-            <div class="form-group">
-              <label class="form-label required">URL Tripay</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="url_tripay"
-                placeholder="https://tripay.co.id/api/"
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label required">Private Key</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="private_key"
-                placeholder="DEV-xxxxxxxxxxxxxxxxxxxx"
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label required">API Key</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="api_key"
-                placeholder="DEV-xxxxxxxxxxxxxxxxxxxx"
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label required">Kode Merchant</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="kode_merchant"
-                placeholder="T1234"
-              />
-            </div>
-          </div>
-
-          <!-- Midtrans Edit Form -->
+          <!-- Midtrans Edit Form (id 3, Tripay id 2 removed) -->
           <div *ngIf="selectedPaymentMethod?.id === 3">
             <div class="form-group">
               <label class="form-label required">URL</label>
@@ -729,17 +670,6 @@
             <div class="row">
               <div class="col-sm-6"><strong>Nama Pemilik:</strong></div>
               <div class="col-sm-6">{{ currentEditItem.namaPemilik }}</div>
-            </div>
-          </div>
-          <!-- Tripay Preview -->
-          <div *ngIf="selectedPaymentMethod?.id === 2" class="border rounded p-3 bg-light">
-            <div class="row">
-              <div class="col-sm-6"><strong>URL:</strong></div>
-              <div class="col-sm-6">{{ currentEditItem.urlTripay }}</div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6"><strong>Merchant:</strong></div>
-              <div class="col-sm-6">{{ currentEditItem.kodeMerchant }}</div>
             </div>
           </div>
           <!-- Midtrans Preview -->

@@ -151,12 +151,44 @@
   }
 }
 
+.btn-icon--edit {
+  background: #fef3c7;
+  color: #d97706;
+
+  &:hover:not(:disabled) {
+    background: #fde68a;
+  }
+
+  &.btn-icon--active {
+    background: #d97706;
+    color: white;
+  }
+}
+
 .btn-icon--delete {
   background: #fef2f2;
   color: #dc2626;
 
   &:hover:not(:disabled) {
     background: #fee2e2;
+  }
+}
+
+// --- Badge for saved events ---
+.badge-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-left: 0.5rem;
+
+  i {
+    font-size: 0.65rem;
   }
 }
 

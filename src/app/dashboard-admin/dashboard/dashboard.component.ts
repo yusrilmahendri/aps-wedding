@@ -37,6 +37,10 @@ export class DashboardComponent implements OnInit {
   selectedUser: any = null;
   private notyf: Notyf;
 
+  // Edit package properties
+  editPackageForm: FormGroup;
+  selectedUserForPackage: any = null;
+
   constructor(
     private dashboardSvc: DashboardService,
     private modalService: BsModalService,
@@ -51,11 +55,17 @@ export class DashboardComponent implements OnInit {
       }
     });
 
-    // Initialize form
+    // Initialize forms
     this.confirmPaymentForm = this.fb.group({
       user_id: ['', Validators.required],
       kode_pemesanan: ['', Validators.required],
       confirmCheck: [false, Validators.requiredTrue]
+    });
+
+    this.editPackageForm = this.fb.group({
+      user_id: ['', Validators.required],
+      paket_undangan_id: ['', Validators.required],
+      extend_from_now: [false]
     });
   }
 
@@ -244,6 +254,91 @@ export class DashboardComponent implements OnInit {
     this.confirmPaymentForm.reset();
     this.confirmPaymentForm.patchValue({ confirmCheck: false });
     this.selectedUser = null;
+  }
+
+  // Edit Package Methods
+  onEditPackageClicked(row: any, template: TemplateRef<any>) {
+    this.selectedUserForPackage = row;
+    this.editPackageForm.patchValue({
+      user_id: row.id,
+      paket_undangan_id: row.originalData?.paket_undangan_id || '',
+      extend_from_now: false
+    });
+    this.modalRef = this.modalService.show(template, {
+      class: 'modal-md',
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+
+  onSubmitPackageChange() {
+    if (this.editPackageForm.invalid) {
+      this.notyf.error('Harap lengkapi form');
+      return;
+    }
+
+    const payload = this.editPackageForm.value;
+
+    this.dashboardSvc.create(DashboardServiceType.ADMIN_CHANGE_PACKAGE, payload).subscribe({
+      next: (res) => {
+        this.notyf.success(res.message || 'Package berhasil diubah');
+        this.modalRef?.hide();
+        this.getDetailUser(); // Refresh data
+      },
+      error: (err) => {
+        this.notyf.error(err.error?.message || 'Gagal mengubah package');
+      }
+    });
+  }
+
+  onCancelPackageModal() {
+    this.modalRef?.hide();
+    this.editPackageForm.reset();
+    this.selectedUserForPackage = null;
+  }
+
+  isTrialUser(row: any): boolean {
+    return row.originalData?.is_trial ?? false;
+  }
+
+  getCurrentPackageName(): string {
+    if (!this.selectedUserForPackage?.originalData?.paket_undangan_id) {
+      return '–';
+    }
+    // Use loose equality (==) to handle string vs number comparison
+    const pkg = this.paketList.find(p => p.id == this.selectedUserForPackage.originalData.paket_undangan_id);
+    return pkg?.name_paket || '–';
+  }
+
+  getCurrentPackagePrice(): string {
+    if (!this.selectedUserForPackage?.originalData?.paket_undangan_id) {
+      return '–';
+    }
+    const pkg = this.paketList.find(p => p.id == this.selectedUserForPackage.originalData.paket_undangan_id);
+    if (pkg?.price) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(Number(pkg.price));
+    }
+    return '–';
+  }
+
+  getCurrentPackageDuration(): string {
+    if (!this.selectedUserForPackage?.originalData?.paket_undangan_id) {
+      return '–';
+    }
+    const pkg = this.paketList.find(p => p.id == this.selectedUserForPackage.originalData.paket_undangan_id);
+    return pkg ? `${pkg.masa_aktif} hari` : '–';
+  }
+
+  formatPrice(price: string | number): string {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(Number(price));
   }
 
   onEditClicked(row: any) {

@@ -25,6 +25,13 @@ interface PaymentMethod {
   name: string;
 }
 
+interface ActivePaymentMethodData {
+  id: number;
+  metode_transaction_id: number;
+  is_active: boolean;
+  metodeTransaction?: PaymentMethod;
+}
+
 interface Bank {
   id: number;
   kode_bank: string;
@@ -45,11 +52,6 @@ interface PaymentMethodDetail {
   kodeBank?: string;
   namaPemilik?: string;
   photoRek?: string | null;
-  // Tripay fields
-  urlTripay?: string;
-  privateKey?: string;
-  apiKey?: string;
-  kodeMerchant?: string;
   // Midtrans fields
   url?: string;
   serverKey?: string;
@@ -98,6 +100,11 @@ export class SettingsPaymentComponent implements OnInit {
   paymentMethods: PaymentMethod[] = [];
   selectedPaymentMethod: PaymentMethod | null = null;
 
+  // Active Payment Method Management
+  activePaymentMethod: ActivePaymentMethodData | null = null;
+  availablePaymentMethods: PaymentMethod[] = [];
+  isLoadingActiveMethod = false;
+
   // Bank list for manual payments
   bankList: Bank[] = [];
 
@@ -135,6 +142,7 @@ export class SettingsPaymentComponent implements OnInit {
     this.paymentForm = this.fb.group({});
 
     this.loadPaymentMethods();
+    this.loadActivePaymentMethod();
   }
 
   private loadPaymentMethods(): void {
@@ -150,6 +158,45 @@ export class SettingsPaymentComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private loadActivePaymentMethod(): void {
+    this.isLoadingActiveMethod = true;
+    this.dashboardSvc.list(DashboardServiceType.ADM_ACTIVE_PAYMENT_METHOD).subscribe({
+      next: (response) => {
+        this.activePaymentMethod = response?.data || null;
+        // Also store available methods for the card selection UI
+        this.availablePaymentMethods = this.paymentMethods.filter(m =>
+          m.id !== 2 // Filter out Tripay (id: 2)
+        );
+        this.isLoadingActiveMethod = false;
+      },
+      error: (err) => {
+        console.error('Error loading active payment method:', err);
+        this.isLoadingActiveMethod = false;
+      }
+    });
+  }
+
+  setActivePaymentMethod(methodId: number): void {
+    this.isLoadingActiveMethod = true;
+    this.dashboardSvc.update(DashboardServiceType.SET_ACTIVE_PAYMENT_METHOD, `/${methodId}`, {}).subscribe({
+      next: (response) => {
+        this.activePaymentMethod = response?.data || null;
+        this.notyf.success(response?.message || 'Active payment method updated successfully');
+        this.isLoadingActiveMethod = false;
+      },
+      error: (err) => {
+        console.error('Error setting active payment method:', err);
+        this.notyf.error('Gagal mengubah metode pembayaran aktif');
+        this.isLoadingActiveMethod = false;
+      }
+    });
+  }
+
+  isPaymentMethodActive(methodId: number): boolean {
+    return this.activePaymentMethod?.metode_transaction_id === methodId ||
+           this.activePaymentMethod?.metodeTransaction?.id === methodId;
   }
 
   private loadBankList(): void {
@@ -221,18 +268,7 @@ export class SettingsPaymentComponent implements OnInit {
         });
         break;
 
-      case 2: // Tripay
-        this.paymentForm = this.fb.group({
-          url_tripay: new FormControl('', [Validators.required]),
-          private_key: new FormControl('', [Validators.required]),
-          api_key: new FormControl('', [Validators.required]),
-          kode_merchant: new FormControl('', [Validators.required]),
-          methode_pembayaran: new FormControl('Tripay', [Validators.required]),
-          id_methode_pembayaran: new FormControl('2', [Validators.required])
-        });
-        break;
-
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - id 2 no longer exists)
         this.paymentForm = this.fb.group({
           url: new FormControl('', [Validators.required]),
           server_key: new FormControl('', [Validators.required]),
@@ -385,17 +421,7 @@ export class SettingsPaymentComponent implements OnInit {
           };
           break;
 
-        case '2': // Tripay
-          detail = {
-            ...detail,
-            urlTripay: item.url_tripay || '-',
-            privateKey: item.private_key || '-',
-            apiKey: item.api_key || '-',
-            kodeMerchant: item.kode_merchant || '-'
-          };
-          break;
-
-        case '3': // Midtrans
+        case '3': // Midtrans (Tripay removed)
           detail = {
             ...detail,
             url: item.url || '-',
@@ -462,10 +488,7 @@ export class SettingsPaymentComponent implements OnInit {
       case 1: // Manual
         this.submitManualPayment(formValues);
         break;
-      case 2: // Tripay
-        this.submitTripayPayment(formValues);
-        break;
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - case 2 no longer exists)
         this.submitMidtransPayment(formValues);
         break;
       default:
@@ -513,28 +536,6 @@ export class SettingsPaymentComponent implements OnInit {
       },
       error: (err) => {
         this.handleRekeningApiError(err);
-        this.isSubmitting = false;
-      }
-    });
-  }
-
-  private submitTripayPayment(formValues: any): void {
-    const formData = new FormData();
-    Object.keys(formValues).forEach(key => {
-      if (formValues[key] !== null && formValues[key] !== undefined) {
-        formData.append(key, formValues[key]);
-      }
-    });
-
-    this.dashboardSvc.create(DashboardServiceType.ADM_TRIPAY_PAYMENT, formData).subscribe({
-      next: (res) => {
-        this.notyf.success(res?.message || 'Konfigurasi Tripay berhasil disimpan');
-        this.loadPaymentDetails();
-        this.resetForm();
-        this.isSubmitting = false;
-      },
-      error: (err) => {
-        this.handleApiError(err);
         this.isSubmitting = false;
       }
     });
@@ -626,9 +627,7 @@ export class SettingsPaymentComponent implements OnInit {
     switch (this.selectedPaymentMethod.id) {
       case 1: // Manual
         return ['pengguna', 'email', 'noRekening', 'namaBank', 'metodePembayaran'];
-      case 2: // Tripay
-        return ['urlTripay', 'apiKey', 'kodeMerchant', 'metodePembayaran'];
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - case 2 no longer exists)
         return ['url', 'serverKey', 'clientKey', 'metodePembayaran'];
       case 4: // Trial
         return ['trialInfo', 'metodePembayaran'];
@@ -643,9 +642,6 @@ export class SettingsPaymentComponent implements OnInit {
       email: 'Email',
       noRekening: 'No Rekening',
       namaBank: 'Bank',
-      urlTripay: 'URL Tripay',
-      apiKey: 'API Key',
-      kodeMerchant: 'Kode Merchant',
       url: 'URL',
       serverKey: 'Server Key',
       clientKey: 'Client Key',
@@ -678,10 +674,6 @@ export class SettingsPaymentComponent implements OnInit {
       'kode_bank': 'Bank',
       'nomor_rekening': 'Nomor Rekening',
       'nama_pemilik': 'Nama Pemilik',
-      'url_tripay': 'URL Tripay',
-      'private_key': 'Private Key',
-      'api_key': 'API Key',
-      'kode_merchant': 'Kode Merchant',
       'url': 'URL',
       'server_key': 'Server Key',
       'client_key': 'Client Key',
@@ -762,18 +754,7 @@ export class SettingsPaymentComponent implements OnInit {
         });
         break;
 
-      case 2: // Tripay
-        this.editPaymentForm = this.fb.group({
-          url_tripay: [detail.urlTripay || '', Validators.required],
-          private_key: [detail.privateKey || '', Validators.required],
-          api_key: [detail.apiKey || '', Validators.required],
-          kode_merchant: [detail.kodeMerchant || '', Validators.required],
-          methode_pembayaran: ['Tripay', Validators.required],
-          id_methode_pembayaran: ['2', Validators.required]
-        });
-        break;
-
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - case 2 no longer exists)
         this.editPaymentForm = this.fb.group({
           url: [detail.url || '', Validators.required],
           server_key: [detail.serverKey || '', Validators.required],
@@ -818,10 +799,7 @@ export class SettingsPaymentComponent implements OnInit {
       case 1: // Manual
         this.updateManualPayment(formValues);
         break;
-      case 2: // Tripay
-        this.updateTripayPayment(formValues);
-        break;
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - case 2 no longer exists)
         this.updateMidtransPayment(formValues);
         break;
       default:
@@ -872,24 +850,6 @@ export class SettingsPaymentComponent implements OnInit {
     });
   }
 
-  private updateTripayPayment(formValues: any): void {
-    // Use DashboardService update method with service type
-    const itemId = this.currentEditItem!.id;
-
-    this.dashboardSvc.update(DashboardServiceType.ADM_GET_TRIPAY_DETAIL, `/${itemId}`, formValues).subscribe({
-      next: (res: any) => {
-        this.notyf.success(res?.message || 'Konfigurasi Tripay berhasil diperbarui');
-        this.loadPaymentDetails();
-        this.closeEditModal();
-        this.isSubmitting = false;
-      },
-      error: (err) => {
-        this.handleApiError(err);
-        this.isSubmitting = false;
-      }
-    });
-  }
-
   private updateMidtransPayment(formValues: any): void {
     const itemId = this.currentEditItem!.id;
 
@@ -918,10 +878,7 @@ export class SettingsPaymentComponent implements OnInit {
       case 1: // Manual
         this.deleteManualPayment();
         break;
-      case 2: // Tripay
-        this.deleteTripayPayment();
-        break;
-      case 3: // Midtrans
+      case 3: // Midtrans (Tripay removed - case 2 no longer exists)
         this.deleteMidtransPayment();
         break;
       default:
@@ -944,24 +901,6 @@ export class SettingsPaymentComponent implements OnInit {
       },
       error: (err) => {
         this.handleRekeningApiError(err);
-        this.isSubmitting = false;
-      }
-    });
-  }
-
-  private deleteTripayPayment(): void {
-    const itemId = this.currentEditItem!.id;
-
-    // Use DashboardService deleteV2 method with service type
-    this.dashboardSvc.deleteV2(DashboardServiceType.ADM_GET_TRIPAY_DETAIL, itemId).subscribe({
-      next: (res: any) => {
-        this.notyf.success(res?.message || 'Konfigurasi Tripay berhasil dihapus');
-        this.loadPaymentDetails();
-        this.closeDeleteModal();
-        this.isSubmitting = false;
-      },
-      error: (err) => {
-        this.handleApiError(err);
         this.isSubmitting = false;
       }
     });

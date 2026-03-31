@@ -57,6 +57,7 @@ export interface WeddingQuote {
 export interface GalleryItem {
   id: number;
   photo: string;
+  photo_url: string;
   url_video: string;
   nama_foto: string;
   status: number;
@@ -170,6 +171,7 @@ export interface WeddingData {
 export class WeddingDataService {
 
   private weddingDataSubject = new BehaviorSubject<WeddingData | null>(null);
+  private guestTokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor() { }
 
@@ -397,5 +399,36 @@ export class WeddingDataService {
     // Fallback to couple name approach
     console.warn('No domain found, using couple name fallback for sharing URL');
     return this.generateWeddingUrl(weddingData);
+  }
+
+  /**
+   * Set guest token for QR code generation
+   * @param token - Guest token from tracking API
+   */
+  setGuestToken(token: string): void {
+    this.guestTokenSubject.next(token);
+  }
+
+  /**
+   * Get current guest token
+   * @returns Current guest token or null
+   */
+  getGuestToken(): string | null {
+    return this.guestTokenSubject.value;
+  }
+
+  /**
+   * Get guest token as observable
+   * @returns Observable of guest token
+   */
+  getGuestToken$(): Observable<string | null> {
+    return this.guestTokenSubject.asObservable();
+  }
+
+  /**
+   * Clear guest token
+   */
+  clearGuestToken(): void {
+    this.guestTokenSubject.next(null);
   }
 }

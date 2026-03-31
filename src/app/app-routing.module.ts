@@ -19,6 +19,7 @@ import { CeritaQuoteComponent } from './dashboard/website/cerita-quote/cerita-qu
 import { RekeningComponent } from './dashboard/website/rekening/rekening.component';
 import { RiwayatComponent } from './dashboard/pengunjung/riwayat/riwayat.component';
 import { UcapanComponent } from './dashboard/pengunjung/ucapan/ucapan.component';
+import { QRScannerComponent } from './dashboard/qr-scanner/qr-scanner.component';
 import { GenerateUndanganComponent } from './generate-undangan/generate-undangan.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard';
@@ -38,6 +39,8 @@ import { ProfileComponent } from './dashboard/profile/profile.component';
 import { BillUserComponent } from './dashboard/bill-user/bill-user.component';
 import { ProfileAdminComponent } from './dashboard-admin/pengaturan/profile-admin/profile-admin.component';
 import { GuestGeneratorComponentsComponent } from './guest-generator-components/guest-generator-components.component';
+import { UpgradePackageComponent } from './dashboard/upgrade-package/upgrade-package.component';
+import { UpgradePaymentComponent } from './dashboard/upgrade-payment/upgrade-payment.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -77,8 +80,12 @@ const routes: Routes = [
         children: [
           { path: 'riwayat', component: RiwayatComponent },
           { path: 'ucapan', component: UcapanComponent },
+          { path: 'qr-scanner', component: QRScannerComponent },
         ],
-      },      { path: 'testimoni', component: TestimoniComponent },
+      },
+      { path: 'testimoni', component: TestimoniComponent },
+      { path: 'upgrade', component: UpgradePackageComponent },
+      { path: 'upgrade/payment', component: UpgradePaymentComponent },
       { path: 'hubungi-kami', component: HubungiKamiComponent },
     ],
   },

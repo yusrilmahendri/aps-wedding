@@ -80,6 +80,7 @@ import { ModalDeleteAllCategoryComponent } from './shared/modal/modal-delete-all
 import { ModalAddVideoCategoryComponent } from './shared/modal/modal-add-video-category/modal-add-video-category.component';
 import { ModalAddWebsiteCategoryComponent } from './shared/modal/modal-add-website-category/modal-add-website-category.component';
 import { QRCodeModalComponent } from './shared/modal/qr-code-modal/qr-code-modal.component';
+import { QRScannerComponent } from './dashboard/qr-scanner/qr-scanner.component';
 import { WeddingViewComponent } from './dashboard/wedding-view/wedding-view.component';
 import { CoupleViewComponent } from './dashboard/wedding-view/couple-view/couple-view.component';
 import { MessageViewComponent } from './dashboard/wedding-view/message-view/message-view.component';
@@ -92,6 +93,8 @@ import { GiftViewComponent } from './dashboard/wedding-view/gift-view/gift-view.
 import { BillUserComponent } from './dashboard/bill-user/bill-user.component';
 import { ProfileAdminComponent } from './dashboard-admin/pengaturan/profile-admin/profile-admin.component';
 import { GuestGeneratorComponentsComponent } from './guest-generator-components/guest-generator-components.component';
+import { UpgradePackageComponent } from './dashboard/upgrade-package/upgrade-package.component';
+import { UpgradePaymentComponent } from './dashboard/upgrade-payment/upgrade-payment.component';
 
 @NgModule({
   declarations: [
@@ -159,6 +162,7 @@ import { GuestGeneratorComponentsComponent } from './guest-generator-components/
     ModalAddVideoCategoryComponent,
     ModalAddWebsiteCategoryComponent,
     QRCodeModalComponent,
+    QRScannerComponent,
     WeddingViewComponent,
     CoupleViewComponent,
     MessageViewComponent,
@@ -171,6 +175,8 @@ import { GuestGeneratorComponentsComponent } from './guest-generator-components/
     BillUserComponent,
     ProfileAdminComponent,
     GuestGeneratorComponentsComponent,
+    UpgradePackageComponent,
+    UpgradePaymentComponent,
   ],
   imports: [
     BrowserModule,

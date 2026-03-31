@@ -100,12 +100,23 @@ export enum DashboardServiceType {
   ADM_ADD_REKENING,
   ADM_TRIPAY_PAYMENT,
   ADM_MIDTRANS_PAYMENT,
+  // === Active Payment Method Management ===
+  ADM_ACTIVE_PAYMENT_METHOD,
+  SET_ACTIVE_PAYMENT_METHOD,
+  USER_ACTIVE_PAYMENT_METHOD,
+  // === Trial Configuration ===
+  TRIAL_CONFIG,
   ADM_ADD_CATEGORY,
   ADM_EDIT_CATEGORY,
   ADM_DELETE_CATEGORY,
   ADM_DELETE_ALL_CATEGORY,
   ADM_GET_CATEGORY,
   RDM_CONFIRM_PAYMENT,
+
+  // === Package Upgrade Endpoints ===
+  ADMIN_CHANGE_PACKAGE,
+  USER_ELIGIBLE_PACKAGES,
+  USER_UPGRADE_PACKAGE,
 
   // === User Settings Endpoints ===
   // Manages user preferences like domain, music, and filters.
@@ -167,6 +178,20 @@ export enum DashboardServiceType {
   // === User Contact Settings Endpoints ===
   // User-facing contact settings retrieval.
   USER_CONTACT_SETTINGS_GET,
+
+  // === Attendance Scanning (QR Code) Endpoints ===
+  // QR code scanning for real-time attendance tracking.
+  ATTENDANCE_SCAN_PROCESS,
+  ATTENDANCE_SCAN_LIST,
+  ATTENDANCE_SCAN_STATISTICS,
+  ATTENDANCE_SCAN_DELETE,
+
+  // === Guest Tracking Endpoints ===
+  // Track guest visits and manage unique QR codes.
+  WEDDING_GUEST_TRACK,
+  GUEST_VERIFY_TOKEN,
+  GUEST_CONFIRM_ATTENDANCE,
+  GUEST_LIST,
 
   // === Theme Management Endpoints ===
   // Admin and public theme/category management.
@@ -463,6 +488,17 @@ export class DashboardService {
       case DashboardServiceType.MD_RGS_PAYMENT:
         return `${this.BASE_URL_API}/v1/master-tagihan`;
 
+      // Active Payment Method Management
+      case DashboardServiceType.ADM_ACTIVE_PAYMENT_METHOD:
+        return `${this.BASE_URL_API}/v1/admin/active-payment-method`;
+      case DashboardServiceType.SET_ACTIVE_PAYMENT_METHOD:
+        return `${this.BASE_URL_API}/v1/admin/active-payment-method`;
+      case DashboardServiceType.USER_ACTIVE_PAYMENT_METHOD:
+        return `${this.BASE_URL_API}/v1/active-payment-method`;
+      // Trial Configuration
+      case DashboardServiceType.TRIAL_CONFIG:
+        return `${this.BASE_URL_API}/v1/admin/trial-config`;
+
       //PEMBAYARAN ADMIN
 
       case DashboardServiceType.ADM_TRIPAY_PAYMENT:
@@ -477,6 +513,14 @@ export class DashboardService {
         return `${this.BASE_URL_API}/v1/admin/send-rekening`;
       case DashboardServiceType.RDM_CONFIRM_PAYMENT:
         return `${this.BASE_URL_API}/v1/update/status-bayar`;
+
+      // Package Upgrade
+      case DashboardServiceType.ADMIN_CHANGE_PACKAGE:
+        return `${this.BASE_URL_API}/v1/admin/change-package`;
+      case DashboardServiceType.USER_ELIGIBLE_PACKAGES:
+        return `${this.BASE_URL_API}/v1/user/eligible-packages`;
+      case DashboardServiceType.USER_UPGRADE_PACKAGE:
+        return `${this.BASE_URL_API}/v1/user/upgrade-package`;
 
       // Kategori
       case DashboardServiceType.ADM_ADD_CATEGORY:
@@ -518,6 +562,26 @@ export class DashboardService {
         return `${this.BASE_URL_API}/v1/wedding-profile/couple`;
       case DashboardServiceType.ATTENDANCE:
         return `${this.BASE_URL_API}/v1/attendance`;
+
+      // Attendance Scanning (QR Code) API endpoints
+      case DashboardServiceType.ATTENDANCE_SCAN_PROCESS:
+        return `${this.BASE_URL_API}/v1/user/attendance-scans`;
+      case DashboardServiceType.ATTENDANCE_SCAN_LIST:
+        return `${this.BASE_URL_API}/v1/user/attendance-scans`;
+      case DashboardServiceType.ATTENDANCE_SCAN_STATISTICS:
+        return `${this.BASE_URL_API}/v1/user/attendance-scans/statistics`;
+      case DashboardServiceType.ATTENDANCE_SCAN_DELETE:
+        return `${this.BASE_URL_API}/v1/user/attendance-scans`;
+
+      // Guest Tracking API endpoints
+      case DashboardServiceType.WEDDING_GUEST_TRACK:
+        return `${this.BASE_URL_API}/v1/wedding-guests/track`;
+      case DashboardServiceType.GUEST_VERIFY_TOKEN:
+        return `${this.BASE_URL_API}/v1/wedding-guests/verify`;
+      case DashboardServiceType.GUEST_CONFIRM_ATTENDANCE:
+        return `${this.BASE_URL_API}/v1/wedding-guests/confirm-attendance`;
+      case DashboardServiceType.GUEST_LIST:
+        return `${this.BASE_URL_API}/v1/wedding-guests`;
 
       // Dashboard Analytics API endpoints
       case DashboardServiceType.DASHBOARD_OVERVIEW:

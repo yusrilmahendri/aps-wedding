@@ -31,11 +31,13 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   silverForm!: FormGroup;
   goldForm!: FormGroup;
   platinumForm!: FormGroup;
+  trialForm!: FormGroup; // New form for Trial configuration
 
 
   silverLoading = false;
   goldLoading = false;
   platinumLoading = false;
+  trialLoading = false; // Loading state for Trial config
   dataLoading = true;
 
   private notyf: Notyf;
@@ -60,6 +62,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForms();
     this.getDataBundle();
+    this.getTrialConfig();
   }
 
   ngOnDestroy(): void {
@@ -108,6 +111,10 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       import_data: [false]
     });
 
+    // Trial configuration form - only active period is configurable
+    this.trialForm = this.fb.group({
+      trial_masa_aktif: [3, [Validators.required, Validators.min(1), Validators.max(30)]]
+    });
 
     this.trackFormChanges();
   }
@@ -146,8 +153,22 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       });
   }
 
+  private getTrialConfig(): void {
+    this.dashboardSvc.list(DashboardServiceType.TRIAL_CONFIG).subscribe({
+      next: (res) => {
+        const trialDays = res?.data?.trial_masa_aktif || 3;
+        this.trialForm.patchValue({ trial_masa_aktif: trialDays });
+      },
+      error: (err) => {
+        console.error('Error fetching trial config:', err);
+        // Set default value on error
+        this.trialForm.patchValue({ trial_masa_aktif: 3 });
+      }
+    });
+  }
+
   private populateFormData(data: PackageData[]): void {
-    const [silver, gold, platinum] = data;
+    const [, silver, gold, platinum] = data;
 
 
     if (silver) {
@@ -429,5 +450,46 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
         packageType === 'gold' ? this.goldForm : this.platinumForm;
       this.updateSingleForm(form, originalPackage);
     }
+  }
+
+  // Trial Configuration Methods
+  onClickTrial(): void {
+    if (!this.trialForm.valid || this.trialLoading) {
+      this.markFormGroupTouched(this.trialForm);
+      this.notyf.error('Mohon lengkapi field dengan benar');
+      return;
+    }
+
+    this.showConfirmationModal(
+      'Apakah Anda yakin ingin mengubah konfigurasi Trial?',
+      () => this.saveTrialConfig()
+    );
+  }
+
+  private saveTrialConfig(): void {
+    this.trialLoading = true;
+    const formData = this.trialForm.value;
+
+    this.dashboardSvc.update(DashboardServiceType.TRIAL_CONFIG, '', formData)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.trialLoading = false;
+          this.modalRef?.hide();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.notyf.success(res?.message || 'Berhasil mengubah konfigurasi Trial');
+        },
+        error: (err) => {
+          console.error('Error updating trial config:', err);
+          this.notyf.error(err?.error?.message || 'Gagal menyimpan konfigurasi Trial');
+        }
+      });
+  }
+
+  resetTrialForm(): void {
+    this.trialForm.patchValue({ trial_masa_aktif: 3 });
   }
 }

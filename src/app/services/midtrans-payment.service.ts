@@ -188,6 +188,23 @@ export class MidtransPaymentService {
   }
 
   /**
+   * Fallback endpoint to confirm payment success from frontend callback.
+   * Called when frontend receives onSuccess from Midtrans Snap but checkStatus fails.
+   */
+  confirmPaymentSuccess(orderId: string, transactionId?: string, grossAmount?: number): Observable<PaymentStatusResponse> {
+    return this.http.post<PaymentStatusResponse>('/api/v1/midtrans/confirm-success', {
+      order_id: orderId,
+      transaction_id: transactionId,
+      gross_amount: grossAmount,
+    }).pipe(
+      catchError((err) => {
+        const message = err?.error?.message ?? 'Failed to confirm payment';
+        return throwError(() => new Error(message));
+      })
+    );
+  }
+
+  /**
    * Open the Midtrans Snap payment popup.
    * Loads Snap.js first if not yet loaded.
    */

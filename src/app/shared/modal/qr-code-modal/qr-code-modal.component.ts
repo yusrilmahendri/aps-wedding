@@ -2,6 +2,13 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef, 
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import * as QRCode from 'qrcode';
 
+interface GuestQRData {
+  type: string;
+  wedding_domain: string;
+  guest_name: string;
+  token: string;
+}
+
 @Component({
   selector: 'wc-qr-code-modal',
   templateUrl: './qr-code-modal.component.html',
@@ -11,6 +18,10 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() url: string = '';
   @Input() title: string = 'Share Wedding Invitation';
   @Input() description: string = 'Scan this QR code to view the wedding invitation';
+  @Input() guestName?: string;
+  @Input() domain?: string;
+  @Input() guestToken?: string;
+  @Input() useGuestQR: boolean = false;
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('qrCanvas', { static: false }) qrCanvas!: ElementRef<HTMLCanvasElement>;
@@ -51,17 +62,17 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Generate QR code from the provided URL
+   * Generate QR code from the provided URL or guest data
    */
   private async generateQRCode(): Promise<void> {
-    console.log('generateQRCode called with URL:', this.url);
+    console.log('generateQRCode called with:', {
+      url: this.url,
+      guestName: this.guestName,
+      domain: this.domain,
+      guestToken: this.guestToken,
+      useGuestQR: this.useGuestQR
+    });
     console.log('qrCanvas element:', this.qrCanvas);
-
-    if (!this.url) {
-      this.errorMessage = 'Missing URL for QR code generation';
-      console.error('No URL provided for QR code generation');
-      return;
-    }
 
     if (!this.qrCanvas) {
       this.errorMessage = 'Canvas element not found';
@@ -75,6 +86,30 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const canvas = this.qrCanvas.nativeElement;
       console.log('Canvas element:', canvas);
+
+      // Determine QR data content
+      let qrDataContent: string;
+
+      if (this.useGuestQR && this.guestName && this.domain && this.guestToken) {
+        // Generate JSON format QR for guest attendance
+        const guestQRData: GuestQRData = {
+          type: 'wedding_attendance',
+          wedding_domain: this.domain,
+          guest_name: this.guestName,
+          token: this.guestToken
+        };
+        qrDataContent = JSON.stringify(guestQRData);
+        console.log('Generating guest QR with data:', guestQRData);
+      } else if (this.url) {
+        // Use URL for regular invitation QR
+        qrDataContent = this.url;
+        console.log('Generating URL QR with:', this.url);
+      } else {
+        this.errorMessage = 'Missing URL or guest data for QR code generation';
+        console.error('No URL or guest data provided for QR code generation');
+        this.isGenerating = false;
+        return;
+      }
 
       // QR code options for wedding invitation style
       const options = {
@@ -91,7 +126,7 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       console.log('Generating QR code with options:', options);
-      await QRCode.toCanvas(canvas, this.url, options);
+      await QRCode.toCanvas(canvas, qrDataContent, options);
 
       this.qrCodeGenerated = true;
       this.isGenerating = false;

@@ -24,7 +24,7 @@ export class GalleryViewComponent implements OnInit {
   }
 
   getImageUrl(item: GalleryItem): string {
-    return item.photo || 'assets/default-gallery.jpg';
+    return item.photo_url || item.photo || 'assets/default-gallery.jpg';
   }
 
   getImageAlt(item: GalleryItem, index: number): string {

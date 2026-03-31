@@ -8,6 +8,7 @@ import { ModalComponent } from 'src/app/shared/modal/modal.component';
 
 interface Acara {
   id: string | null;
+  jenis_acara: 'akad' | 'resepsi' | null;
   nama_acara: string;
   tanggal_acara: string | Date | null;
   start_acara: string;
@@ -42,6 +43,9 @@ export class AcaraComponent implements OnInit {
   isLoading = false;
   countdownData: Countdown | null = null;
   userID: any;
+
+  // Track edit mode for each event card
+  editMode: { [key: number]: boolean } = {};
 
   constructor(
     private readonly fb: FormBuilder,
@@ -80,6 +84,7 @@ export class AcaraComponent implements OnInit {
   private createDynamicEventForm(eventData?: Partial<Acara>): FormGroup {
     return this.fb.group({
       id: [eventData?.id ?? null],
+      jenis_acara: [eventData?.jenis_acara ?? null, Validators.required],
       nama_acara: [eventData?.nama_acara ?? '', Validators.required],
       tanggal_acara: [
         eventData?.tanggal_acara
@@ -156,11 +161,24 @@ export class AcaraComponent implements OnInit {
     this.dashboardSvc.list(DashboardServiceType.ACARA_DATA).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.data = (res?.data?.acaras as Acara[]) ?? [];
+
+        // Handle both old (acaras array) and new (events object) API response structure
+        const acarasData = res?.data?.acaras as Acara[] ?? [];
+
+        // Also check if data is in events.akad and events.resepsi format
+        if (acarasData.length === 0 && res?.data?.events) {
+          const events = res.data.events;
+          if (events.akad) acarasData.push(events.akad);
+          if (events.resepsi) acarasData.push(events.resepsi);
+        }
+
+        this.data = acarasData;
 
         if (this.data.length > 0) {
-          this.countdownData = this.data[0].countdown ?? null;
-          this.userID = res?.data?.acaras[0].user_id ?? null;
+          this.countdownData = res?.data?.countdown ?? null;
+          // Get user_id from API response directly
+          this.userID = (res as any)?.data?.events?.akad?.user_id ??
+                       (res as any)?.data?.events?.resepsi?.user_id ?? null;
           this.staticEventForm.patchValue({
             selectedEvent: this.countdownData?.name_countdown ?? null,
           });
@@ -171,6 +189,12 @@ export class AcaraComponent implements OnInit {
 
           this.data.forEach((acara) => {
             this.dynamicEvents.push(this.createDynamicEventForm(acara));
+          });
+
+          // Initialize edit mode for all cards
+          this.editMode = {};
+          this.data.forEach((_, index) => {
+            this.editMode[index] = false;
           });
         } else {
           this.dynamicEvents.push(this.createDynamicEventForm());
@@ -305,6 +329,7 @@ submitDynamicEventForm(): void {
 
     if (eventsToCreate.length > 0) {
       const createPayload = {
+        jenis_acara: eventsToCreate.map(event => event.jenis_acara),
         nama_acara: eventsToCreate.map(event => event.nama_acara),
         tanggal_acara: eventsToCreate.map(event =>
           event.tanggal_acara instanceof Date
@@ -325,6 +350,7 @@ submitDynamicEventForm(): void {
     if (eventsToUpdate.length > 0) {
       const updatePayload = eventsToUpdate.map(event => ({
         id: event.id,
+        jenis_acara: event.jenis_acara,
         nama_acara: event.nama_acara,
         tanggal_acara: event.tanggal_acara instanceof Date
           ? event.tanggal_acara.toISOString().split('T')[0]
@@ -390,5 +416,44 @@ submitDynamicEventForm(): void {
 
   hasExistingData(): boolean {
     return this.data.length > 0;
+  }
+
+  /**
+   * Toggle edit mode for a specific event card
+   */
+  toggleEditMode(index: number): void {
+    const eventForm = this.dynamicEvents.at(index) as FormGroup;
+    const hasId = !!eventForm.get('id')?.value;
+
+    if (!hasId) {
+      // Use error instead of warning as Notyf doesn't have warning method
+      this.notyf.error('Tidak bisa mengedit acara yang belum disimpan');
+      return;
+    }
+
+    this.editMode[index] = !this.editMode[index];
+
+    if (this.editMode[index]) {
+      // Enable form editing
+      eventForm.enable();
+    } else {
+      // Disable form editing
+      eventForm.disable();
+    }
+  }
+
+  /**
+   * Check if a specific event card is in edit mode
+   */
+  isEditMode(index: number): boolean {
+    return this.editMode[index] ?? false;
+  }
+
+  /**
+   * Check if an event has been saved (has an ID)
+   */
+  isEventSaved(index: number): boolean {
+    const eventForm = this.dynamicEvents.at(index) as FormGroup;
+    return !!eventForm.get('id')?.value;
   }
 }

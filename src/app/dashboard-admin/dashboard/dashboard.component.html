@@ -99,22 +99,37 @@
                      [attr.aria-label]="'Domain ' + row.domain">{{ row.domain }}</a>
                 </td>
                 <td>
-                  <span class="status-badge"
-                        [ngClass]="row.statusData.class"
-                        [attr.aria-label]="row.statusData.ariaLabel">
-                    <span class="dot" aria-hidden="true"></span>
-                    {{ row.statusData.text }}
-                  </span>
+                  <div class="status-container">
+                    <span class="status-badge"
+                          [ngClass]="row.statusData.class"
+                          [attr.aria-label]="row.statusData.ariaLabel">
+                      <span class="dot" aria-hidden="true"></span>
+                      {{ row.statusData.text }}
+                    </span>
+                    <span class="trial-badge"
+                          *ngIf="isTrialUser(row)"
+                          aria-label="Trial User">
+                      Trial
+                    </span>
+                  </div>
                 </td>
                 <td>
-                  <button class="btn-konfirmasi"
-                          [disabled]="!row.konfirmasiAktif"
-                          [attr.aria-disabled]="!row.konfirmasiAktif"
-                          [ngClass]="{ 'active': row.konfirmasiAktif }"
-                          [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                          (click)="onConfirmClicked(row, confirmPaymentModal)">
-                    Konfirmasi
-                  </button>
+                  <div class="action-buttons">
+                    <button class="btn-icon btn-edit"
+                            (click)="onEditPackageClicked(row, editPackageModal)"
+                            [attr.aria-label]="'Edit paket ' + row.pengguna"
+                            title="Edit Paket">
+                      <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+                    </button>
+                    <button class="btn-konfirmasi"
+                            [disabled]="!row.konfirmasiAktif"
+                            [attr.aria-disabled]="!row.konfirmasiAktif"
+                            [ngClass]="{ 'active': row.konfirmasiAktif }"
+                            [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
+                            (click)="onConfirmClicked(row, confirmPaymentModal)">
+                      Konfirmasi
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -125,12 +140,19 @@
           <div class="invoice-card" *ngFor="let row of displayedRows">
             <div class="invoice-card-header">
               <span class="invoice-number">{{ row.invoice }}</span>
-              <span class="status-badge"
-                    [ngClass]="row.statusData.class"
-                    [attr.aria-label]="row.statusData.ariaLabel">
-                <span class="dot" aria-hidden="true"></span>
-                {{ row.statusData.text }}
-              </span>
+              <div class="mobile-status-container">
+                <span class="status-badge"
+                      [ngClass]="row.statusData.class"
+                      [attr.aria-label]="row.statusData.ariaLabel">
+                  <span class="dot" aria-hidden="true"></span>
+                  {{ row.statusData.text }}
+                </span>
+                <span class="trial-badge"
+                      *ngIf="isTrialUser(row)"
+                      aria-label="Trial User">
+                  Trial
+                </span>
+              </div>
             </div>
             <div class="invoice-card-body">
               <div class="invoice-detail">
@@ -146,14 +168,22 @@
               </div>
             </div>
             <div class="invoice-card-footer">
-              <button class="btn-konfirmasi btn-konfirmasi--mobile"
-                      [disabled]="!row.konfirmasiAktif"
-                      [attr.aria-disabled]="!row.konfirmasiAktif"
-                      [ngClass]="{ 'active': row.konfirmasiAktif }"
-                      [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
-                      (click)="onConfirmClicked(row, confirmPaymentModal)">
-                Konfirmasi
-              </button>
+              <div class="mobile-action-buttons">
+                <button class="btn-icon btn-edit btn-icon--mobile"
+                        (click)="onEditPackageClicked(row, editPackageModal)"
+                        [attr.aria-label]="'Edit paket ' + row.pengguna"
+                        title="Edit Paket">
+                  <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+                </button>
+                <button class="btn-konfirmasi btn-konfirmasi--mobile"
+                        [disabled]="!row.konfirmasiAktif"
+                        [attr.aria-disabled]="!row.konfirmasiAktif"
+                        [ngClass]="{ 'active': row.konfirmasiAktif }"
+                        [attr.aria-pressed]="row.konfirmasiAktif ? 'true' : null"
+                        (click)="onConfirmClicked(row, confirmPaymentModal)">
+                  Konfirmasi
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -269,6 +299,110 @@
       <button type="button" class="btn btn-primary" [disabled]="confirmPaymentForm.invalid"
         (click)="onSubmitPaymentConfirmation()">
         <i class="fas fa-check me-1"></i> Konfirmasi Pembayaran
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Edit Package Modal -->
+  <ng-template #editPackageModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        <i class="fas fa-box-open me-2"></i>Ubah Paket
+      </h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="onCancelPackageModal()">
+        <!-- <span aria-hidden="true">&times;</span> -->
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="editPackageForm">
+        <!-- User Info - Compact -->
+        <div class="user-info-compact">
+          <div class="user-info-row">
+            <span class="user-label">Email</span>
+            <span class="user-value">{{ selectedUserForPackage?.pengguna }}</span>
+          </div>
+          <div class="user-info-row">
+            <span class="user-label">Domain</span>
+            <span class="user-value">{{ selectedUserForPackage?.domain || '–' }}</span>
+          </div>
+        </div>
+
+        <!-- Current Package - Highlighted -->
+        <div class="current-package-card">
+          <div class="current-package-header">
+            <span class="current-label">Paket Saat Ini</span>
+            <span class="current-badge">{{ getCurrentPackageName() }}</span>
+          </div>
+          <div class="current-package-details">
+            <div class="detail-item">
+              <i class="fas fa-tag"></i>
+              <span>{{ getCurrentPackagePrice() }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-clock"></i>
+              <span>{{ getCurrentPackageDuration() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Package Selection -->
+        <div class="package-selection">
+          <label class="form-label-modern">
+            <i class="fas fa-exchange-alt me-2"></i>Pilih Paket Baru
+            <span class="required">*</span>
+          </label>
+          <select id="paket_undangan_id"
+                  class="form-select-modern"
+                  formControlName="paket_undangan_id"
+                  required>
+            <option value="">Pilih Paket</option>
+            <option *ngFor="let pkg of paketList"
+                    [ngValue]="pkg.id">
+              {{ pkg.name_paket }}
+            </option>
+          </select>
+          <div class="package-options" *ngIf="editPackageForm.get('paket_undangan_id')?.value">
+            <ng-container *ngFor="let pkg of paketList">
+              <div *ngIf="pkg.id == editPackageForm.get('paket_undangan_id')?.value"
+                   class="selected-package-info">
+                <span class="package-price">{{ formatPrice(pkg.price) }}</span>
+                <span class="package-duration">{{ pkg.masa_aktif }} hari</span>
+              </div>
+            </ng-container>
+          </div>
+          <div class="error-message"
+               *ngIf="editPackageForm.get('paket_undangan_id')?.invalid && editPackageForm.get('paket_undangan_id')?.touched">
+            <i class="fas fa-exclamation-circle me-1"></i> Paket harus dipilih
+          </div>
+        </div>
+
+        <!-- Expiry Option - Toggle Style -->
+        <div class="expiry-toggle">
+          <label class="toggle-label">
+            <span class="toggle-title">Hitung dari sekarang</span>
+            <span class="toggle-desc">Masa aktif dihitung dari hari ini</span>
+          </label>
+          <label class="toggle-switch">
+            <input type="checkbox"
+                   id="extend_from_now"
+                   formControlName="extend_from_now">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Hidden user_id -->
+        <input type="hidden" formControlName="user_id">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-cancel" (click)="onCancelPackageModal()">
+        <i class="fas fa-times me-2"></i> Batal
+      </button>
+      <button type="button"
+              class="btn btn-save"
+              [disabled]="editPackageForm.invalid"
+              (click)="onSubmitPackageChange()">
+        <i class="fas fa-save me-2"></i> Simpan Perubahan
       </button>
     </div>
   </ng-template>

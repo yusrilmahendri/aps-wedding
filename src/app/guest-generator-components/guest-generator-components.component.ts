@@ -67,7 +67,7 @@ export class GuestGeneratorComponentsComponent implements OnInit {
         console.log('✅ Profile API Response:', res);
         if (res && res.success && res.data && res.data.domain_info) {
           this.userDomain = res.data.domain_info.domain;
-          this.baseUrlUndangan = `https://sena-digital.com/wedding/${this.userDomain}`;
+          this.baseUrlUndangan = `http://localhost:4200/wedding/${this.userDomain}`;
           console.log('🌐 Domain found:', this.userDomain);
           console.log('🔗 Base URL Undangan:', this.baseUrlUndangan);
           // Auto-fill base URL

@@ -60,3 +60,92 @@ body {
 .btn-custom:hover {
   background-color: #008fbf;
 }
+
+// Package Card Headers
+.card-header-silver {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+  color: white;
+  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  border: none;
+
+  h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.card-header-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+  color: #333;
+  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  border: none;
+
+  h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.card-header-platinum {
+  background: linear-gradient(135deg, #e5e4e2 0%, #bcd6e6 100%);
+  color: #333;
+  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  border: none;
+
+  h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.card-header-trial {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+}
+
+// Form text helpers
+.form-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+// Alert styling
+.alert {
+  border-radius: 10px;
+  border: none;
+
+  &.alert-info {
+    background-color: #e0f2fe;
+    color: #0369a1;
+
+    i {
+      color: #0284c7;
+    }
+  }
+}

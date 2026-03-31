@@ -37,6 +37,7 @@
     "lodash.isequal": "^4.5.0",
     "ng2-charts": "^3.1.2",
     "ngx-bootstrap": "^6.2.0",
+    "ngx-scanner-qrcode": "^1.0.6",
     "ngx-select-ex": "^8.0.1",
     "notyf": "^3.10.0",
     "qrcode": "^1.5.4",

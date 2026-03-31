@@ -1,0 +1,494 @@
+// UpgradePaymentComponent - Modern UI for upgrade payment flow
+.upgrade-payment-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100%;
+}
+
+// Header
+.upgrade-payment-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+
+    i {
+      color: #66a3ff;
+      margin-right: 8px;
+    }
+  }
+
+  .text-muted {
+    font-size: 14px;
+    color: #6b7280;
+  }
+}
+
+// Upgrade Summary Card
+.upgrade-summary-card {
+  background: linear-gradient(135deg, #f0f8ff 0%, #fff 100%);
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+
+    i {
+      color: #66a3ff;
+      margin-right: 8px;
+    }
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e5e9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.total {
+      padding-top: 16px;
+      margin-top: 8px;
+      border-top: 2px solid #d1d5db;
+    }
+
+    .label {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .value {
+      font-size: 14px;
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+  }
+}
+
+// Form Group Styling
+.payment-form-group {
+  margin-bottom: 20px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.payment-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+// Select Field Wrapper
+.payment-select-wrapper {
+  position: relative;
+
+  .payment-select {
+    width: 100%;
+    height: 48px;
+
+    ::ng-deep {
+      .ui-select-container {
+        border: 1.5px solid #e1e5e9;
+        border-radius: 8px;
+        height: 48px;
+
+        .ui-select-placeholder {
+          padding: 0 16px;
+          line-height: 45px;
+          font-size: 16px;
+          color: #9ca3af;
+          font-weight: 400;
+        }
+
+        .ui-select-match-text {
+          padding: 0 16px;
+          line-height: 45px;
+          font-size: 16px;
+          color: #1a1a1a;
+          font-weight: 400;
+        }
+
+        &.open,
+        &:focus-within {
+          border-color: #66a3ff;
+          box-shadow: 0 0 0 3px rgba(102, 163, 255, 0.1);
+        }
+      }
+
+      .ui-select-dropdown {
+        border: 1px solid #e1e5e9;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-top: 4px;
+
+        .ui-select-choices-row {
+          padding: 12px 16px;
+          font-size: 16px;
+
+          &:hover {
+            background: #f8fafc;
+          }
+
+          &.active {
+            background: #66a3ff;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Payment Section
+.payment-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.payment-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 20px 0;
+}
+
+// Readonly Field Styling
+.payment-readonly-field {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid #e1e5e9;
+  border-radius: 8px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #374151;
+  box-sizing: border-box;
+
+  &.payment-copyable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #66a3ff;
+      background: #f0f8ff;
+
+      .payment-copy-icon {
+        color: #66a3ff;
+      }
+    }
+  }
+}
+
+.payment-copy-icon {
+  color: #9ca3af;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+// Link Styling
+.payment-link {
+  color: #66a3ff;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Amount Section
+.payment-amount-section {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.payment-amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-amount-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.payment-amount-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+// Instructions
+.payment-instructions {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-top: 16px;
+
+  p {
+    font-size: 14px;
+    color: #92400e;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Invoice Card
+.payment-invoice-card {
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.payment-invoice-header {
+  background: linear-gradient(135deg, #66a3ff 0%, #5588ee 100%);
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.payment-invoice-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.payment-invoice-number {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Courier New', monospace;
+}
+
+.payment-invoice-body {
+  padding: 20px 24px;
+}
+
+.payment-invoice-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.payment-invoice-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.payment-invoice-value {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.payment-invoice-footer {
+  background: #f8fafc;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.payment-invoice-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-total-label {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.payment-total-amount {
+  font-size: 20px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+// Status Info
+.payment-status-info {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 24px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &.payment-status-pending {
+    background: #fffbeb;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+  }
+
+  &.payment-status-paid {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+  }
+
+  &.payment-status-failed {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+  }
+}
+
+// Invoice Action
+.payment-invoice-action {
+  padding: 16px 24px 24px;
+}
+
+// Buttons
+.payment-button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.payment-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.payment-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e1e5e9;
+
+    &:hover:not(:disabled) {
+      background: #e5e7eb;
+    }
+  }
+
+  &.payment-btn-primary {
+    background: #66a3ff;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #5588ee;
+    }
+  }
+
+  &.payment-btn-pay {
+    width: 100%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Loading Spinner
+.spinner-border {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+
+  &.text-primary {
+    color: #66a3ff !important;
+  }
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .upgrade-payment-container {
+    padding: 16px;
+  }
+
+  .upgrade-payment-header h2 {
+    font-size: 20px;
+  }
+
+  .payment-button-group {
+    flex-direction: column;
+
+    .payment-btn {
+      width: 100%;
+    }
+  }
+
+  .payment-amount-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .payment-btn,
+  .payment-readonly-field.payment-copyable {
+    transition: none;
+  }
+}

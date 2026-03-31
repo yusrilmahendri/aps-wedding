@@ -187,7 +187,44 @@ export class WeddingViewComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('Guest name from query params:', guest);
     this.guestName = guest ? guest : "Nama Tamu";
     console.log('Set guestName to:', this.guestName);
+
+    // Track guest visit if guest name is present and domain is available
+    if (guest && this.domain) {
+      this.trackGuestVisit(guest);
+    }
   });
+}
+
+/**
+ * Track guest visit to invitation
+ * Creates or updates wedding_guests record when guest opens invitation
+ */
+private trackGuestVisit(guestName: string): void {
+  if (!this.domain) {
+    console.warn('Cannot track guest visit: domain not available');
+    return;
+  }
+
+  console.log('Tracking guest visit:', { guestName, domain: this.domain });
+
+  const trackSubscription = this.dashboardService.create(DashboardServiceType.WEDDING_GUEST_TRACK, {
+    guest_name: guestName,
+    domain: this.domain
+  }).subscribe({
+    next: (response) => {
+      console.log('Guest tracked successfully:', response);
+      // Store guest token for QR code generation
+      if (response?.data?.guest_token) {
+        this.weddingDataService.setGuestToken(response.data.guest_token);
+      }
+    },
+    error: (error) => {
+      console.error('Error tracking guest visit:', error);
+      // Silently fail - don't disrupt user experience
+    }
+  });
+
+  this.subscriptions.add(trackSubscription);
 }
 
 scrollToContent() {
@@ -1318,14 +1355,32 @@ setResepsiDate() {
 
     const weddingUrl = this.getWeddingUrl();
     const coupleNames = this.getCoupleDisplayName();
+    const guestToken = this.weddingDataService.getGuestToken();
+    const guestNameFromParam = this.guestName !== "Nama Tamu" ? this.guestName : null;
 
-    console.log('Wedding URL:', weddingUrl);
-    console.log('Couple names:', coupleNames);
+    console.log('QR Modal Data:', {
+      weddingUrl,
+      coupleNames,
+      guestToken,
+      guestName: guestNameFromParam,
+      domain: this.domain
+    });
+
+    // If viewing as guest (guest name from query params and token available), generate guest QR
+    const useGuestQR = !!(guestNameFromParam && guestToken && this.domain);
 
     const initialState = {
       url: weddingUrl,
-      title: `Share ${coupleNames}'s Wedding`,
-      description: 'Scan this QR code to view our wedding invitation'
+      title: useGuestQR
+        ? `QR Kehadiran - ${guestNameFromParam}`
+        : `Share ${coupleNames}'s Wedding`,
+      description: useGuestQR
+        ? 'Scan this QR code to confirm your attendance'
+        : 'Scan this QR code to view our wedding invitation',
+      guestName: guestNameFromParam || undefined,
+      domain: this.domain,
+      guestToken: guestToken || undefined,
+      useGuestQR: useGuestQR
     };
 
     console.log('Modal initial state:', initialState);

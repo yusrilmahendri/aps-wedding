@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
@@ -8,10 +8,6 @@ import { MidtransPaymentService, SnapResult } from 'src/app/services/midtrans-pa
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
-/**
- * Interface for persisted payment state in localStorage.
- * Enables recovery after page refresh or browser close.
- */
 interface PaymentState {
   snapToken: string;
   orderId: string;
@@ -20,42 +16,35 @@ interface PaymentState {
   timestamp: number;
 }
 
-interface InvoiceData {
-  kode_pemesanan: string;
-  paket: string;
-  email: string;
-  phone: string;
-  domain: string;
-  total: number;
+interface UpgradeData {
+  upgrade: {
+    paket_undangan_id: number;
+    package: any;
+    isUpgrade: boolean;
+    isTrial?: boolean;
+    invitation_id?: number;
+    kode_pemesanan?: string;
+  };
 }
 
 @Component({
-  selector: 'wc-regis-pembayaran',
-  templateUrl: './regis-pembayaran.component.html',
-  styleUrls: ['./regis-pembayaran.component.scss'],
+  selector: 'wc-upgrade-payment',
+  templateUrl: './upgrade-payment.component.html',
+  styleUrls: ['./upgrade-payment.component.scss'],
 })
-export class RegisPembayaranComponent implements OnInit, OnDestroy {
-  @Input() formData: any;
-  @Output() prev = new EventEmitter<void>();
-
+export class UpgradePaymentComponent implements OnInit, OnDestroy {
   events: any[] = [];
   selectedMethod: any;
-  activePaymentMethod: any = null; // Single active payment method from admin
   bill: any[] = [];
   manualBill: any;
   isPayingMidtrans = false;
   midtransPaymentStatus: 'idle' | 'pending' | 'paid' | 'failed' = 'idle';
   currentOrderId: string | null = null;
   private currentSnapToken: string | null = null;
-  invoiceData: InvoiceData | null = null;
-  isTrialPackage: boolean = false; // Track if user selected Trial package
 
-  /**
-   * Maximum age of payment state before it's considered stale.
-   * Snap tokens typically expire after 24 hours.
-   */
   private readonly PAYMENT_STATE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
-  private readonly PAYMENT_STATE_KEY = 'midtrans_payment_state';
+  private readonly PAYMENT_STATE_KEY = 'upgrade_payment_state';
+  private readonly UPGRADE_DATA_KEY = 'upgradeData';
 
   get hasSnapToken(): boolean {
     return !!this.currentSnapToken;
@@ -74,7 +63,9 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
 
   userId: any;
   private invitationId: number | null = null;
-  private invoiceAmount: number | null = null;
+  invoiceAmount: number | null = null;
+  upgradeData: UpgradeData | null = null;
+  isLoading = true;
 
   constructor(
     private dashboardSvc: DashboardService,
@@ -90,88 +81,50 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getActivePaymentMethod();
-    const raw = localStorage.getItem('formData');
-    if (raw) {
-      const stored = JSON.parse(raw);
-      const priceSnapshot = stored?.registrasi?.response?.invitation?.package_price_snapshot;
-      const formPrice     = stored?.registrasi?.formData?.price;
-      const resolvedPrice = priceSnapshot ?? formPrice ?? null;
+    this.getMasterPayment();
+    this.loadUpgradeData();
+  }
 
-      this.manualBill    = resolvedPrice !== null ? Number(resolvedPrice) : null;
-      this.invoiceAmount = this.manualBill;
-      this.userId        = stored?.registrasi?.response?.user?.id ?? null;
-      this.invitationId  = stored?.registrasi?.response?.invitation?.id ?? null;
-
-      // Check if this is a Trial package (price is 0 or name contains 'Trial')
-      const packageName = stored?.registrasi?.response?.invitation?.package_features_snapshot?.name_paket
-        ?? stored?.registrasi?.formData?.paket_name
-        ?? '';
-      this.isTrialPackage = this.manualBill === 0 || packageName.toLowerCase().includes('trial');
-
-      // Populate invoice data
-      this.invoiceData = {
-        kode_pemesanan: stored?.registrasi?.response?.user?.kode_pemesanan
-          ?? stored?.registrasi?.formData?.kode_pemesanan
-          ?? '-',
-        paket: packageName,
-        email: stored?.registrasi?.formData?.email ?? '-',
-        phone: stored?.registrasi?.formData?.phone ?? '-',
-        domain: stored?.registrasi?.formData?.domain ?? '-',
-        total: this.manualBill ?? 0
-      };
+  loadUpgradeData(): void {
+    const raw = localStorage.getItem(this.UPGRADE_DATA_KEY);
+    if (!raw) {
+      this.notyf.error('Data upgrade tidak ditemukan. Silakan pilih paket terlebih dahulu.');
+      this.router.navigate(['/dashboard/upgrade']);
+      return;
     }
 
-    // Restore payment state if available (e.g., after page refresh)
+    this.upgradeData = JSON.parse(raw) as UpgradeData;
+    const pkg = this.upgradeData?.upgrade?.package;
+
+    if (!pkg) {
+      this.notyf.error('Data paket tidak valid.');
+      this.router.navigate(['/dashboard/upgrade']);
+      return;
+    }
+
+    this.manualBill = Number(pkg.price) || 0;
+    this.invoiceAmount = this.manualBill;
+
+    // Use invitation_id from stored upgrade data (already initiated in previous component)
+    this.invitationId = this.upgradeData?.upgrade?.invitation_id ?? null;
+
+    if (!this.invitationId) {
+      this.notyf.error('ID invitation tidak ditemukan. Silakan coba lagi.');
+      this.router.navigate(['/dashboard/upgrade']);
+      return;
+    }
+
+    this.isLoading = false;
+
+    // Restore payment state if available
     this.restorePaymentState();
   }
 
-  getActivePaymentMethod(): void {
-    // Get the single active payment method set by admin
+  getMasterPayment(): void {
     this.dashboardSvc
-      .getParam(DashboardServiceType.USER_ACTIVE_PAYMENT_METHOD, '')
+      .getParam(DashboardServiceType.MD_RGS_PAYMENT, '')
       .subscribe((response) => {
-        const methods = response['data'] || [];
-        if (methods.length > 0) {
-          this.activePaymentMethod = methods[0];
-          this.selectedMethod = this.activePaymentMethod.id;
-          this.selectOptions.payment.items = methods;
-
-          // CASE 1: Trial active + Paid package → Auto-switch ke Midtrans
-          if (this.activePaymentMethod?.id === 4 && !this.isTrialPackage) {
-            const fallbackMethodId = 3; // Midtrans as primary fallback
-
-            this.dashboardSvc.list(DashboardServiceType.MNL_MD_METHOD).subscribe({
-              next: (res) => {
-                const allMethods = res?.data || [];
-                const fallbackMethod = allMethods.find((m: any) => m.id === fallbackMethodId);
-
-                if (fallbackMethod) {
-                  this.selectedMethod = fallbackMethodId;
-                  this.activePaymentMethod = fallbackMethod;
-                  console.log(`Auto-switched to ${fallbackMethod.name} for paid package`);
-                }
-                this.getDetailMethod();
-              },
-              error: () => {
-                // On error, proceed with original active method
-                this.getDetailMethod();
-              }
-            });
-          }
-          // CASE 2: Midtrans/Manual active + Trial package → Tampilkan Trial UI saja
-          else if (this.isTrialPackage) {
-            // Set selectedMethod ke 4 (Trial) untuk menampilkan Trial UI
-            // Tidak perlu getDetailMethod() karena Trial tidak butuh config
-            this.selectedMethod = 4;
-          }
-          // Normal flow: load payment details for active method
-          else {
-            this.getDetailMethod();
-          }
-        } else {
-          console.warn('No active payment method configured');
-        }
+        this.selectOptions.payment.items = response['data'];
       });
   }
 
@@ -194,31 +147,19 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   }
 
   onBack(): void {
-    this.prev.emit();
+    localStorage.removeItem(this.UPGRADE_DATA_KEY);
+    this.router.navigate(['/dashboard/upgrade']);
   }
 
   onNextClicked(): void {
-    // For Trial packages, skip payment confirmation and go directly to dashboard
-    if (this.isTrialPackage) {
-      this.notyf.success('Paket Trial aktif! Mengarahkan ke dashboard...');
-      setTimeout(() => {
-        localStorage.removeItem('formData');
-        localStorage.removeItem('formRegis');
-        window.location.href = '/dashboard/overview';
-      }, 1500);
-      return;
-    }
-
-    // For paid packages, show payment confirmation modal
-    this.modalService.show(PaymentConfirmComponent, {
-      initialState: { userId: this.userId },
-    });
+    // For manual payment confirmation
+    this.notyf.success('Permintaan upgrade telah dikirim. Admin akan mengkonfirmasi pembayaran Anda.');
+    localStorage.removeItem(this.UPGRADE_DATA_KEY);
+    this.router.navigate(['/dashboard/overview']);
   }
 
   /**
-   * Initiate Midtrans Snap payment popup.
-   * Calls createSnapToken → loads Snap.js → opens popup.
-   * On pending → starts polling checkPaymentStatus every 5s.
+   * Initiate Midtrans Snap payment popup for upgrade.
    */
   onPayWithMidtrans(): void {
     // If we have an existing snap token, reopen the popup directly
@@ -228,7 +169,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     }
 
     if (!this.invitationId || !this.invoiceAmount) {
-      this.notyf.error('Data pembayaran tidak lengkap. Ulangi proses registrasi.');
+      this.notyf.error('Data pembayaran tidak lengkap. Silakan coba lagi.');
       return;
     }
 
@@ -327,10 +268,9 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
       this.isPayingMidtrans = false;
       this.midtransPaymentStatus = 'paid';
       this.clearPaymentState();
-      this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
+      this.clearUpgradeData();
+      this.notyf.success('Upgrade berhasil! Mengarahkan ke dashboard...');
       setTimeout(() => {
-        localStorage.removeItem('formData');
-        localStorage.removeItem('formRegis');
         window.location.href = '/dashboard/overview';
       }, 1500);
       return;
@@ -343,54 +283,30 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
         this.midtransPaymentStatus = 'paid';
 
         if (res.payment_status === 'paid') {
-          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
+          this.notyf.success('Upgrade berhasil! Mengarahkan ke dashboard...');
         } else {
-          this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
+          this.notyf.success('Upgrade berhasil! Mengarahkan ke dashboard...');
         }
 
         this.clearPaymentState();
+        this.clearUpgradeData();
         setTimeout(() => {
-          localStorage.removeItem('formData');
-          localStorage.removeItem('formRegis');
           window.location.href = '/dashboard/overview';
         }, 1500);
       },
       error: (err) => {
-        // Payment succeeded in Midtrans but backend verification failed (API down, etc.)
-        // Try fallback endpoint to confirm payment via frontend callback
-        console.error('Failed to verify payment status via checkStatus:', err);
+        // Payment succeeded in Midtrans but backend verification failed
+        // Proceed with redirect anyway - webhook or manual sync will handle it
+        console.error('Failed to verify payment status:', err);
+        this.isPayingMidtrans = false;
+        this.midtransPaymentStatus = 'paid';
+        this.clearPaymentState();
+        this.clearUpgradeData();
+        this.notyf.success('Upgrade berhasil! Mengarahkan ke dashboard...');
 
-        const grossAmount = this.invoiceAmount ?? undefined;
-
-        this.midtransSvc.confirmPaymentSuccess(orderId, result.transaction_id, grossAmount).subscribe({
-          next: (res) => {
-            console.log('Payment confirmed via fallback endpoint:', res);
-            this.isPayingMidtrans = false;
-            this.midtransPaymentStatus = 'paid';
-            this.clearPaymentState();
-            this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
-
-            setTimeout(() => {
-              localStorage.removeItem('formData');
-              localStorage.removeItem('formRegis');
-              window.location.href = '/dashboard/overview';
-            }, 1500);
-          },
-          error: (fallbackErr) => {
-            // Both checkStatus and fallback failed - log and proceed anyway
-            console.error('Fallback confirmation also failed:', fallbackErr);
-            this.isPayingMidtrans = false;
-            this.midtransPaymentStatus = 'paid';
-            this.clearPaymentState();
-            this.notyf.success('Pembayaran berhasil! Webhook akan menyinkronkan status. Mengarahkan ke dashboard...');
-
-            setTimeout(() => {
-              localStorage.removeItem('formData');
-              localStorage.removeItem('formRegis');
-              window.location.href = '/dashboard/overview';
-            }, 1500);
-          }
-        });
+        setTimeout(() => {
+          window.location.href = '/dashboard/overview';
+        }, 1500);
       }
     });
   }
@@ -409,54 +325,13 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
   }
 
   private onSnapClose(): void {
-    // User closed Snap popup — stop everything and allow reopening
     console.log('Snap popup closed by user');
-    console.log('Before reset - isPayingMidtrans:', this.isPayingMidtrans, 'status:', this.midtransPaymentStatus, 'hasToken:', this.currentSnapToken ? 'yes' : 'no');
-
     this.stopPolling();
     this.isPayingMidtrans = false;
     if (this.midtransPaymentStatus !== 'paid') {
       this.midtransPaymentStatus = 'idle';
     }
-
-    // Force Angular to detect changes immediately
     this.cdr.detectChanges();
-
-    console.log('After reset - isPayingMidtrans:', this.isPayingMidtrans, 'status:', this.midtransPaymentStatus);
-  }
-
-  private verifyPaymentAfterClose(): void {
-    if (!this.currentOrderId) return;
-
-    this.midtransSvc.checkPaymentStatus(this.currentOrderId).subscribe({
-      next: (res) => {
-        if (res.payment_status === 'paid') {
-          this.stopPolling();
-          this.isPayingMidtrans = false;
-          this.midtransPaymentStatus = 'paid';
-          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
-          setTimeout(() => {
-            localStorage.removeItem('formData');
-            localStorage.removeItem('formRegis');
-            window.location.href = '/dashboard/overview';
-          }, 1500);
-        } else if (res.payment_status === 'pending') {
-          // Payment still pending - allow user to reopen popup
-          console.log('Payment still pending after popup close');
-          this.isPayingMidtrans = false;
-          this.midtransPaymentStatus = 'idle';
-        } else {
-          // Payment failed or other status - keep snap token for retry
-          this.isPayingMidtrans = false;
-          this.midtransPaymentStatus = 'idle';
-        }
-      },
-      error: (err) => {
-        console.error('Failed to verify payment after popup close:', err);
-        this.isPayingMidtrans = false;
-        this.midtransPaymentStatus = 'idle';
-      }
-    });
   }
 
   private startStatusPolling(orderId: string): void {
@@ -468,10 +343,10 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
           this.stopPolling();
           this.midtransPaymentStatus = 'paid';
           this.isPayingMidtrans = false;
-          this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
+          this.clearPaymentState();
+          this.clearUpgradeData();
+          this.notyf.success('Upgrade berhasil! Mengarahkan ke dashboard...');
           setTimeout(() => {
-            localStorage.removeItem('formData');
-            localStorage.removeItem('formRegis');
             window.location.href = '/dashboard/overview';
           }, 1500);
         } else if (res.payment_status === 'failed') {
@@ -509,23 +384,14 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
 
   // ─── Payment State Persistence Methods ───────────────────────────────────────
 
-  /**
-   * Save payment state to localStorage for recovery after page refresh.
-   * Called immediately after successful snap token creation.
-   */
   private savePaymentState(state: PaymentState): void {
     try {
       localStorage.setItem(this.PAYMENT_STATE_KEY, JSON.stringify(state));
     } catch {
-      // Storage might be full or disabled; fail silently
       console.warn('Failed to save payment state to localStorage');
     }
   }
 
-  /**
-   * Restore payment state from localStorage on component init.
-   * Validates state age and matching invitation ID before restoring.
-   */
   private restorePaymentState(): void {
     try {
       const raw = localStorage.getItem(this.PAYMENT_STATE_KEY);
@@ -533,25 +399,18 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
 
       const state: PaymentState = JSON.parse(raw);
 
-      // Validate state matches current invitation and isn't expired
       if (state.invitationId === this.invitationId && this.isValidPaymentState(state)) {
         this.currentSnapToken = state.snapToken;
         this.currentOrderId = state.orderId;
-        console.log('Payment state restored for order:', state.orderId);
+        console.log('Upgrade payment state restored for order:', state.orderId);
       } else {
-        // State is invalid or for different invitation - clear it
         this.clearPaymentState();
       }
     } catch {
-      // Corrupted state - clear it
       this.clearPaymentState();
     }
   }
 
-  /**
-   * Clear payment state from localStorage.
-   * Called after successful payment or when switching payment methods.
-   */
   private clearPaymentState(): void {
     try {
       localStorage.removeItem(this.PAYMENT_STATE_KEY);
@@ -560,47 +419,39 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Validate payment state hasn't expired.
-   * Snap tokens are valid for 24 hours by default.
-   */
+  private clearUpgradeData(): void {
+    try {
+      localStorage.removeItem(this.UPGRADE_DATA_KEY);
+    } catch {
+      // Storage might be disabled; fail silently
+    }
+  }
+
   private isValidPaymentState(state: PaymentState): boolean {
     const age = Date.now() - state.timestamp;
     return age < this.PAYMENT_STATE_MAX_AGE_MS;
   }
 
-  /**
-   * Check if error indicates payment was already initiated.
-   */
   private isPaymentAlreadyInitiatedError(err: Error): boolean {
     const msg = err.message.toLowerCase();
     return msg.includes('already initiated') || msg.includes('sudah ada');
   }
 
-  /**
-   * Handle case where payment already exists on backend.
-   * Attempts to recover using saved state or informs user.
-   */
   private handleExistingPaymentError(): void {
     const saved = this.getSavedPaymentState();
 
     if (saved && saved.invitationId === this.invitationId && this.isValidPaymentState(saved)) {
-      // Restore state and allow user to continue
       this.currentOrderId = saved.orderId;
       this.currentSnapToken = saved.snapToken;
       this.isPayingMidtrans = false;
       this.notyf.success('Pembayaran sebelumnya ditemukan. Silakan lanjutkan.');
       this.cdr.detectChanges();
     } else {
-      // No valid saved state - user must contact support
       this.isPayingMidtrans = false;
       this.notyf.error('Pembayaran sedang diproses. Hubungi support untuk melanjutkan.');
     }
   }
 
-  /**
-   * Retrieve saved payment state from localStorage.
-   */
   private getSavedPaymentState(): PaymentState | null {
     try {
       const raw = localStorage.getItem(this.PAYMENT_STATE_KEY);
@@ -620,5 +471,13 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
       currency: 'IDR',
       minimumFractionDigits: 0
     }).format(amount);
+  }
+
+  getPackageName(): string {
+    return this.upgradeData?.upgrade?.package?.name_paket || 'Paket';
+  }
+
+  getPackageDuration(): string {
+    return this.upgradeData?.upgrade?.package?.masa_aktif || '0';
   }
 }

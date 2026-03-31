@@ -1,0 +1,62 @@
+<div class="upgrade-page">
+  <div class="page-header">
+    <h1>Upgrade Paket</h1>
+    <p>Pilih paket undangan yang sesuai dengan kebutuhan Anda</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Memuat paket tersedia...</p>
+  </div>
+
+  <div *ngIf="!isLoading && packages.length === 0" class="empty-state">
+    <p>Tidak ada paket tersedia untuk upgrade.</p>
+    <button class="btn-text" (click)="loadEligiblePackages()">Muat Ulang</button>
+  </div>
+
+  <div *ngIf="!isLoading && packages.length > 0" class="packages-list">
+    <div
+      *ngFor="let pkg of packages"
+      class="package-card"
+      [class.selected]="selectedPackage?.id === pkg.id"
+      (click)="onSelectPackage(pkg)">
+      <div class="card-header">
+        <div class="package-info">
+          <h3 class="package-name">{{ pkg.name_paket }}</h3>
+          <span class="package-duration">{{ pkg.masa_aktif }} hari</span>
+        </div>
+        <div class="package-price">{{ formatPrice(pkg.price) }}</div>
+      </div>
+
+      <div class="card-features">
+        <div class="feature" [class.active]="getFeatureIcon(pkg.kirim_wa)">
+          <span class="dot"></span>
+          <span>Kirim WA</span>
+        </div>
+        <div class="feature" [class.active]="getFeatureIcon(pkg.bebas_pilih_tema)">
+          <span class="dot"></span>
+          <span>Bebas Pilih Tema</span>
+        </div>
+        <div class="feature" [class.active]="getFeatureIcon(pkg.kirim_hadiah)">
+          <span class="dot"></span>
+          <span>Kirim Hadiah</span>
+        </div>
+        <div class="feature" [class.active]="getFeatureIcon(pkg.import_data)">
+          <span class="dot"></span>
+          <span>Import Data</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && selectedPackage" class="selection-footer">
+    <div class="summary">
+      <span class="label">Paket dipilih:</span>
+      <span class="value">{{ selectedPackage.name_paket }}</span>
+    </div>
+    <button class="btn-continue" (click)="onContinue()" [disabled]="isProcessing">
+      <span *ngIf="!isProcessing">Lanjut Pembayaran</span>
+      <span *ngIf="isProcessing">Memproses...</span>
+    </button>
+  </div>
+</div>

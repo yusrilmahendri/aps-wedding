@@ -42,11 +42,24 @@
         [formGroupName]="i" class="card-section event-card">
 
         <div class="event-card__header">
-          <h2 class="section-title">Acara #{{ i + 1 }}</h2>
+          <h2 class="section-title">
+            Acara #{{ i + 1 }}
+            <span *ngIf="isEventSaved(i)" class="badge-saved">
+              <i class="fa fa-check-circle"></i> Tersimpan
+            </span>
+          </h2>
           <div class="event-card__actions">
             <button type="button" class="btn-icon btn-icon--add" (click)="addDynamicEvent()"
               aria-label="Tambah acara" [disabled]="isLoading">
               <i class="fa fa-plus"></i>
+            </button>
+            <button type="button" class="btn-icon btn-icon--edit"
+              [class.btn-icon--active]="isEditMode(i)"
+              (click)="toggleEditMode(i)"
+              *ngIf="isEventSaved(i)"
+              aria-label="Edit acara"
+              [disabled]="isLoading">
+              <i class="fa fa-pencil"></i>
             </button>
             <button type="button" class="btn-icon btn-icon--delete" (click)="deleteDynamicEvent(i)"
               *ngIf="dynamicEvents.length > 1" aria-label="Hapus acara" [disabled]="isLoading">
@@ -58,10 +71,29 @@
         <input type="hidden" formControlName="id" />
 
         <div class="form-field">
+          <label for="jenisAcara{{i}}" class="form-label fw-semibold">Jenis Acara</label>
+          <select class="form-control" id="jenisAcara{{i}}"
+                  formControlName="jenis_acara"
+                  [disabled]="isLoading || !!eventForm.get('id')">
+            <option value="" disabled selected>Pilih jenis acara</option>
+            <option value="akad">Akad Nikah</option>
+            <option value="resepsi">Resepsi</option>
+          </select>
+          <div class="field-error"
+               *ngIf="eventForm.get('jenis_acara')?.invalid && eventForm.get('jenis_acara')?.touched">
+            Jenis acara wajib dipilih
+          </div>
+          <small class="text-muted" *ngIf="!!eventForm.get('id')">
+            Jenis acara tidak dapat diubah setelah dibuat
+          </small>
+        </div>
+
+        <div class="form-field">
           <label for="namaAcara{{i}}" class="form-label fw-semibold">Nama Acara</label>
           <input type="text" class="form-control" id="namaAcara{{i}}"
             placeholder="Contoh: Pernikahan Andra dan Mega"
-            formControlName="nama_acara" [disabled]="isLoading" />
+            formControlName="nama_acara"
+            [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))" />
           <div class="field-error"
             *ngIf="eventForm.get('nama_acara')?.invalid && eventForm.get('nama_acara')?.touched">
             Nama acara wajib diisi
@@ -73,7 +105,8 @@
           <div class="input-icon">
             <input type="text" class="form-control" id="tanggal{{i}}"
               placeholder="Pilih tanggal" formControlName="tanggal_acara" bsDatepicker
-              [bsConfig]="bsConfig" readonly [disabled]="isLoading" />
+              [bsConfig]="bsConfig" readonly
+              [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))" />
             <i class="far fa-calendar-alt"></i>
           </div>
           <div class="field-error"
@@ -87,7 +120,8 @@
             <label for="waktuMulai{{i}}" class="form-label fw-semibold">Waktu Mulai</label>
             <div class="input-icon">
               <input type="time" class="form-control" id="waktuMulai{{i}}"
-                formControlName="start_acara" [disabled]="isLoading" />
+                formControlName="start_acara"
+                [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))" />
               <i class="far fa-clock"></i>
             </div>
             <div class="field-error"
@@ -99,7 +133,8 @@
             <label for="waktuSelesai{{i}}" class="form-label fw-semibold">Waktu Selesai</label>
             <div class="input-icon">
               <input type="time" class="form-control" id="waktuSelesai{{i}}"
-                formControlName="end_acara" [disabled]="isLoading" />
+                formControlName="end_acara"
+                [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))" />
               <i class="far fa-clock"></i>
             </div>
             <div class="field-error"
@@ -113,7 +148,7 @@
           <label for="alamat{{i}}" class="form-label fw-semibold">Alamat</label>
           <textarea class="form-control" id="alamat{{i}}" rows="3"
             formControlName="alamat" placeholder="Masukkan alamat lengkap acara"
-            [disabled]="isLoading"></textarea>
+            [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))"></textarea>
           <div class="field-error"
             *ngIf="eventForm.get('alamat')?.invalid && eventForm.get('alamat')?.touched">
             Alamat wajib diisi
@@ -126,7 +161,7 @@
             <span class="maps-input__prefix">Google Maps</span>
             <input type="url" class="form-control" id="linkLokasi{{i}}"
               placeholder="https://maps.google.com/..." formControlName="link_maps"
-              [disabled]="isLoading" />
+              [disabled]="isLoading || (isEventSaved(i) && !isEditMode(i))" />
           </div>
           <div class="field-error"
             *ngIf="eventForm.get('link_maps')?.invalid && eventForm.get('link_maps')?.touched">

@@ -1,15 +1,14 @@
 <div class="rp-container">
-  <!-- Payment Method Selection -->
-  <div class="rp-form-group">
-    <label for="payment_method" class="rp-label">Metode Pembayaran</label>
-    <div class="rp-select-wrapper">
-      <ngx-select [items]="selectOptions.payment.items"
-                  [optionTextField]="'name'"
-                  [optionValueField]="'id'"
-                  placeholder="Pilih metode pembayaran"
-                  (select)="onMetodeSelect($event)"
-                  class="rp-select">
-      </ngx-select>
+  <!-- Active Payment Method Display (No selection - Admin sets this) -->
+  <div class="rp-form-group" *ngIf="activePaymentMethod && !isTrialPackage">
+    <label class="rp-label">Metode Pembayaran Aktif</label>
+    <div class="rp-active-method-display">
+      <div class="rp-method-badge" [ngClass]="'rp-method-badge--' + activePaymentMethod.name.toLowerCase()">
+        <i class="fas fa-credit-card" *ngIf="activePaymentMethod.name === 'Manual'"></i>
+        <i class="fas fa-shopping-cart" *ngIf="activePaymentMethod.name === 'Midtrans'"></i>
+        <span>{{ activePaymentMethod.name }}</span>
+      </div>
+      <span class="rp-method-note">{{ activePaymentMethod.name === 'Manual' ? 'Transfer Bank' : 'Payaran Online' }}</span>
     </div>
   </div>
 
@@ -55,53 +54,6 @@
       <!-- Instructions -->
       <div class="rp-instructions">
         <p>Setelah melakukan pembayaran, pastikan Anda klik "Lanjut" untuk langkah selanjutnya. Mohon untuk menyimpan bukti pembayaran.</p>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- Tripay Payment Method -->
-  <ng-container *ngIf="selectedMethod === 2">
-    <div *ngFor="let tripayData of bill" class="rp-payment-section">
-      <h3 class="rp-section-title">{{ tripayData.methode_pembayaran }}</h3>
-
-      <div class="rp-form-group">
-        <label class="rp-label">API Key</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyTripayToClipboard(tripayData.api_key)">
-          <span>{{ tripayData.api_key }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">Private Key</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyTripayToClipboard(tripayData.private_key)">
-          <span>{{ tripayData.private_key }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">Kode Merchant</label>
-        <div class="rp-readonly-field rp-copyable" (click)="copyTripayToClipboard(tripayData.kode_merchant)">
-          <span>{{ tripayData.kode_merchant }}</span>
-          <svg class="rp-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="rp-form-group">
-        <label class="rp-label">URL Tripay</label>
-        <div class="rp-readonly-field">
-          <a [href]="tripayData.url_tripay" target="_blank" class="rp-link">{{ tripayData.url_tripay }}</a>
-        </div>
       </div>
     </div>
   </ng-container>
@@ -173,14 +125,23 @@
     </div>
   </ng-container>
 
-  <!-- Trial Method -->
-  <ng-container *ngIf="selectedMethod === 4">
+  <!-- Trial Package Info -->
+  <ng-container *ngIf="isTrialPackage">
     <div class="rp-trial-section">
+      <div class="rp-trial-icon">
+        <i class="fas fa-gift"></i>
+      </div>
+      <h3 class="rp-trial-title">Paket Trial Aktif</h3>
       <p class="rp-trial-text">
-        Anda memilih metode "Trial dulu" sehingga masa uji coba hanya berlangsung selama 3 hari.
-        Beberapa fitur tidak akan tersedia di akun Anda. Setelah masa uji coba habis,
-        Anda tidak dapat lagi mengakses undangan yang Anda buat.
+        Anda menggunakan Paket Trial Gratis. Nikmati akses penuh ke dashboard undangan Anda!
+        Setelah masa trial habis, Anda dapat melakukan upgrade ke paket berbayar untuk melanjutkan akses.
       </p>
+      <div class="rp-trial-info">
+        <div class="rp-trial-info-item">
+          <i class="fas fa-clock"></i>
+          <span>Masa Aktif: 3 hari</span>
+        </div>
+      </div>
     </div>
   </ng-container>
 
@@ -189,8 +150,8 @@
     <button type="button" class="rp-btn rp-btn-secondary" (click)="onBack()">
       Kembali
     </button>
-    <button type="button" class="rp-btn rp-btn-primary" (click)="onNextClicked()" [disabled]="!selectedMethod" *ngIf="selectedMethod === 1 || selectedMethod === 4">
-      Lanjut
+    <button type="button" class="rp-btn rp-btn-primary" (click)="onNextClicked()" [disabled]="!selectedMethod" *ngIf="selectedMethod === 1 || isTrialPackage">
+      {{ isTrialPackage ? 'Lanjut ke Dashboard' : 'Lanjut' }}
     </button>
   </div>
 </div>
