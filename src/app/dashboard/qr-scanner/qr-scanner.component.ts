@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import jsQR from 'jsqr';
+import { BrowserMultiFormatReader } from '@zxing/browser';
+import { Result } from '@zxing/library';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 interface AttendanceScan {
   id: number;
@@ -12,14 +14,6 @@ interface AttendanceScan {
   acara_type: string;
   scan_type: string;
   scanned_at: string;
-}
-
-interface ScanStatistics {
-  total_scans: number;
-  qr_scans: number;
-  manual_scans: number;
-  today_scans: number;
-  by_acara_type: { [key: string]: number };
 }
 
 interface AcaraOption {
@@ -42,12 +36,15 @@ interface GuestQRData {
 })
 export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
 
   private destroy$ = new Subject<void>();
   private notyf: Notyf;
-  private stream: MediaStream | null = null;
-  private animationFrameId: number | null = null;
+  private codeReader: BrowserMultiFormatReader | null = null;
+  private scanControls: any = null;
+  private lastScannedData: string | null = null;
+  private scanCooldown = false;
+  private pendingScanStart = false;
+  private videoElementReady = false;
 
   // Form for manual entry
   manualEntryForm: FormGroup;
@@ -55,12 +52,13 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   // UI state
   isScanning = false;
   isProcessing = false;
-  selectedTab: 'scan' | 'list' | 'stats' = 'scan';
+  isInitializing = false;
+  selectedTab: 'scan' | 'list' | 'manual' = 'scan';
   selectedAcaraId: number | null = null;
   scannedQrData: string | null = null;
   hasCameraPermission = false;
   cameraError: string | null = null;
-  currentFacingMode: 'environment' | 'user' = 'environment'; // 'environment' = belakang, 'user' = depan
+  currentFacingMode: 'environment' | 'user' = 'environment';
 
   // Parsed guest data from QR
   scannedGuestData: {
@@ -71,12 +69,13 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Data
   attendanceScans: AttendanceScan[] = [];
-  statistics: ScanStatistics | null = null;
   availableAcara: AcaraOption[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private dashboardSvc: DashboardService
+    private dashboardSvc: DashboardService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {
     this.notyf = new Notyf({ duration: 3000, position: { x: 'right', y: 'top' } });
 
@@ -85,11 +84,12 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
       acara_id: ['', Validators.required],
       notes: ['']
     });
+
+    this.codeReader = new BrowserMultiFormatReader();
   }
 
   ngOnInit(): void {
     this.loadAcaraOptions();
-    this.loadStatistics();
   }
 
   ngOnDestroy(): void {
@@ -99,8 +99,25 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Video and canvas elements are now available
-    console.log('QR Scanner component initialized');
+    setTimeout(() => {
+      this.checkVideoElementReady();
+    }, 100);
+  }
+
+  /**
+   * Check if video element is ready in DOM
+   */
+  private checkVideoElementReady(): void {
+    this.videoElementReady = !!(this.videoElement && this.videoElement.nativeElement);
+
+    if (this.videoElementReady && this.pendingScanStart) {
+      this.pendingScanStart = false;
+      this.zone.run(() => {
+        this.startScanning();
+      });
+    }
+
+    this.cdr.detectChanges();
   }
 
   /**
@@ -124,14 +141,17 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
    * Toggle camera facing mode (front/back)
    */
   toggleCamera(): void {
-    this.currentFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
+    const newFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
 
-    // Stop current scanning and restart with new camera
     if (this.isScanning) {
       this.stopScanning();
+      this.currentFacingMode = newFacingMode;
+
       setTimeout(() => {
         this.startScanning();
-      }, 100);
+      }, 300);
+    } else {
+      this.currentFacingMode = newFacingMode;
     }
 
     const cameraName = this.currentFacingMode === 'environment' ? 'Belakang' : 'Depan';
@@ -147,12 +167,37 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    if (this.isScanning) {
+    if (this.isScanning || this.isInitializing) {
+      console.log('Already scanning or initializing, ignoring start request');
       return;
     }
 
+    // Check video element availability
+    if (!this.videoElement || !this.videoElement.nativeElement) {
+      console.log('Video element not ready, setting pending flag');
+      this.pendingScanStart = true;
+      this.isInitializing = true;
+      this.notyf.success('Menyiapkan kamera...');
+
+      // Retry after a delay
+      setTimeout(() => {
+        this.checkVideoElementReady();
+        if (!this.videoElementReady) {
+          this.isInitializing = false;
+          this.cameraError = 'Video element tidak tersedia. Silakan refresh halaman.';
+          this.notyf.error(this.cameraError);
+          this.pendingScanStart = false;
+        }
+      }, 500);
+      return;
+    }
+
+    this.isInitializing = true;
     this.isProcessing = true;
     this.cameraError = null;
+    this.scanCooldown = false;
+    this.lastScannedData = null;
+    this.pendingScanStart = false;
 
     try {
       console.log('Requesting camera permission...');
@@ -166,8 +211,10 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
 
+      const video = this.videoElement.nativeElement;
+
       // Request camera permission with current facing mode
-      this.stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: this.currentFacingMode,
           width: { ideal: 1280 },
@@ -175,49 +222,90 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-      console.log('Camera permission granted, stream obtained:', this.stream);
+      console.log('Camera permission granted, stream obtained');
 
       this.hasCameraPermission = true;
       this.isScanning = true;
+      this.isInitializing = false;
+      this.isProcessing = false;
 
-      // Wait for next tick to ensure DOM is updated
-      setTimeout(() => {
-        if (this.videoElement && this.videoElement.nativeElement) {
-          const video = this.videoElement.nativeElement;
-          video.srcObject = this.stream;
-          video.muted = true;
-          video.playsInline = true;
+      // Set up video element
+      video.srcObject = stream;
+      video.muted = true;
+      video.playsInline = true;
 
-          video.onloadedmetadata = () => {
-            console.log('Video metadata loaded, starting playback');
-            video.play()
-              .then(() => {
-                console.log('Video playback started');
-                this.startScanningLoop();
-              })
-              .catch(err => {
-                console.error('Error playing video:', err);
+      // Wait for video to be ready
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Video play timeout'));
+        }, 10000);
+
+        video.onloadedmetadata = () => {
+          clearTimeout(timeout);
+          video.play()
+            .then(() => {
+              console.log('Video playback started');
+              resolve();
+            })
+            .catch((err) => {
+              console.error('Error playing video:', err);
+              reject(err);
+            });
+        };
+
+        video.onerror = (err) => {
+          clearTimeout(timeout);
+          reject(err);
+        };
+      });
+
+      // Start QR scanning using zxing
+      console.log('Starting QR code scanning...');
+      this.scanControls = this.codeReader!.decodeFromVideoDevice(
+        undefined,
+        video,
+        (result: Result | undefined) => {
+          if (!this.isScanning || this.isProcessing || this.scanCooldown) {
+            return;
+          }
+
+          if (result) {
+            const qrText = result.getText();
+            if (qrText && qrText.trim().length > 0) {
+              if (qrText === this.lastScannedData) {
+                return;
+              }
+
+              console.log('QR Code found:', qrText);
+              this.lastScannedData = qrText;
+              this.zone.run(() => {
+                this.onScanSuccess(qrText);
               });
-          };
-
-          video.onerror = (e) => {
-            console.error('Video error:', e);
-          };
-        } else {
-          console.error('Video element not available');
-          this.cameraError = 'Video element tidak tersedia';
-          this.stopScanning();
+            }
+          }
         }
+      );
 
-        this.isProcessing = false;
-        this.notyf.success('Kamera diaktifkan');
-      }, 100);
+      this.notyf.success('Kamera diaktifkan');
 
     } catch (error) {
       console.error('Error accessing camera:', error);
-      this.cameraError = 'Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.';
+
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          this.cameraError = 'Izin kamera ditolak. Berikan izin kamera di browser settings.';
+        } else if (error.name === 'NotFoundError') {
+          this.cameraError = 'Tidak ada kamera ditemukan pada perangkat ini.';
+        } else {
+          this.cameraError = `Gagal mengakses kamera: ${error.message}`;
+        }
+      } else {
+        this.cameraError = 'Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.';
+      }
+
       this.notyf.error(this.cameraError);
       this.isScanning = false;
+      this.isInitializing = false;
       this.isProcessing = false;
     }
   }
@@ -226,8 +314,26 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
    * Stop QR code scanner
    */
   stopScanning(): void {
+    console.log('Stopping scanner...');
     this.isScanning = false;
     this.hasCameraPermission = false;
+    this.isInitializing = false;
+    this.scanCooldown = true;
+    this.pendingScanStart = false;
+
+    // Reset scan controls to null - this will stop the callback from processing
+    if (this.scanControls) {
+      this.scanControls = null;
+    }
+
+    // Abort any ongoing scans by re-creating the reader
+    if (this.codeReader) {
+      try {
+        this.codeReader = new BrowserMultiFormatReader();
+      } catch (e) {
+        console.log('Error resetting code reader:', e);
+      }
+    }
 
     // Exit fullscreen if active
     if (document.fullscreenElement && document.exitFullscreen) {
@@ -236,88 +342,51 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-    // Stop animation loop
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-
     // Stop video stream
-    if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
-      this.stream = null;
-    }
+    if (this.videoElement && this.videoElement.nativeElement) {
+      const video = this.videoElement.nativeElement;
+      const stream = video.srcObject as MediaStream;
 
-    // Clear video element
-    if (this.videoElement) {
-      this.videoElement.nativeElement.srcObject = null;
-    }
-  }
-
-  /**
-   * Start the scanning loop
-   */
-  private startScanningLoop(): void {
-    const video = this.videoElement.nativeElement;
-    const canvas = this.canvasElement.nativeElement;
-    const ctx = canvas.getContext('2d');
-
-    const scan = () => {
-      if (!this.isScanning) {
-        return;
+      if (stream) {
+        stream.getTracks().forEach(track => {
+          track.stop();
+          console.log('Track stopped:', track.kind);
+        });
       }
 
-      if (video?.readyState === video.HAVE_ENOUGH_DATA && ctx) {
-        // Set canvas dimensions to match video
-        canvas.height = video.videoHeight;
-        canvas.width = video.videoWidth;
+      video.pause();
+      video.srcObject = null;
+      video.load();
+    }
 
-        // Draw video frame to canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Get image data for QR scanning
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        // Try to find QR code - only process if we have valid data
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-        if (code && code.data && code.data.trim().length > 0) {
-          console.log('QR Code found:', code.data);
-          this.onScanSuccess(code.data);
-          return; // Stop scanning after successful scan
-        }
-      }
-
-      // Continue scanning
-      this.animationFrameId = requestAnimationFrame(scan);
-    };
-
-    // Start the scanning loop
-    this.animationFrameId = requestAnimationFrame(scan);
+    console.log('Scanner stopped');
   }
 
   /**
    * Handle QR code scan result
    */
   onScanSuccess(qrData: string): void {
-    if (!this.selectedAcaraId || this.isProcessing) {
+    if (!this.selectedAcaraId || this.isProcessing || this.scanCooldown) {
       return;
     }
 
     console.log('QR Data scanned:', qrData);
     this.scannedQrData = qrData;
     this.isProcessing = true;
+    this.scanCooldown = true;
 
-    // Stop scanning after successful scan
     this.stopScanning();
 
+    setTimeout(() => {
+      this.scanCooldown = false;
+      this.lastScannedData = null;
+    }, 2000);
+
     try {
-      // Parse QR data - expecting JSON format
       const scanData: GuestQRData = JSON.parse(qrData);
 
       console.log('Parsed QR Data:', scanData);
 
-      // Validate QR data format
       if (scanData.type !== 'wedding_attendance') {
         this.notyf.error('QR Code tidak valid untuk kehadiran');
         this.isProcessing = false;
@@ -325,7 +394,6 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      // Validate required fields
       if (!scanData.wedding_domain || !scanData.guest_name || !scanData.token) {
         this.notyf.error('QR Code tidak lengkap');
         this.isProcessing = false;
@@ -333,14 +401,12 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      // Store parsed guest data for UI display
       this.scannedGuestData = {
         name: scanData.guest_name,
         domain: scanData.wedding_domain,
         token: scanData.token
       };
 
-      // Process the scan with new guest tracking API
       this.processGuestAttendanceScan({
         guest_token: scanData.token,
         acara_id: this.selectedAcaraId,
@@ -376,14 +442,12 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Process guest attendance scan with token (new API)
-   * This is called when scanning QR codes with guest tokens
+   * Process guest attendance scan with token
    */
   private processGuestAttendanceScan(payload: any): void {
     this.dashboardSvc.create(DashboardServiceType.GUEST_CONFIRM_ATTENDANCE, payload).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Kehadiran berhasil dicatat');
-        this.loadStatistics();
 
         if (this.selectedTab === 'list') {
           this.loadAttendanceScans();
@@ -411,17 +475,19 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   resetScan(): void {
     this.scannedQrData = null;
     this.scannedGuestData = null;
+    this.isProcessing = false;
+    this.scanCooldown = false;
+    this.lastScannedData = null;
   }
 
   /**
-   * Process attendance scan (send to API) - legacy method for manual entry
+   * Process attendance scan (legacy method for manual entry)
    */
   private processAttendanceScan(payload: any): void {
     this.dashboardSvc.create(DashboardServiceType.ATTENDANCE_SCAN_PROCESS, payload).subscribe({
       next: (res: any) => {
         this.notyf.success(res?.message || 'Kehadiran berhasil dicatat');
         this.manualEntryForm.reset();
-        this.loadStatistics();
 
         if (this.selectedTab === 'list') {
           this.loadAttendanceScans();
@@ -461,22 +527,6 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Load attendance statistics
-   */
-  loadStatistics(): void {
-    const params = this.selectedAcaraId ? { acara_id: this.selectedAcaraId } : {};
-
-    this.dashboardSvc.list(DashboardServiceType.ATTENDANCE_SCAN_STATISTICS, params).subscribe({
-      next: (res: any) => {
-        this.statistics = res?.data || null;
-      },
-      error: (err) => {
-        console.error('Error loading statistics:', err);
-      }
-    });
-  }
-
-  /**
    * Delete scan record
    */
   deleteScan(scanId: number): void {
@@ -488,7 +538,6 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (res: any) => {
         this.notyf.success('Data scan berhasil dihapus');
         this.loadAttendanceScans();
-        this.loadStatistics();
       },
       error: (err) => {
         console.error('Error deleting scan:', err);
@@ -498,10 +547,63 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Export attendance data
+   * Export attendance data to Excel
    */
   exportData(): void {
-    this.notyf.error('Fitur export akan segera tersedia');
+    if (this.attendanceScans.length === 0) {
+      this.notyf.error('Tidak ada data untuk diexport');
+      return;
+    }
+
+    try {
+      // Prepare data for Excel
+      const exportData = this.attendanceScans.map((scan, index) => ({
+        'No': index + 1,
+        'Nama Tamu': scan.guest_name,
+        'Acara': this.getAcaraTypeName(scan.acara_type),
+        'Tipe Scan': scan.scan_type === 'qr_code' ? 'QR Code' : 'Manual',
+        'Waktu Scan': scan.scanned_at
+      }));
+
+      // Create workbook
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+      // Create worksheet
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 5 },   // No
+        { wch: 30 },  // Nama Tamu
+        { wch: 15 },  // Acara
+        { wch: 12 },  // Tipe Scan
+        { wch: 20 }   // Waktu Scan
+      ];
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Daftar Kehadiran');
+
+      // Generate Excel file
+      const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+      // Create blob and save
+      const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // Generate filename with timestamp
+      const date = new Date();
+      const timestamp = date.toISOString().slice(0, 10).replace(/-/g, '');
+      const acaraName = this.selectedAcaraId
+        ? this.availableAcara.find(a => a.id === this.selectedAcaraId)?.jenis_acara || 'semua'
+        : 'semua';
+      const fileName = `daftar_kehadiran_${acaraName}_${timestamp}.xlsx`;
+
+      saveAs(blob, fileName);
+
+      this.notyf.success('Data berhasil diexport ke Excel');
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      this.notyf.error('Gagal mengekspor data ke Excel');
+    }
   }
 
   /**

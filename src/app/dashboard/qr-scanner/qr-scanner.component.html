@@ -7,23 +7,23 @@
       <i class="fa fa-qrcode"></i> Scan QR
     </button>
     <button class="tab-btn"
+            [class.active]="selectedTab === 'manual'"
+            (click)="selectedTab = 'manual'">
+      <i class="fa fa-edit"></i> Input Manual
+    </button>
+    <button class="tab-btn"
             [class.active]="selectedTab === 'list'"
             (click)="selectedTab = 'list'; loadAttendanceScans()">
       <i class="fa fa-list"></i> Daftar Hadir
     </button>
-    <button class="tab-btn"
-            [class.active]="selectedTab === 'stats'"
-            (click)="selectedTab = 'stats'; loadStatistics()">
-      <i class="fa fa-chart-bar"></i> Statistik
-    </button>
   </div>
 
-  <!-- Scan Tab -->
-  <div class="tab-content" *ngIf="selectedTab === 'scan'">
+  <!-- Scan QR Tab -->
+  <div class="tab-content" [hidden]="selectedTab !== 'scan'">
     <!-- Acara Selector -->
     <div class="acara-selector">
       <label>Pilih Acara:</label>
-      <select [(ngModel)]="selectedAcaraId" (change)="loadStatistics()">
+      <select [(ngModel)]="selectedAcaraId">
         <option value="">-- Pilih Acara --</option>
         <option *ngFor="let acara of availableAcara" [value]="acara.id">
           {{ getAcaraTypeName(acara.jenis_acara) }} - {{ acara.nama_acara }}
@@ -31,146 +31,158 @@
       </select>
     </div>
 
-    <div class="scan-methods">
-      <!-- QR Scanner Section -->
-      <div class="qr-scanner-section">
-        <h3>Scan QR Code</h3>
-
-        <div class="scanner-preview" *ngIf="!selectedAcaraId">
-          <p class="text-muted">Pilih acara terlebih dahulu untuk memulai scanning</p>
+    <!-- QR Scanner Section -->
+    <div class="scanner-section" *ngIf="!selectedAcaraId">
+      <div class="scanner-placeholder">
+        <div class="placeholder-content">
+          <i class="fa fa-qrcode fa-5x"></i>
+          <p>Pilih acara terlebih dahulu</p>
         </div>
+      </div>
+    </div>
 
-        <div class="scanner-preview" *ngIf="selectedAcaraId">
-          <!-- Scanner when active -->
-          <div class="scanner-wrapper" *ngIf="isScanning">
-            <div class="video-container">
-              <video #videoElement class="scanner-video" playsinline></video>
-              <canvas #canvasElement class="scanner-canvas"></canvas>
-              <div class="scan-overlay" *ngIf="!isProcessing">
-                <div class="overlay-content">
-                  <i class="fa fa-qrcode fa-2x"></i>
-                  <p>Arahkan QR Code ke kamera</p>
-                </div>
-              </div>
+    <div class="scanner-section" *ngIf="selectedAcaraId">
+      <!-- Video element always in DOM when acara selected -->
+      <div class="scanner-wrapper" [hidden]="!isScanning && !isInitializing">
+        <div class="video-container">
+          <video #videoElement class="scanner-video" playsinline></video>
+          <canvas #canvasElement class="scanner-canvas"></canvas>
+          <div class="scan-overlay" *ngIf="!isProcessing && !isInitializing">
+            <div class="overlay-content">
+              <i class="fa fa-qrcode fa-3x"></i>
+              <p>Arahkan QR Code ke kamera</p>
             </div>
           </div>
-
-          <!-- Scanner placeholder when not scanning -->
-          <div class="scanner-placeholder" *ngIf="!isScanning">
-            <div class="placeholder-content">
-              <i class="fa fa-camera fa-4x"></i>
-              <p>Klik "Mulai Scan" untuk mengaktifkan kamera</p>
-              <small *ngIf="!cameraError">Arahkan QR Code tamu ke kamera untuk mencatat kehadiran</small>
-              <small *ngIf="cameraError" class="text-danger">{{ cameraError }}</small>
+          <div class="scan-overlay" *ngIf="isInitializing">
+            <div class="overlay-content">
+              <i class="fa fa-spinner fa-spin fa-3x"></i>
+              <p>Menyiapkan kamera...</p>
             </div>
-          </div>
-
-          <div class="scanner-controls">
-            <button class="btn btn-success"
-                    (click)="startScanning()"
-                    [disabled]="isScanning || isProcessing">
-              <i class="fa fa-play"></i> Mulai Scan
-            </button>
-            <button class="btn btn-secondary"
-                    (click)="toggleCamera()"
-                    [disabled]="!isScanning || isProcessing">
-              <i class="fa fa-sync-alt"></i> Putar Kamera
-            </button>
-            <button class="btn btn-danger"
-                    (click)="stopScanning()"
-                    [disabled]="!isScanning || isProcessing">
-              <i class="fa fa-stop"></i> Berhenti
-            </button>
-          </div>
-
-          <!-- Scanned Guest Data Display -->
-          <div class="scan-result-card" *ngIf="scannedGuestData">
-            <div class="scan-result-header">
-              <i class="fa fa-check-circle"></i>
-              <span>Data Tamu Terdeteksi</span>
-            </div>
-            <div class="scan-result-list">
-              <div class="scan-result-item">
-                <i class="fa fa-user"></i>
-                <div class="scan-result-content">
-                  <span class="scan-result-label">Nama Tamu</span>
-                  <span class="scan-result-value">{{ scannedGuestData.name }}</span>
-                </div>
-              </div>
-              <div class="scan-result-item">
-                <i class="fa fa-globe"></i>
-                <div class="scan-result-content">
-                  <span class="scan-result-label">Domain Undangan</span>
-                  <span class="scan-result-value">{{ scannedGuestData.domain }}</span>
-                </div>
-              </div>
-              <div class="scan-result-item">
-                <i class="fa fa-key"></i>
-                <div class="scan-result-content">
-                  <span class="scan-result-label">Token</span>
-                  <span class="scan-result-value scan-token">{{ scannedGuestData.token.substring(0, 20) }}...</span>
-                </div>
-              </div>
-            </div>
-            <div class="scan-result-actions">
-              <button class="btn btn-primary" (click)="resetScan()">
-                <i class="fa fa-redo"></i> Scan Lagi
-              </button>
-            </div>
-          </div>
-
-          <!-- Processing indicator -->
-          <div class="scan-status" *ngIf="isProcessing">
-            <div class="spinner-border text-primary" role="status">
-              <span class="sr-only">Memproses...</span>
-            </div>
-            <p>Memproses scan...</p>
           </div>
         </div>
       </div>
 
-      <!-- Manual Entry Section -->
-      <div class="manual-entry-section">
-        <h3>Input Manual</h3>
-        <form [formGroup]="manualEntryForm" (ngSubmit)="onManualSubmit()">
-          <div class="form-group">
-            <label>Nama Tamu:</label>
-            <input type="text"
-                   class="form-control"
-                   formControlName="guest_name"
-                   placeholder="Masukkan nama tamu">
-          </div>
+      <!-- Scanner placeholder when not scanning -->
+      <div class="scanner-placeholder" [hidden]="isScanning || isInitializing">
+        <div class="placeholder-content">
+          <i class="fa fa-camera fa-5x"></i>
+          <p>Klik "Mulai Scan" untuk mengaktifkan kamera</p>
+          <small *ngIf="!cameraError">Arahkan QR Code tamu ke kamera</small>
+          <small *ngIf="cameraError" class="text-danger">{{ cameraError }}</small>
+        </div>
+      </div>
 
-          <div class="form-group">
-            <label>Acara:</label>
-            <select class="form-control" formControlName="acara_id">
-              <option value="">-- Pilih Acara --</option>
-              <option *ngFor="let acara of availableAcara" [value]="acara.id">
-                {{ getAcaraTypeName(acara.jenis_acara) }}
-              </option>
-            </select>
-          </div>
+      <div class="scanner-controls">
+        <button class="btn btn-success"
+                (click)="startScanning()"
+                [disabled]="isScanning || isProcessing || isInitializing">
+          <i class="fa fa-play"></i> Mulai Scan
+        </button>
+        <button class="btn btn-secondary"
+                (click)="toggleCamera()"
+                [disabled]="!isScanning || isProcessing || isInitializing">
+          <i class="fa fa-sync-alt"></i> Putar Kamera
+        </button>
+        <button class="btn btn-danger"
+                (click)="stopScanning()"
+                [disabled]="!isScanning || isProcessing">
+          <i class="fa fa-stop"></i> Berhenti
+        </button>
+      </div>
 
-          <div class="form-group">
-            <label>Catatan (Opsional):</label>
-            <textarea class="form-control"
-                      formControlName="notes"
-                      rows="2"
-                      placeholder="Catatan tambahan..."></textarea>
+      <!-- Scanned Guest Data Display -->
+      <div class="scan-result-card" *ngIf="scannedGuestData">
+        <div class="scan-result-header">
+          <i class="fa fa-check-circle"></i>
+          <span>Data Tamu Terdeteksi</span>
+        </div>
+        <div class="scan-result-list">
+          <div class="scan-result-item">
+            <i class="fa fa-user"></i>
+            <div class="scan-result-content">
+              <span class="scan-result-label">Nama Tamu</span>
+              <span class="scan-result-value">{{ scannedGuestData.name }}</span>
+            </div>
           </div>
-
-          <button type="submit"
-                  class="btn btn-primary btn-block"
-                  [disabled]="manualEntryForm.invalid || isProcessing">
-            <i class="fa fa-check"></i> Catat Kehadiran
+          <div class="scan-result-item">
+            <i class="fa fa-globe"></i>
+            <div class="scan-result-content">
+              <span class="scan-result-label">Domain Undangan</span>
+              <span class="scan-result-value">{{ scannedGuestData.domain }}</span>
+            </div>
+          </div>
+          <div class="scan-result-item">
+            <i class="fa fa-key"></i>
+            <div class="scan-result-content">
+              <span class="scan-result-label">Token</span>
+              <span class="scan-result-value scan-token">{{ scannedGuestData.token.substring(0, 20) }}...</span>
+            </div>
+          </div>
+        </div>
+        <div class="scan-result-actions">
+          <button class="btn btn-primary" (click)="resetScan()">
+            <i class="fa fa-redo"></i> Scan Lagi
           </button>
-        </form>
+        </div>
+      </div>
+
+      <!-- Processing indicator -->
+      <div class="scan-status" *ngIf="isProcessing">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Memproses...</span>
+        </div>
+        <p>Memproses scan...</p>
       </div>
     </div>
   </div>
 
+  <!-- Manual Entry Tab -->
+  <div class="tab-content" [hidden]="selectedTab !== 'manual'">
+    <div class="manual-entry-container">
+      <div class="manual-entry-header">
+        <i class="fa fa-edit fa-3x"></i>
+        <h2>Input Manual Kehadiran</h2>
+        <p>Masukkan data tamu secara manual</p>
+      </div>
+
+      <form [formGroup]="manualEntryForm" (ngSubmit)="onManualSubmit()" class="manual-entry-form">
+        <div class="form-group">
+          <label>Nama Tamu:</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="guest_name"
+                 placeholder="Masukkan nama tamu">
+        </div>
+
+        <div class="form-group">
+          <label>Acara:</label>
+          <select class="form-control" formControlName="acara_id">
+            <option value="">-- Pilih Acara --</option>
+            <option *ngFor="let acara of availableAcara" [value]="acara.id">
+              {{ getAcaraTypeName(acara.jenis_acara) }} - {{ acara.nama_acara }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Catatan (Opsional):</label>
+          <textarea class="form-control"
+                    formControlName="notes"
+                    rows="3"
+                    placeholder="Catatan tambahan..."></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary btn-submit"
+                [disabled]="manualEntryForm.invalid || isProcessing">
+          <i class="fa fa-check"></i> Catat Kehadiran
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- List Tab -->
-  <div class="tab-content" *ngIf="selectedTab === 'list'">
+  <div class="tab-content" [hidden]="selectedTab !== 'list'">
     <div class="list-controls">
       <select [(ngModel)]="selectedAcaraId" (change)="loadAttendanceScans()">
         <option value="">Semua Acara</option>
@@ -210,41 +222,6 @@
       <div class="empty-state" *ngIf="attendanceScans.length === 0">
         <i class="fa fa-inbox fa-3x"></i>
         <p>Belum ada data kehadiran</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Statistics Tab -->
-  <div class="tab-content" *ngIf="selectedTab === 'stats'">
-    <div class="statistics-grid" *ngIf="statistics">
-      <div class="stat-card">
-        <div class="stat-value">{{ statistics.total_scans }}</div>
-        <div class="stat-label">Total Scan</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-value">{{ statistics.qr_scans }}</div>
-        <div class="stat-label">QR Code</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-value">{{ statistics.manual_scans }}</div>
-        <div class="stat-label">Input Manual</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-value">{{ statistics.today_scans }}</div>
-        <div class="stat-label">Hari Ini</div>
-      </div>
-    </div>
-
-    <div class="acara-breakdown" *ngIf="statistics?.by_acara_type">
-      <h3>Berdasarkan Jenis Acara</h3>
-      <div class="acara-stat" *ngFor="let count of (statistics?.by_acara_type | keyvalue)">
-        <span class="acara-name">
-          {{ getAcaraTypeName(count.key) }}
-        </span>
-        <span class="acara-count">{{ count.value }} tamu</span>
       </div>
     </div>
   </div>

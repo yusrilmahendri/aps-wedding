@@ -1,15 +1,16 @@
 {
-  "version": 2,
-  "buildCommand": "ng build --configuration production",
+  "buildCommand": "npm run build:prod",
   "outputDirectory": "dist/woocommerce",
   "installCommand": "npm install --legacy-peer-deps",
+  "framework": null,
   "routes": [
     {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/index.html",
+      "status": 200
     }
   ]
 }

@@ -51,9 +51,11 @@ WRITING RULES
 Banned words: can, may, just, very, literally, actually, certainly, probably, basically, could, maybe, delve, embark, utilize, however, furthermore, hence, powerful, groundbreaking, cutting-edge, revolutionize, unlock, discover, elevate, enhance, craft, illuminate, unveil, pivotal, intricate, tapestry, landscape, testament, in summary, in conclusion
 
 RESPONSE FORMAT
+
 Case: [
 
 ]
+
 Analysis: [technical assessment and concerns]
 Plan: [step-by-step approach with files affected]
 Execution: [code implementation]

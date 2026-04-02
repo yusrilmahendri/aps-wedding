@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint"
   },
@@ -30,8 +31,11 @@
     "@google/gemini-cli": "^0.1.14",
     "@ngx-translate/core": "^13.0.0",
     "@types/qrcode": "^1.5.5",
+    "@zxing/browser": "^0.1.4",
+    "@zxing/library": "^0.21.3",
     "bootstrap": "^4.6.2",
     "chart.js": "^3.9.1",
+    "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
     "jwt-decode": "^3.1.2",
     "lodash.isequal": "^4.5.0",
@@ -44,6 +48,7 @@
     "rxjs": "~7.4.0",
     "sweetalert2": "^11.26.3",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
