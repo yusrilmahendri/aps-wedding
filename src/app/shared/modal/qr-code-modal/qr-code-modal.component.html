@@ -1,64 +1,96 @@
-<!-- Simple ngx-bootstrap modal content for testing -->
-<div class="wedding-modal">
+<div class="qrm">
 
-  <!-- Modal Header -->
-  <div class="modal-header border-0">
-    <h5 class="modal-title w-100 text-center wedding-title">
-      <i class="fas fa-qrcode mr-2"></i>
-      {{ title }}
+  <!-- Header -->
+  <div class="qrm__header">
+    <h5 class="qrm__title">
+      <i class="fas fa-qrcode mr-2"></i>{{ title }}
     </h5>
-    <button type="button" class="close" (click)="closeModal()" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+    <button type="button" class="qrm__close" (click)="closeModal()" aria-label="Tutup">
+      <i class="fas fa-times"></i>
     </button>
   </div>
 
-  <!-- Modal Body -->
-  <div class="modal-body text-center px-4 pb-4">
+  <!-- Body -->
+  <div class="qrm__body">
 
-    <!-- Description -->
-    <p class="description-text mb-4">{{ description }}</p>
-
-    <!-- Loading State -->
-    <div *ngIf="isGenerating" class="loading-container">
+    <!-- Loading -->
+    <div *ngIf="isGenerating" class="qrm__state">
       <div class="spinner-border text-success" role="status">
-        <span class="sr-only">Generating QR code...</span>
+        <span class="sr-only">Membuat QR code...</span>
       </div>
-      <p class="mt-3 text-muted">Generating QR code...</p>
+      <p class="qrm__state-text mt-3">Membuat QR code...</p>
     </div>
 
-    <!-- Error State -->
-    <div *ngIf="errorMessage && !isGenerating" class="error-container">
-      <div class="error-icon mb-3">
-        <i class="fas fa-exclamation-triangle text-danger"></i>
-      </div>
+    <!-- Error -->
+    <div *ngIf="errorMessage && !isGenerating" class="qrm__state">
+      <i class="fas fa-exclamation-triangle qrm__error-icon mb-3"></i>
       <p class="text-danger mb-3">{{ errorMessage }}</p>
-      <button class="btn btn-outline-primary" (click)="retryGeneration()">
-        <i class="fas fa-redo mr-2"></i>
-        Try Again
+      <button class="btn btn-outline-danger btn-sm" (click)="retryGeneration()">
+        <i class="fas fa-redo mr-1"></i>Coba Lagi
       </button>
     </div>
 
-    <!-- QR Code Display -->
-    <div *ngIf="!isGenerating && !errorMessage" class="qr-container">
-      <div class="qr-wrapper">
-        <canvas #qrCanvas class="qr-canvas"></canvas>
+    <!-- QR Display — Guest Attendance Mode -->
+    <div *ngIf="!isGenerating && !errorMessage && useGuestQR" class="qrm__guest">
+      <div class="qrm__canvas-wrap">
+        <canvas #qrCanvas class="qrm__canvas"></canvas>
+        <button
+          class="qrm__fullscreen-btn"
+          type="button"
+          (click)="toggleFullscreen()"
+          title="Tampilkan layar penuh">
+          <i class="fas fa-expand"></i>
+        </button>
       </div>
 
-      <!-- URL Display -->
-      <div class="url-display mt-4">
+      <!-- Scan Status Pill -->
+      <div
+        class="qrm__scan-status"
+        [ngClass]="{
+          'qrm__scan-status--idle':    scanStatus === 'idle',
+          'qrm__scan-status--success': scanStatus === 'success',
+          'qrm__scan-status--error':   scanStatus === 'error'
+        }"
+        role="status"
+        aria-live="polite">
+        <ng-container [ngSwitch]="scanStatus">
+          <span *ngSwitchCase="'idle'">
+            <i class="fas fa-circle-notch fa-spin mr-2"></i>Menunggu scan...
+          </span>
+          <span *ngSwitchCase="'success'">
+            <i class="fas fa-check-circle mr-2"></i>{{ scanStatusMessage }}
+          </span>
+          <span *ngSwitchCase="'error'">
+            <i class="fas fa-times-circle mr-2"></i>{{ scanStatusMessage }}
+          </span>
+        </ng-container>
+      </div>
+
+      <!-- Download only in guest mode -->
+      <div class="qrm__actions mt-3">
+        <button class="btn qrm__btn-dl" (click)="downloadQRCode()" aria-label="Unduh QR code">
+          <i class="fas fa-download mr-2"></i>Unduh QR
+        </button>
+      </div>
+    </div>
+
+    <!-- QR Display — Share / Invite Mode -->
+    <div *ngIf="!isGenerating && !errorMessage && !useGuestQR" class="qrm__share">
+      <div class="qrm__canvas-wrap">
+        <canvas #qrCanvas class="qrm__canvas"></canvas>
+      </div>
+
+      <!-- URL Strip -->
+      <div class="qrm__url-strip mt-3">
         <div class="input-group">
           <input
             type="text"
-            class="form-control url-input"
+            class="form-control qrm__url-input"
             [value]="url"
             readonly
-            aria-label="Wedding invitation URL">
+            aria-label="URL undangan">
           <div class="input-group-append">
-            <button
-              class="btn btn-outline-secondary copy-btn"
-              type="button"
-              (click)="copyUrl()"
-              aria-label="Copy URL">
+            <button class="btn qrm__copy-btn" type="button" (click)="copyUrl()" aria-label="Salin URL">
               <i class="fas fa-copy"></i>
             </button>
           </div>
@@ -66,33 +98,26 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="action-buttons mt-4">
-        <button
-          class="btn btn-success mr-2 mb-2"
-          (click)="shareUrl()"
-          aria-label="Share wedding invitation">
-          <i class="fas fa-share-alt mr-2"></i>
-          Share
+      <div class="qrm__actions mt-3">
+        <button class="btn qrm__btn-share" (click)="shareUrl()" aria-label="Bagikan undangan">
+          <i class="fas fa-share-alt mr-2"></i>Bagikan
         </button>
-
-        <button
-          class="btn btn-outline-success mr-2 mb-2"
-          (click)="downloadQRCode()"
-          aria-label="Download QR code">
-          <i class="fas fa-download mr-2"></i>
-          Download
-        </button>
-
-        <button
-          class="btn btn-outline-primary mb-2"
-          (click)="copyUrl()"
-          aria-label="Copy URL">
-          <i class="fas fa-link mr-2"></i>
-          Copy Link
+        <button class="btn qrm__btn-dl" (click)="downloadQRCode()" aria-label="Unduh QR code">
+          <i class="fas fa-download mr-2"></i>Unduh QR
         </button>
       </div>
-
-
     </div>
+
+  </div><!-- /body -->
+</div>
+
+<!-- Fullscreen Overlay -->
+<div class="qrm-fs" *ngIf="isFullscreen" (click)="toggleFullscreen()" aria-modal="true" role="dialog">
+  <div class="qrm-fs__inner" (click)="$event.stopPropagation()">
+    <button class="qrm-fs__close" (click)="toggleFullscreen()" aria-label="Tutup layar penuh">
+      <i class="fas fa-compress"></i>
+    </button>
+    <canvas #qrCanvasFull class="qrm-fs__canvas"></canvas>
+    <p class="qrm-fs__hint">Tap di luar untuk menutup</p>
   </div>
 </div>

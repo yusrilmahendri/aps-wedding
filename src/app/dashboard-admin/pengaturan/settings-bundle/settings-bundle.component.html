@@ -12,8 +12,117 @@
 
     <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-4" *ngIf="!dataLoading">
       <div class="card h-100 shadow-sm">
+        <div class="card-header card-header-trial d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Paket Trial</h5>
+          <span class="badge bg-info">Gratis</span>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="trialForm" novalidate>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                Nama Paket Undangan <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid(trialForm, 'name_paket')"
+                formControlName="name_paket" placeholder="Masukkan nama paket" [disabled]="trialLoading">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(trialForm, 'name_paket')">
+                {{ getFieldError(trialForm, 'name_paket') }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                Harga Paket Undangan <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">Rp</span>
+                <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid(trialForm, 'price')"
+                  formControlName="price" placeholder="0" min="0" [disabled]="trialLoading">
+              </div>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(trialForm, 'price')">
+                {{ getFieldError(trialForm, 'price') }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                Masa Aktif Undangan <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid(trialForm, 'masa_aktif')"
+                  formControlName="masa_aktif" placeholder="30" min="1" [disabled]="trialLoading">
+                <span class="input-group-text">hari</span>
+              </div>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(trialForm, 'masa_aktif')">
+                {{ getFieldError(trialForm, 'masa_aktif') }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <h6 class="fw-bold mb-3">Fitur Paket:</h6>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="trialHalamanBuku" formControlName="halaman_buku"
+                  [disabled]="trialLoading">
+                <label class="form-check-label" for="trialHalamanBuku">
+                  Halaman Buku Tamu
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="trialKirimWa" formControlName="kirim_wa"
+                  [disabled]="trialLoading">
+                <label class="form-check-label" for="trialKirimWa">
+                  Kirim WhatsApp
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="trialBebasTema" formControlName="bebas_pilih_tema"
+                  [disabled]="trialLoading">
+                <label class="form-check-label" for="trialBebasTema">
+                  Bebas Pilih Tema
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="trialKirimHadiah" formControlName="kirim_hadiah"
+                  [disabled]="trialLoading">
+                <label class="form-check-label" for="trialKirimHadiah">
+                  Kirim Hadiah
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="trialImportData" formControlName="import_data"
+                  [disabled]="trialLoading">
+                <label class="form-check-label" for="trialImportData">
+                  Import Data Tamu (Excel)
+                </label>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-outline-secondary mt-3" type="button" (click)="resetTrialForm()"
+                [disabled]="trialLoading">
+                <i class="fas fa-undo me-2"></i>Reset
+              </button>
+              <button class="btn btn-custom mt-3" type="button" (click)="onClickTrial()"
+                [disabled]="trialLoading || !trialForm.valid">
+                <span *ngIf="trialLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                {{ trialLoading ? 'Menyimpan...' : 'Simpan' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-4" *ngIf="!dataLoading">
+      <div class="card h-100 shadow-sm">
         <div class="card-header card-header-silver d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Paket 1 - Silver</h5>
+          <h5 class="mb-0">Paket Silver</h5>
         </div>
         <div class="card-body">
           <form [formGroup]="silverForm" novalidate>
@@ -121,7 +230,7 @@
     <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-4" *ngIf="!dataLoading">
       <div class="card h-100 shadow-sm">
         <div class="card-header card-header-gold d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Paket 2 - Gold</h5>
+          <h5 class="mb-0">Paket Gold</h5>
         </div>
         <div class="card-body">
           <form [formGroup]="goldForm" novalidate>
@@ -229,7 +338,7 @@
     <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-4" *ngIf="!dataLoading">
       <div class="card h-100 shadow-sm">
         <div class="card-header card-header-platinum d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Paket 3 - Platinum</h5>
+          <h5 class="mb-0">Paket Platinum</h5>
         </div>
         <div class="card-body">
           <form [formGroup]="platinumForm" novalidate>
@@ -327,60 +436,6 @@
                 [disabled]="platinumLoading || !platinumForm.valid">
                 <span *ngIf="platinumLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
                 {{ platinumLoading ? 'Menyimpan...' : 'Simpan' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Trial Configuration Card -->
-    <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-4">
-      <div class="card h-100 shadow-sm">
-        <div class="card-header card-header-trial d-flex justify-content-between align-items-center">
-          <h5 class="mb-0"><i class="fas fa-gift me-2"></i>Konfigurasi Paket Trial</h5>
-          <span class="badge bg-info">Gratis</span>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="trialForm" novalidate>
-            <p class="text-muted mb-3">
-              Atur masa aktif untuk paket Trial. Pengguna yang memilih paket Trial akan mendapatkan akses gratis
-              selama periode yang ditentukan.
-            </p>
-
-            <div class="mb-3">
-              <label class="form-label fw-bold">
-                Masa Aktif Trial <span class="text-danger">*</span>
-              </label>
-              <div class="input-group">
-                <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid(trialForm, 'trial_masa_aktif')"
-                  formControlName="trial_masa_aktif" placeholder="3" min="1" max="30" [disabled]="trialLoading">
-                <span class="input-group-text">hari</span>
-              </div>
-              <div class="form-text">Minimal 1 hari, maksimal 30 hari</div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid(trialForm, 'trial_masa_aktif')">
-                {{ getFieldError(trialForm, 'trial_masa_aktif') }}
-              </div>
-            </div>
-
-            <div class="alert alert-info mb-3">
-              <i class="fas fa-info-circle me-2"></i>
-              <small>
-                Paket Trial memiliki harga Rp 0 dan memberikan akses penuh ke dashboard selama masa aktif.
-                Setelah masa aktif habis, user dapat melakukan upgrade ke paket berbayar.
-              </small>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-outline-secondary mt-3" type="button" (click)="resetTrialForm()"
-                [disabled]="trialLoading">
-                <i class="fas fa-undo me-2"></i>Reset
-              </button>
-              <button class="btn btn-custom mt-3" type="button" (click)="onClickTrial()"
-                [disabled]="trialLoading || !trialForm.valid">
-                <span *ngIf="trialLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                {{ trialLoading ? 'Menyimpan...' : 'Simpan' }}
               </button>
             </div>
           </form>

@@ -593,11 +593,11 @@ export class DashboardService {
 
       // Ucapan (Wedding Wishes) API endpoints
       case DashboardServiceType.UCAPAN_INDEX:
-        return `${this.BASE_URL_API}/v1/ucapan`;
+        return `${this.BASE_URL_API}/v1/user/ucapan`;
       case DashboardServiceType.UCAPAN_DELETE:
         return `${this.BASE_URL_API}/v1/ucapan`;
       case DashboardServiceType.UCAPAN_STATISTICS:
-        return `${this.BASE_URL_API}/v1/ucapan-statistics`;
+        return `${this.BASE_URL_API}/v1/user/ucapan-statistics`;
 
       // Profile Management API endpoints
       case DashboardServiceType.PROFILE_GET:

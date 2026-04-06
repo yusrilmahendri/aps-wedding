@@ -102,7 +102,7 @@ export class AkadViewComponent implements OnInit, OnDestroy {
 
     this.galleryImages = this.weddingData.gallery
       .slice(3, 8)
-      .map((item: any) => item?.photo)
+      .map((item: any) => item?.photo_url || item?.photo)
       .filter(Boolean);
   }
 

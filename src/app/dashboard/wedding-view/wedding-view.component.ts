@@ -239,7 +239,7 @@ setResepsiDate() {
 
     const resepsiEvent = this.weddingData.events.find((event: any) =>
       event.nama_acara?.toLowerCase().includes('resepsi')
-    );
+    ) || this.weddingData.events[0];
 
     if (!resepsiEvent) return;
 
@@ -285,7 +285,7 @@ setResepsiDate() {
     // ambil 3 gambar pertama
     this.sliderImages = this.weddingData.gallery
       .slice(0, 3)
-      .map((item: any) => item.photo);
+      .map((item: any) => item.photo_url || item.photo);
 
     if (this.sliderImages.length <= 1) return;
 
@@ -301,7 +301,7 @@ setResepsiDate() {
 
     this.galleryImages = this.weddingData.gallery
       .slice(3, 8)
-      .map((item: any) => item?.photo)
+      .map((item: any) => item?.photo_url || item?.photo)
       .filter(Boolean);
     console.log(this.galleryImages, 'gl');
 
@@ -577,6 +577,12 @@ setResepsiDate() {
     this.subscriptions.add(settingsSubscription);
   }
 
+  onGuestWishSubmitted(): void {
+    if (this.domain) {
+      this.loadWeddingDataFromAPI(this.domain, true);
+    }
+  }
+
   /**
    * Load wedding data from API using domain
    * Updated to use domain parameter instead of coupleName
@@ -786,7 +792,7 @@ setResepsiDate() {
 
     const resepsiEvent = this.weddingData.events.find((event: any) =>
       event.nama_acara?.toLowerCase().includes('resepsi')
-    );
+    ) || this.weddingData.events[0];
 
     if (!resepsiEvent) return null;
 

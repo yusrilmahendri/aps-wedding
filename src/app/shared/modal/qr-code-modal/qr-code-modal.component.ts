@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import * as QRCode from 'qrcode';
+import { DashboardService, DashboardServiceType } from '../../../dashboard.service';
 
 interface GuestQRData {
   type: string;
@@ -25,58 +26,87 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('qrCanvas', { static: false }) qrCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('qrCanvasFull', { static: false }) qrCanvasFull!: ElementRef<HTMLCanvasElement>;
 
   isGenerating: boolean = false;
+  isFullscreen: boolean = false;
   errorMessage: string = '';
   qrCodeGenerated: boolean = false;
 
-  constructor(public bsModalRef: BsModalRef) {
-    console.log('QRCodeModalComponent constructor called');
-  }
+  scanStatus: 'idle' | 'success' | 'error' = 'idle';
+  scanStatusMessage: string = '';
+  private pollingInterval: ReturnType<typeof setInterval> | null = null;
 
-  ngOnInit(): void {
-    console.log('QRCodeModalComponent ngOnInit called with:', {
-      url: this.url,
-      title: this.title,
-      description: this.description
-    });
-  }
+  constructor(public bsModalRef: BsModalRef, private dashboardSvc: DashboardService) {}
+
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    console.log('QRCodeModalComponent ngAfterViewInit called');
-    console.log('qrCanvas available:', !!this.qrCanvas);
-
     if (this.url) {
-      // Use setTimeout to ensure the view is fully rendered
       setTimeout(() => {
         this.generateQRCode();
+        if (this.useGuestQR && this.guestToken) {
+          this.startAttendancePolling();
+        }
       }, 100);
     } else {
       this.errorMessage = 'No URL provided for QR code generation';
-      console.error('QRCodeModalComponent: No URL provided');
     }
   }
 
   ngOnDestroy(): void {
-    console.log('QRCodeModalComponent destroyed');
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+  }
+
+  /**
+   * Toggle fullscreen QR overlay for scanning officers
+   */
+  toggleFullscreen(): void {
+    this.isFullscreen = !this.isFullscreen;
+    if (this.isFullscreen) {
+      setTimeout(() => this.generateQRCode(480), 50);
+    }
+  }
+
+  /**
+   * Poll attendance status every 3 seconds until scan confirmed
+   */
+  private startAttendancePolling(): void {
+    this.pollingInterval = setInterval(() => {
+      this.dashboardSvc.getParam(DashboardServiceType.GUEST_VERIFY_TOKEN, '/' + this.guestToken).subscribe({
+        next: (res: any) => {
+          if (res?.data?.attended === true) {
+            this.scanStatus = 'success';
+            this.scanStatusMessage = 'QR Anda telah berhasil discan!';
+            if (this.pollingInterval) {
+              clearInterval(this.pollingInterval);
+              this.pollingInterval = null;
+            }
+          }
+        },
+        error: () => {
+          this.scanStatus = 'error';
+          this.scanStatusMessage = 'Gagal memeriksa status kehadiran';
+          if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+          }
+        }
+      });
+    }, 3000);
   }
 
   /**
    * Generate QR code from the provided URL or guest data
    */
-  private async generateQRCode(): Promise<void> {
-    console.log('generateQRCode called with:', {
-      url: this.url,
-      guestName: this.guestName,
-      domain: this.domain,
-      guestToken: this.guestToken,
-      useGuestQR: this.useGuestQR
-    });
-    console.log('qrCanvas element:', this.qrCanvas);
+  private async generateQRCode(size: number = 280): Promise<void> {
+    const targetCanvas = size > 280 ? this.qrCanvasFull : this.qrCanvas;
 
-    if (!this.qrCanvas) {
+    if (!targetCanvas) {
       this.errorMessage = 'Canvas element not found';
-      console.error('qrCanvas element not found');
       return;
     }
 
@@ -84,14 +114,11 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.errorMessage = '';
 
     try {
-      const canvas = this.qrCanvas.nativeElement;
-      console.log('Canvas element:', canvas);
+      const canvas = targetCanvas.nativeElement;
 
-      // Determine QR data content
       let qrDataContent: string;
 
       if (this.useGuestQR && this.guestName && this.domain && this.guestToken) {
-        // Generate JSON format QR for guest attendance
         const guestQRData: GuestQRData = {
           type: 'wedding_attendance',
           wedding_domain: this.domain,
@@ -99,41 +126,33 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
           token: this.guestToken
         };
         qrDataContent = JSON.stringify(guestQRData);
-        console.log('Generating guest QR with data:', guestQRData);
       } else if (this.url) {
-        // Use URL for regular invitation QR
         qrDataContent = this.url;
-        console.log('Generating URL QR with:', this.url);
       } else {
         this.errorMessage = 'Missing URL or guest data for QR code generation';
-        console.error('No URL or guest data provided for QR code generation');
         this.isGenerating = false;
         return;
       }
 
-      // QR code options for wedding invitation style
       const options = {
         errorCorrectionLevel: 'M' as const,
         type: 'image/png' as const,
         quality: 0.92,
         margin: 2,
         color: {
-          dark: '#2c5530', // Wedding theme green
+          dark: '#2c5530',
           light: '#FFFFFF'
         },
-        width: 280, // Size for mobile-friendly scanning
+        width: size,
         scale: 4
       };
 
-      console.log('Generating QR code with options:', options);
       await QRCode.toCanvas(canvas, qrDataContent, options);
 
       this.qrCodeGenerated = true;
       this.isGenerating = false;
-      console.log('QR code generated successfully');
 
     } catch (error) {
-      console.error('Error generating QR code:', error);
       this.errorMessage = 'Failed to generate QR code. Please try again.';
       this.isGenerating = false;
     }
@@ -143,7 +162,6 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
    * Retry generating QR code
    */
   retryGeneration(): void {
-    console.log('Retrying QR code generation');
     this.generateQRCode();
   }
 
@@ -153,11 +171,7 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
   async copyUrl(): Promise<void> {
     try {
       await navigator.clipboard.writeText(this.url);
-      console.log('URL copied to clipboard:', this.url);
-      // You could show a toast notification here
     } catch (error) {
-      console.error('Failed to copy URL:', error);
-      // Fallback for older browsers
       this.fallbackCopyUrl();
     }
   }
@@ -177,9 +191,8 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
 
     try {
       document.execCommand('copy');
-      console.log('URL copied using fallback method');
     } catch (error) {
-      console.error('Fallback copy failed:', error);
+      // fallback failed silently
     }
 
     document.body.removeChild(textArea);
@@ -189,24 +202,16 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
    * Download QR code as PNG image
    */
   downloadQRCode(): void {
-    if (!this.qrCanvas || !this.qrCodeGenerated) {
-      console.error('QR code not available for download');
-      return;
-    }
+    if (!this.qrCanvas || !this.qrCodeGenerated) return;
 
     try {
       const canvas = this.qrCanvas.nativeElement;
       const dataURL = canvas.toDataURL('image/png');
-
       const link = document.createElement('a');
       link.download = 'wedding-qr-code.png';
       link.href = dataURL;
       link.click();
-
-      console.log('QR code download initiated');
-    } catch (error) {
-      console.error('Error downloading QR code:', error);
-    }
+    } catch (_err) {}
   }
 
   /**
@@ -215,18 +220,11 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
   async shareUrl(): Promise<void> {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: this.title,
-          text: this.description,
-          url: this.url
-        });
-        console.log('URL shared successfully');
-      } catch (error) {
-        console.error('Error sharing URL:', error);
-        this.copyUrl(); // Fallback to copy
+        await navigator.share({ title: this.title, text: this.description, url: this.url });
+      } catch (_err) {
+        this.copyUrl();
       }
     } else {
-      // Fallback for browsers without Web Share API
       this.copyUrl();
     }
   }
@@ -235,7 +233,6 @@ export class QRCodeModalComponent implements OnInit, AfterViewInit, OnDestroy {
    * Close the modal
    */
   closeModal(): void {
-    console.log('Closing QR modal');
     this.close.emit();
     this.bsModalRef.hide();
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { WeddingData } from '../../../services/wedding-data.service';
 import { DashboardService, DashboardServiceType } from '../../../dashboard.service';
@@ -40,6 +40,7 @@ interface PresenceFormData {
 })
 export class PresenceViewComponent implements OnInit, OnDestroy {
   @Input() weddingData: WeddingData | undefined;
+  @Output() attendanceSubmitted = new EventEmitter<void>();
 
   formData: PresenceFormData = {
     nama: '',
@@ -163,6 +164,7 @@ export class PresenceViewComponent implements OnInit, OnDestroy {
     const successMessage = `Terima kasih ${this.formData.nama}! Konfirmasi kehadiran Anda untuk acara ${this.getCoupleNames()} telah berhasil dikirim.`;
 
     this.notyf.success(successMessage);
+    this.attendanceSubmitted.emit();
 
     // Reset form after successful submission
     this.resetForm();

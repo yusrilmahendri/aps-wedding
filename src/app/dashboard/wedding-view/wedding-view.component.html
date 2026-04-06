@@ -171,7 +171,8 @@
 
           <section class="full-section mt-3" id="section-8">
             <wc-presence-view
-            [weddingData]="weddingData || undefined">
+            [weddingData]="weddingData || undefined"
+            (attendanceSubmitted)="onGuestWishSubmitted()">
           </wc-presence-view>
           </section>
 

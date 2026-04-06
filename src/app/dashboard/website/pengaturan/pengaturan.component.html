@@ -1,7 +1,7 @@
 <div class="pengaturan-container">
   <div class="settings-grid">
     <!-- Domain dan Token -->
-    <div class="settings-grid__item">
+    <!-- <div class="settings-grid__item">
       <div class="card">
         <div class="section-bar"></div>
         <h2>Domain dan Token</h2>
@@ -27,10 +27,10 @@
           </button>
         </form>
       </div>
-    </div>
+    </div> -->
 
     <!-- Musik -->
-    <div class="settings-grid__item">
+    <div class="settings-grid__item settings-grid__item--full">
       <div class="card">
         <div class="section-bar"></div>
         <h2>Musik</h2>
@@ -90,17 +90,20 @@
     <div class="settings-grid__item">
       <div class="card">
         <div class="section-bar"></div>
-        <h2>Salam Pembuka</h2>
+        <h2>Pengaturan Pesan Undangan</h2>
         <form [formGroup]="salamForm" (ngSubmit)="saveSalam()">
-          <label for="salam-pembuka" class="form-label fw-semibold">Salam Pembuka Undangan</label>
+          <label for="salam-pembuka" class="form-label fw-semibold">Pesan WhatsApp</label>
+          <small class="text-muted d-block mb-1">Teks ini digunakan sebagai isi pesan saat mengirim undangan via tombol WhatsApp di generator tamu.</small>
           <textarea id="salam-pembuka" rows="4" class="form-control mb-3" formControlName="salam_pembuka"
             [disabled]="isLoadingSalam"></textarea>
 
-          <label for="salam-atas" class="form-label fw-semibold">Salam Pembuka WhatsApp (atas)</label>
+          <label for="salam-atas" class="form-label fw-semibold">Pembuka Pesan (Copy Pesan)</label>
+          <small class="text-muted d-block mb-1">Teks ini tampil di awal pesan saat menyalin undangan via tombol Copy Pesan, sebelum link undangan.</small>
           <textarea id="salam-atas" rows="4" class="form-control mb-3" formControlName="salam_atas"
             [disabled]="isLoadingSalam"></textarea>
 
-          <label for="salam-bawah" class="form-label fw-semibold">Salam Pembuka WhatsApp (bawah)</label>
+          <label for="salam-bawah" class="form-label fw-semibold">Penutup Pesan (Copy Pesan)</label>
+          <small class="text-muted d-block mb-1">Teks ini tampil di akhir pesan saat menyalin undangan via tombol Copy Pesan, setelah link undangan.</small>
           <textarea id="salam-bawah" rows="4" class="form-control mb-3" formControlName="salam_bawah"
             [disabled]="isLoadingSalam"></textarea>
 

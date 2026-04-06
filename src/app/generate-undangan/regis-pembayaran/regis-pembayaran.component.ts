@@ -241,6 +241,8 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
     this.isPayingMidtrans = true;
     this.midtransPaymentStatus = 'idle';
 
+    this.midtransSvc.clearMidtransStorage();
+
     this.midtransSvc
       .createSnapToken({
         invitation_id: this.invitationId,
@@ -329,6 +331,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
       this.clearPaymentState();
       this.notyf.success('Pembayaran berhasil! Mengarahkan ke dashboard...');
       setTimeout(() => {
+        this.midtransSvc.clearMidtransStorage();
         localStorage.removeItem('formData');
         localStorage.removeItem('formRegis');
         window.location.href = '/dashboard/overview';
@@ -350,6 +353,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
 
         this.clearPaymentState();
         setTimeout(() => {
+          this.midtransSvc.clearMidtransStorage();
           localStorage.removeItem('formData');
           localStorage.removeItem('formRegis');
           window.location.href = '/dashboard/overview';
@@ -371,6 +375,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
             this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
 
             setTimeout(() => {
+              this.midtransSvc.clearMidtransStorage();
               localStorage.removeItem('formData');
               localStorage.removeItem('formRegis');
               window.location.href = '/dashboard/overview';
@@ -385,6 +390,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
             this.notyf.success('Pembayaran berhasil! Webhook akan menyinkronkan status. Mengarahkan ke dashboard...');
 
             setTimeout(() => {
+              this.midtransSvc.clearMidtransStorage();
               localStorage.removeItem('formData');
               localStorage.removeItem('formRegis');
               window.location.href = '/dashboard/overview';
@@ -470,6 +476,7 @@ export class RegisPembayaranComponent implements OnInit, OnDestroy {
           this.isPayingMidtrans = false;
           this.notyf.success('Pembayaran terkonfirmasi! Mengarahkan ke dashboard...');
           setTimeout(() => {
+            this.midtransSvc.clearMidtransStorage();
             localStorage.removeItem('formData');
             localStorage.removeItem('formRegis');
             window.location.href = '/dashboard/overview';

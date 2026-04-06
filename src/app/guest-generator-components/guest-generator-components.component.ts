@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { DashboardService, DashboardServiceType } from '../dashboard.service';
 import { Notyf } from 'notyf';
 import { UserProfileResponse } from '../interfaces/user-profile.interface';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'wc-guest-generator-components',
@@ -18,6 +19,7 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   private readonly STORAGE_KEY = 'wedding_guest_list';
 
   // Salam settings from API
+  salamPembuka: string = '';
   salamAtas: string = '';
   salamBawah: string = '';
   private notyf = new Notyf();
@@ -38,8 +40,8 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   currentMessageGuestName: string = '';
 
   // UI state for helper boxes
-  showInstructions: boolean = true;
-  showExample: boolean = true;
+  showInstructions: boolean = false;
+  showExample: boolean = false;
 
   // Expose Math to template
   Math = Math;
@@ -67,7 +69,7 @@ export class GuestGeneratorComponentsComponent implements OnInit {
         console.log('✅ Profile API Response:', res);
         if (res && res.success && res.data && res.data.domain_info) {
           this.userDomain = res.data.domain_info.domain;
-          this.baseUrlUndangan = `http://localhost:4200/wedding/${this.userDomain}`;
+          this.baseUrlUndangan = `${environment.baseUrlUndangan}/${this.userDomain}`;
           console.log('🌐 Domain found:', this.userDomain);
           console.log('🔗 Base URL Undangan:', this.baseUrlUndangan);
           // Auto-fill base URL
@@ -113,20 +115,42 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     this.dashboardService.list(DashboardServiceType.SETTINGS_GET_FILTER).subscribe({
       next: (res: any) => {
         if (res && res.setting) {
+          this.salamPembuka = res.setting.salam_pembuka || this.getDefaultSalamPembuka();
           this.salamAtas = res.setting.salam_atas || this.getDefaultSalamAtas();
           this.salamBawah = res.setting.salam_bawah || this.getDefaultSalamBawah();
         } else {
+          this.salamPembuka = this.getDefaultSalamPembuka();
           this.salamAtas = this.getDefaultSalamAtas();
           this.salamBawah = this.getDefaultSalamBawah();
         }
+        this.rebuildGuestMessages();
       },
       error: (err: any) => {
         console.error('Error loading salam settings:', err);
         this.notyf.error('Gagal memuat pengaturan salam, menggunakan default');
+        this.salamPembuka = this.getDefaultSalamPembuka();
         this.salamAtas = this.getDefaultSalamAtas();
         this.salamBawah = this.getDefaultSalamBawah();
       }
     });
+  }
+
+  rebuildGuestMessages(): void {
+    if (!this.guests.length) return;
+    this.guests = this.guests.map(g => {
+      const base = g.link?.includes('?guest=') ? g.link.split('?guest=')[0] : g.link;
+      return {
+        ...g,
+        message: this.buildMessage(g.name, base),
+        whatsappMessage: this.buildWhatsAppMessage(g.name, base)
+      };
+    });
+    this.saveGuestsToLocalStorage();
+  }
+
+  // Default salam pembuka if API fails or empty
+  getDefaultSalamPembuka(): string {
+    return 'Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.';
   }
 
   // Default salam atas if API fails or empty
@@ -256,13 +280,12 @@ export class GuestGeneratorComponentsComponent implements OnInit {
       .map((v: string) => v.trim())
       .filter((v: string) => v !== '');
 
-    this.guests = [];
-
     lines.forEach((line: string) => {
       this.guests.push({
         name: line,
         link: `${base}?guest=${encodeURIComponent(line)}`,
-        message: this.buildMessage(line, base)
+        message: this.buildMessage(line, base),
+        whatsappMessage: this.buildWhatsAppMessage(line, base)
       });
     });
 
@@ -277,6 +300,18 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     this.saveGuestsToLocalStorage();
 
     Swal.fire('Berhasil', 'Daftar tamu berhasil ditambahkan!', 'success');
+  }
+
+  buildWhatsAppMessage(name: string, baseUrl: string): string {
+    const link = `${baseUrl}?guest=${encodeURIComponent(name)}`;
+    return `Kepada Yth.
+Bapak/Ibu/Saudara/i ${name}
+─────────
+
+${this.salamPembuka}
+
+${link}
+─────────`;
   }
 
   buildMessage(name: string, baseUrl: string) {

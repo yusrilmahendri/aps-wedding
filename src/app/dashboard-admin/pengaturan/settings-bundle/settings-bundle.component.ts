@@ -111,16 +111,24 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       import_data: [false]
     });
 
-    // Trial configuration form - only active period is configurable
+    // Trial configuration form - full package configuration
     this.trialForm = this.fb.group({
-      trial_masa_aktif: [3, [Validators.required, Validators.min(1), Validators.max(30)]]
+      id: [null],
+      name_paket: ['', [Validators.required, Validators.minLength(3)]],
+      price: ['', [Validators.required, Validators.min(0)]],
+      masa_aktif: ['', [Validators.required, Validators.min(1)]],
+      halaman_buku: [false],
+      kirim_wa: [false],
+      bebas_pilih_tema: [false],
+      kirim_hadiah: [false],
+      import_data: [false]
     });
 
     this.trackFormChanges();
   }
 
   private trackFormChanges(): void {
-    [this.silverForm, this.goldForm, this.platinumForm].forEach(form => {
+    [this.silverForm, this.goldForm, this.platinumForm, this.trialForm].forEach(form => {
       form.valueChanges
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
@@ -154,22 +162,26 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   }
 
   private getTrialConfig(): void {
-    this.dashboardSvc.list(DashboardServiceType.TRIAL_CONFIG).subscribe({
-      next: (res) => {
-        const trialDays = res?.data?.trial_masa_aktif || 3;
-        this.trialForm.patchValue({ trial_masa_aktif: trialDays });
-      },
-      error: (err) => {
-        console.error('Error fetching trial config:', err);
-        // Set default value on error
-        this.trialForm.patchValue({ trial_masa_aktif: 3 });
-      }
-    });
+    // Trial configuration now comes from the main bundle API endpoint
+    // This method is kept for compatibility but no longer makes separate API call
   }
 
   private populateFormData(data: PackageData[]): void {
-    const [, silver, gold, platinum] = data;
+    const [trial, silver, gold, platinum] = data;
 
+    if (trial) {
+      this.trialForm.patchValue({
+        id: trial.id,
+        name_paket: trial.name_paket,
+        price: this.formatPrice(trial.price),
+        masa_aktif: trial.masa_aktif,
+        halaman_buku: this.convertToBoolean(trial.halaman_buku),
+        kirim_wa: this.convertToBoolean(trial.kirim_wa),
+        bebas_pilih_tema: this.convertToBoolean(trial.bebas_pilih_tema),
+        kirim_hadiah: this.convertToBoolean(trial.kirim_hadiah),
+        import_data: this.convertToBoolean(trial.import_data)
+      });
+    }
 
     if (silver) {
       this.silverForm.patchValue({
@@ -185,7 +197,6 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       });
     }
 
-
     if (gold) {
       this.goldForm.patchValue({
         id: gold.id,
@@ -199,7 +210,6 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
         import_data: this.convertToBoolean(gold.import_data)
       });
     }
-
 
     if (platinum) {
       this.platinumForm.patchValue({
@@ -311,7 +321,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.silverLoading = true;
     const formData = this.prepareFormData(this.silverForm);
-    const packageId = formData.id || 1;
+    const packageId = formData.id || 2;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -324,7 +334,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.notyf.success(res?.message || 'Berhasil mengubah Paket Silver');
-          this.refreshSinglePackage(1, this.silverForm);
+          this.refreshAllPackages();
         },
         error: (err) => {
           console.error('Error updating silver package:', err);
@@ -338,7 +348,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.goldLoading = true;
     const formData = this.prepareFormData(this.goldForm);
-    const packageId = formData.id || 2;
+    const packageId = formData.id || 3;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -351,7 +361,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.notyf.success(res?.message || 'Berhasil mengubah Paket Gold');
-          this.refreshSinglePackage(2, this.goldForm);
+          this.refreshAllPackages();
         },
         error: (err) => {
           console.error('Error updating gold package:', err);
@@ -365,7 +375,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.platinumLoading = true;
     const formData = this.prepareFormData(this.platinumForm);
-    const packageId = formData.id || 3;
+    const packageId = formData.id || 4;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -378,7 +388,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.notyf.success(res?.message || 'Berhasil mengubah Paket Platinum');
-          this.refreshSinglePackage(3, this.platinumForm);
+          this.refreshAllPackages();
         },
         error: (err) => {
           console.error('Error updating platinum package:', err);
@@ -388,20 +398,23 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   }
 
   private refreshSinglePackage(packageId: number, form: FormGroup): void {
+    // This method is deprecated, use refreshAllPackages() instead
+    this.refreshAllPackages();
+  }
 
+  private refreshAllPackages(): void {
     this.dashboardSvc.list(DashboardServiceType.ST_BUNDLE_ADMIN)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          if (res?.data) {
-            const updatedPackage = res.data.find((pkg: PackageData) => pkg.id === packageId);
-            if (updatedPackage) {
-              this.updateSingleForm(form, updatedPackage);
-            }
+          if (res?.data && Array.isArray(res.data) && res.data.length >= 4) {
+            this.originalData = [...res.data];
+            this.populateFormData(res.data);
           }
         },
         error: (err) => {
           console.error('Error refreshing package data:', err);
+          this.notyf.error('Gagal memperbarui data paket undangan');
         }
       });
   }
@@ -437,16 +450,18 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   }
 
 
-  resetForm(packageType: 'silver' | 'gold' | 'platinum'): void {
+  resetForm(packageType: 'trial' | 'silver' | 'gold' | 'platinum'): void {
     const originalPackage = this.originalData.find(pkg => {
-      if (packageType === 'silver') return pkg.id === 1;
-      if (packageType === 'gold') return pkg.id === 2;
-      if (packageType === 'platinum') return pkg.id === 3;
+      if (packageType === 'trial') return pkg.id === 1;
+      if (packageType === 'silver') return pkg.id === 2;
+      if (packageType === 'gold') return pkg.id === 3;
+      if (packageType === 'platinum') return pkg.id === 4;
       return false;
     });
 
     if (originalPackage) {
-      const form = packageType === 'silver' ? this.silverForm :
+      const form = packageType === 'trial' ? this.trialForm :
+        packageType === 'silver' ? this.silverForm :
         packageType === 'gold' ? this.goldForm : this.platinumForm;
       this.updateSingleForm(form, originalPackage);
     }
@@ -456,21 +471,24 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   onClickTrial(): void {
     if (!this.trialForm.valid || this.trialLoading) {
       this.markFormGroupTouched(this.trialForm);
-      this.notyf.error('Mohon lengkapi field dengan benar');
+      this.notyf.error('Mohon lengkapi semua field yang wajib diisi');
       return;
     }
 
     this.showConfirmationModal(
-      'Apakah Anda yakin ingin mengubah konfigurasi Trial?',
-      () => this.saveTrialConfig()
+      'Apakah Anda yakin ingin mengubah pengaturan Paket Trial?',
+      () => this.saveTrial()
     );
   }
 
-  private saveTrialConfig(): void {
-    this.trialLoading = true;
-    const formData = this.trialForm.value;
+  private saveTrial(): void {
+    if (this.trialLoading) return;
 
-    this.dashboardSvc.update(DashboardServiceType.TRIAL_CONFIG, '', formData)
+    this.trialLoading = true;
+    const formData = this.prepareFormData(this.trialForm);
+    const packageId = formData.id || 1;
+
+    this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
@@ -480,16 +498,20 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.notyf.success(res?.message || 'Berhasil mengubah konfigurasi Trial');
+          this.notyf.success(res?.message || 'Berhasil mengubah Paket Trial');
+          this.refreshAllPackages();
         },
         error: (err) => {
-          console.error('Error updating trial config:', err);
-          this.notyf.error(err?.error?.message || 'Gagal menyimpan konfigurasi Trial');
+          console.error('Error updating trial package:', err);
+          this.notyf.error(err?.error?.message || 'Gagal menyimpan Paket Trial');
         }
       });
   }
 
   resetTrialForm(): void {
-    this.trialForm.patchValue({ trial_masa_aktif: 3 });
+    const originalTrial = this.originalData.find(pkg => pkg.id === 1);
+    if (originalTrial) {
+      this.updateSingleForm(this.trialForm, originalTrial);
+    }
   }
 }

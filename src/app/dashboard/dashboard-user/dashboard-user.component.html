@@ -89,11 +89,11 @@
              tabindex="0">
             <span>Pengaturan</span>
           </a>
-          <a class="submenu-item"
+          <!-- <a class="submenu-item"
              (click)="onMenuItemClick()"
              tabindex="0">
             <span>Data Website</span>
-          </a>
+          </a> -->
           <a class="submenu-item"
              routerLink="website/mempelai"
              routerLinkActive="active"
@@ -153,26 +153,25 @@
         <!-- Pengunjung Submenu with Animation -->
         <div class="submenu"
              [@submenuExpand]="isPengunjungSubmenuOpen ? 'expanded' : 'collapsed'">
-          <a class="submenu-item"
+          <!-- <a class="submenu-item"
              routerLink="pengunjung/riwayat"
              routerLinkActive="active"
              (click)="onMenuItemClick()"
              tabindex="0">
             <span>Riwayat</span>
-          </a>
+          </a> -->
           <a class="submenu-item"
              routerLink="pengunjung/ucapan"
              routerLinkActive="active"
              (click)="onMenuItemClick()"
              tabindex="0">
-            <span>Ucapan</span>
+            <span>Riwayat & Ucapan</span>
           </a>
           <a class="submenu-item"
              routerLink="pengunjung/qr-scanner"
              routerLinkActive="active"
              (click)="onMenuItemClick()"
              tabindex="0">
-            <i class="fas fa-qrcode" aria-hidden="true"></i>
             <span>Scan QR</span>
           </a>
         </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Cha
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Notyf } from 'notyf';
 import { DashboardService, DashboardServiceType } from 'src/app/dashboard.service';
+import { UserProfileResponse } from 'src/app/interfaces/user-profile.interface';
 import { Subject } from 'rxjs';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { Result } from '@zxing/library';
@@ -67,6 +68,9 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
     token: string;
   } | null = null;
 
+  // Authenticated user's wedding domain for ownership validation
+  userDomain: string = '';
+
   // Data
   attendanceScans: AttendanceScan[] = [];
   availableAcara: AcaraOption[] = [];
@@ -90,6 +94,7 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.loadAcaraOptions();
+    this.loadUserDomain();
   }
 
   ngOnDestroy(): void {
@@ -118,6 +123,22 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.cdr.detectChanges();
+  }
+
+  /**
+   * Load authenticated user's domain for QR ownership validation
+   */
+  private loadUserDomain(): void {
+    this.dashboardSvc.list(DashboardServiceType.PROFILE_API).subscribe({
+      next: (res: UserProfileResponse) => {
+        if (res && res.success && res.data && res.data.domain_info) {
+          this.userDomain = res.data.domain_info.domain;
+        }
+      },
+      error: () => {
+        // Silent fail — ownership validation degrades gracefully
+      }
+    });
   }
 
   /**
@@ -396,6 +417,14 @@ export class QRScannerComponent implements OnInit, OnDestroy, AfterViewInit {
 
       if (!scanData.wedding_domain || !scanData.guest_name || !scanData.token) {
         this.notyf.error('QR Code tidak lengkap');
+        this.isProcessing = false;
+        this.scannedGuestData = null;
+        return;
+      }
+
+      // Domain ownership guard: QR must belong to the logged-in user's invitation
+      if (this.userDomain && scanData.wedding_domain !== this.userDomain) {
+        this.notyf.error('QR Code ini bukan bagian dari undangan Anda');
         this.isProcessing = false;
         this.scannedGuestData = null;
         return;

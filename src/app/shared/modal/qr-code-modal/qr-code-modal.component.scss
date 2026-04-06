@@ -1,288 +1,230 @@
-// QR Code Modal Styles - Bootstrap 4 Compatible
+// QR Code Modal — mobile-first BEM
 
-.wedding-modal {
-  background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+.qrm {
+  background: #fff;
+  border-radius: 14px;
   overflow: hidden;
-  max-width: 500px;
-  width: 100%;
-  margin: auto;
+  animation: qrmSlideIn 0.25s ease-out;
 }
 
-.modal-header {
-  background: linear-gradient(135deg, #d4a574 0%, #b8956a 100%);
-  color: white;
-  padding: 20px;
-  border-bottom: none;
-  position: relative;
-
-  .wedding-title {
-    font-family: 'Georgia', serif;
-    font-weight: 600;
-    margin: 0;
-    font-size: 1.4rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-
-  .close {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    opacity: 0.8;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      opacity: 1;
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    span {
-      line-height: 1;
-    }
-  }
+@keyframes qrmSlideIn {
+  from { opacity: 0; transform: translateY(-24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)     scale(1); }
 }
 
-.modal-body {
-  padding: 30px 20px;
-  min-height: 200px;
-
-  .description-text {
-    color: #6c757d;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 25px;
-  }
-}
-
-// Loading State
-.loading-container {
-  padding: 40px 20px;
-
-  .spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.25em;
-  }
-
-  p {
-    margin-top: 15px;
-    color: #6c757d;
-    font-size: 0.95rem;
-  }
-}
-
-// Error State
-.error-container {
-  padding: 20px;
-
-  .error-icon {
-    font-size: 3rem;
-    color: #dc3545;
-  }
-
-  .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-  }
-}
-
-// QR Code Container
-.qr-container {
-  .qr-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    
-    .qr-canvas {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-  }
-}
-
-// URL Display
-.url-display {
-  .input-group {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    
-    .url-input {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      padding: 12px 15px;
-      
-      &:focus {
-        background-color: white;
-        border-color: #d4a574;
-        box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
-      }
-    }
-    
-    .input-group-append .copy-btn {
-      background: #d4a574;
-      border: 1px solid #d4a574;
-      color: white;
-      padding: 12px 15px;
-      transition: all 0.2s ease;
-      
-      &:hover {
-        background: #b8956a;
-        border-color: #b8956a;
-        transform: translateY(-1px);
-      }
-      
-      &:active {
-        transform: translateY(0);
-      }
-    }
-  }
-}
-
-// Action Buttons
-.action-buttons {
+.qrm__header {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #d4a574 0%, #b8956a 100%);
+  color: #fff;
+}
 
-  .btn {
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border-width: 2px;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    &:active {
-      transform: translateY(-1px);
-    }
-    
-    i {
-      margin-right: 8px;
-    }
-  }
+.qrm__title {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  flex: 1;
+  text-align: center;
+}
 
-  .btn-success {
-    background: #28a745;
-    border-color: #28a745;
-    
-    &:hover {
-      background: #218838;
-      border-color: #1e7e34;
-    }
-  }
-
-  .btn-outline-success {
-    color: #28a745;
-    border-color: #28a745;
-    
-    &:hover {
-      background: #28a745;
-      border-color: #28a745;
-      color: white;
-    }
-  }
-
-  .btn-outline-primary {
-    color: #007bff;
-    border-color: #007bff;
-    
-    &:hover {
-      background: #007bff;
-      border-color: #007bff;
-      color: white;
-    }
+.qrm__close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.85);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background .15s;
+  &:hover {
+    background: rgba(255,255,255,.2);
+    color: #fff;
   }
 }
 
-// Instructions
-.instructions {
-  background: #f8f9fa;
-  padding: 15px;
+.qrm__body {
+  padding: 24px 20px 28px;
+  text-align: center;
+}
+
+.qrm__state {
+  padding: 32px 16px;
+  .spinner-border { width: 2.5rem; height: 2.5rem; border-width: .2em; }
+}
+
+.qrm__state-text { color: #6c757d; font-size: .9rem; margin: 0; }
+.qrm__error-icon { font-size: 2.5rem; color: #dc3545; }
+
+.qrm__canvas-wrap {
+  position: relative;
+  display: inline-block;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.10);
+  padding: 16px;
+}
+
+.qrm__canvas { display: block; max-width: 100%; height: auto; border-radius: 6px; }
+
+.qrm__fullscreen-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  border-left: 4px solid #d4a574;
-
-  small {
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
-
-  i {
-    color: #d4a574;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  font-size: .85rem;
+  transition: background .15s, color .15s;
+  &:hover {
+    background: #d4a574;
+    color: #fff;
+    border-color: #d4a574;
   }
 }
 
-// Responsive Design
-@media (max-width: 576px) {
-  .wedding-modal {
-    margin: 10px;
-    border-radius: 12px;
-  }
+.qrm__scan-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: .95rem;
+  min-width: 220px;
+  animation: qrmFadeIn .3s ease;
+  &--idle    { background: #f1f3f5; color: #6c757d; }
+  &--success { background: #d1f5e0; color: #1a7a3c; }
+  &--error   { background: #fde8e8; color: #c0392b; }
+}
 
-  .modal-header {
-    padding: 15px;
-    
-    .wedding-title {
-      font-size: 1.2rem;
-    }
-  }
+@keyframes qrmFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  .modal-body {
-    padding: 20px 15px;
-  }
+.qrm__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
-  .action-buttons {
+.qrm__btn-share,
+.qrm__btn-dl {
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 500;
+  font-size: .9rem;
+  transition: transform .15s, box-shadow .15s;
+  border-width: 2px;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+  &:active { transform: translateY(-1px); }
+}
+
+.qrm__btn-share {
+  background: #28a745;
+  border-color: #28a745;
+  color: #fff;
+  &:hover { background: #218838; border-color: #1e7e34; color: #fff; }
+}
+
+.qrm__btn-dl {
+  background: transparent;
+  border-color: #b8956a;
+  color: #b8956a;
+  &:hover { background: #b8956a; color: #fff; }
+}
+
+.qrm__url-strip {
+  .input-group { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+}
+
+.qrm__url-input {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  font-family: 'Courier New', monospace;
+  font-size: .85rem;
+  padding: 10px 14px;
+  &:focus {
+    background: #fff;
+    border-color: #d4a574;
+    box-shadow: 0 0 0 .15rem rgba(212,165,116,.25);
+  }
+}
+
+.qrm__copy-btn {
+  background: #d4a574;
+  border: 1px solid #d4a574;
+  color: #fff;
+  padding: 10px 14px;
+  transition: background .15s;
+  &:hover { background: #b8956a; border-color: #b8956a; }
+}
+
+.qrm-fs {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: qrmFadeIn .2s ease;
+}
+
+.qrm-fs__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.qrm-fs__canvas {
+  display: block;
+  max-width: 90vmin;
+  max-height: 90vmin;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.5);
+}
+
+.qrm-fs__close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s;
+  &:hover { background: rgba(255,255,255,.3); }
+}
+
+.qrm-fs__hint { color: rgba(255,255,255,.55); font-size: .8rem; margin: 0; }
+
+@media (max-width: 560px) {
+  .qrm__body { padding: 20px 14px 24px; }
+  .qrm__scan-status { min-width: 0; width: 100%; }
+  .qrm__actions {
     flex-direction: column;
-    
-    .btn {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-  }
-
-  .qr-container .qr-wrapper {
-    padding: 15px;
-  }
-}
-
-// Animation for modal entrance
-.wedding-modal {
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    .qrm__btn-share,
+    .qrm__btn-dl { width: 100%; }
   }
 }

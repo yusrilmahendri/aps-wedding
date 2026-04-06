@@ -36,7 +36,6 @@ export class PengaturanComponent implements OnInit {
   private notyf: Notyf;
 
 
-  dataFilter: any;
   settingData: any;
   filterData: any;
   isFilterExisting = false;
@@ -83,9 +82,9 @@ Kami bermaksud mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk me
         [Validators.required]
       ],
       salam_bawah: [
-        `Assalamualaikum Wr Wb.
-Dengan segala kerendahan hati dan syukur atas Karunia Allah SWT.
-Kami bermaksud mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami :`,
+        `Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
+
+Terima Kasih.`,
         [Validators.required]
       ]
     });
@@ -110,7 +109,6 @@ Kami bermaksud mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk me
 
     this.dashboardSvc.list(DashboardServiceType.SETTINGS_GET_FILTER).subscribe({
       next: (res) => {
-        this.dataFilter = res?.['data'];
         this.settingData = res?.['setting'];
         this.filterData = res?.['filter_undangan'];
 
@@ -438,24 +436,27 @@ Kami bermaksud mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk me
 
   private submitFilter(filterData: any): void {
     this.isLoadingFilter = true;
-    const endpoint = this.isFilterExisting ?
-      (DashboardServiceType.USER_SETTINGS_SUBMIT_FILTER_UPDATE) :
-      (DashboardServiceType.USER_SETTINGS_SUBMIT_FILTER);
-    const method = this.isFilterExisting ? 'update' : 'create';
-    this.dashboardSvc[method](endpoint, '', filterData).subscribe({
-      next: (res) => {
+    if (this.isFilterExisting) {
+      this.dashboardSvc.update(DashboardServiceType.USER_SETTINGS_SUBMIT_FILTER_UPDATE, '', filterData).subscribe(this.filterSubscriber());
+    } else {
+      this.dashboardSvc.create(DashboardServiceType.USER_SETTINGS_SUBMIT_FILTER, filterData).subscribe(this.filterSubscriber());
+    }
+  }
+
+  private filterSubscriber() {
+    return {
+      next: (res: any) => {
         this.notyf.success(res?.message || 'Pengaturan filter berhasil disimpan');
         this.modalRef?.hide();
         this.isLoadingFilter = false;
         this.isFilterExisting = true;
-        // Refresh data dari backend agar toggle sesuai value terbaru
         this.loadInitialData();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.notyf.error(err?.error?.message || 'Gagal menyimpan pengaturan filter');
         this.isLoadingFilter = false;
       }
-    });
+    };
   }
 
 

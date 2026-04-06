@@ -40,6 +40,12 @@
 
 .settings-grid__item {
   min-width: 0; // prevent grid blowout
+
+  &--full {
+    @media (min-width: 768px) {
+      grid-column: 1 / -1;
+    }
+  }
 }
 
 // --- Card ---

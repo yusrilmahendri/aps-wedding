@@ -205,6 +205,25 @@ export class MidtransPaymentService {
   }
 
   /**
+   * Clear all Midtrans and Snap SDK entries from localStorage and sessionStorage.
+   * Call before initiating a new payment and after every successful payment to prevent
+   * stale SDK state from blocking Snap token creation in subsequent registrations.
+   */
+  clearMidtransStorage(): void {
+    const patterns = [/^midtrans/i, /^snap/i, /^com\.midtrans/i];
+    [localStorage, sessionStorage].forEach((storage) => {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key && patterns.some((p) => p.test(key))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => storage.removeItem(key));
+    });
+  }
+
+  /**
    * Open the Midtrans Snap payment popup.
    * Loads Snap.js first if not yet loaded.
    */

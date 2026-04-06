@@ -6,7 +6,8 @@ import { Environment } from './environment.interface';
 
 export const environment: Environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8000/api'
+  apiBaseUrl: 'http://localhost:8000/api',
+  baseUrlUndangan: 'http://localhost:4200/wedding'
 };
 
 /*

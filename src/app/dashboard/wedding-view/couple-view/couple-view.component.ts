@@ -41,14 +41,14 @@ export class CoupleViewComponent implements OnInit {
 
   getOpeningText(): string {
     return this.weddingData?.settings?.salam_atas ||
-           'Tanpa mengurangi rasa hormat, kami mengundang<br>Bapak/Ibu/Saudara/I pada acara pernikahan:';
+      'Tanpa mengurangi rasa hormat, kami mengundang<br>Bapak/Ibu/Saudara/I pada acara pernikahan:';
   }
 
   getGroomPhoto() {
     return this.weddingData?.mempelai?.pria?.photo || 'assets/default-groom.jpg';
   }
 
-  getBridePhoto(){
+  getBridePhoto() {
     return this.weddingData?.mempelai?.wanita?.photo || 'assets/default-bride.jpg';
   }
 }
