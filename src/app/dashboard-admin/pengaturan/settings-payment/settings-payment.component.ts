@@ -26,8 +26,8 @@ interface PaymentMethod {
 }
 
 interface ActivePaymentMethodData {
-  id: number;
-  metode_transaction_id: number;
+  id: number | string;
+  metode_transaction_id: number | string;
   is_active: boolean;
   metodeTransaction?: PaymentMethod;
 }
@@ -195,8 +195,8 @@ export class SettingsPaymentComponent implements OnInit {
   }
 
   isPaymentMethodActive(methodId: number): boolean {
-    return this.activePaymentMethod?.metode_transaction_id === methodId ||
-           this.activePaymentMethod?.metodeTransaction?.id === methodId;
+    return Number(this.activePaymentMethod?.metode_transaction_id) === methodId ||
+           Number(this.activePaymentMethod?.metodeTransaction?.id) === methodId;
   }
 
   private loadBankList(): void {
