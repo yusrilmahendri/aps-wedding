@@ -15,8 +15,8 @@ export class GuestGeneratorComponentsComponent implements OnInit {
   form!: FormGroup;
   guests: any[] = [];
 
-  // LocalStorage key for guest list
-  private readonly STORAGE_KEY = 'wedding_guest_list';
+  // LocalStorage key for guest list — namespaced per user ID, set after profile loads
+  private storageKey: string = '';
 
   // Salam settings from API
   salamPembuka: string = '';
@@ -58,7 +58,6 @@ export class GuestGeneratorComponentsComponent implements OnInit {
     });
     this.loadSalamSettings();
     this.loadUserProfile();
-    this.loadGuestsFromLocalStorage();
   }
 
   // Load user profile to get domain
@@ -68,6 +67,7 @@ export class GuestGeneratorComponentsComponent implements OnInit {
       next: (res: UserProfileResponse) => {
         console.log('✅ Profile API Response:', res);
         if (res && res.success && res.data && res.data.domain_info) {
+          this.storageKey = `wedding_guest_list_${res.data.id}`;
           this.userDomain = res.data.domain_info.domain;
           this.baseUrlUndangan = `${environment.baseUrlUndangan}/${this.userDomain}`;
           console.log('🌐 Domain found:', this.userDomain);
@@ -75,6 +75,8 @@ export class GuestGeneratorComponentsComponent implements OnInit {
           // Auto-fill base URL
           this.form.patchValue({ baseUrl: this.baseUrlUndangan });
           console.log('✏️ Form patched with baseUrl:', this.baseUrlUndangan);
+          // Load guest list only after the user-scoped key is ready
+          this.loadGuestsFromLocalStorage();
         } else {
           console.warn('⚠️ Invalid response structure:', res);
         }
@@ -88,8 +90,9 @@ export class GuestGeneratorComponentsComponent implements OnInit {
 
   // Save guests to localStorage
   saveGuestsToLocalStorage(): void {
+    if (!this.storageKey) return;
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.guests));
+      localStorage.setItem(this.storageKey, JSON.stringify(this.guests));
       console.log('💾 Guest list saved to localStorage:', this.guests.length, 'guests');
     } catch (error) {
       console.error('❌ Error saving to localStorage:', error);
@@ -98,8 +101,9 @@ export class GuestGeneratorComponentsComponent implements OnInit {
 
   // Load guests from localStorage
   loadGuestsFromLocalStorage(): void {
+    if (!this.storageKey) return;
     try {
-      const savedGuests = localStorage.getItem(this.STORAGE_KEY);
+      const savedGuests = localStorage.getItem(this.storageKey);
       if (savedGuests) {
         this.guests = JSON.parse(savedGuests);
         console.log('📂 Guest list loaded from localStorage:', this.guests.length, 'guests');
