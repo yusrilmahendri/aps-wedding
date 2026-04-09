@@ -1,9 +1,10 @@
 @import "../../../styles/variable";
 
+/* Mobile-first base styles */
 .wc__testimonials {
   background: linear-gradient(180deg, #FFF7F8 0%, #FFFCFC 63.01%);
   min-height: 100vh;
-  padding: 7.0625rem 1.5rem 3rem;
+  padding: 1.5rem 1rem 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,15 +12,15 @@
 
 .wc__testimonials-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.5rem;
   max-width: 30rem;
 }
 
 .wc__testimonials-title {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 2.5rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   color: #272d4e;
   margin-bottom: 1rem;
 }
@@ -29,17 +30,17 @@
 }
 
 .wc__testimonials-decoration {
-  width: 200px;
+  width: 150px;
   height: auto;
 }
 
 .wc__testimonials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 320px));
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .wc__package-card {
@@ -82,7 +83,7 @@
 }
 
 .wc__package-body {
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.25rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -160,13 +161,15 @@
   color: #ffffff;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  font-size: 1.1rem;
-  padding: 0.875rem 2.5rem;
+  font-size: 1rem;
+  padding: 0.875rem 2rem;
   border: none;
   border-radius: 3rem;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(84, 217, 237, 0.3);
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 280px;
 }
 
 .wc__testimonials-button:hover {
@@ -175,9 +178,12 @@
   background: #4bcde2;
 }
 
-@media (max-width: 900px) {
+/* Tablet and up (min-width: 600px) */
+@media (min-width: 600px) {
   .wc__testimonials {
     padding-top: 3rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .wc__testimonials-title {
@@ -185,43 +191,59 @@
     line-height: 2rem;
   }
 
+  .wc__testimonials-decoration {
+    width: 180px;
+  }
+
   .wc__testimonials-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .wc__testimonials {
-    padding-top: 1.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .wc__testimonials-header {
+    gap: 1.75rem;
     margin-bottom: 2.5rem;
   }
 
-  .wc__testimonials-title {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-  }
-
-  .wc__testimonials-decoration {
-    width: 150px;
-  }
-
-  .wc__testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
   .wc__package-body {
-    padding: 1.5rem 1.25rem;
+    padding: 1.75rem 1.5rem;
   }
 
   .wc__testimonials-button {
-    font-size: 1rem;
-    padding: 0.75rem 2rem;
+    font-size: 1.05rem;
+    padding: 0.875rem 2.25rem;
+  }
+}
+
+/* Desktop and up (min-width: 900px) */
+@media (min-width: 900px) {
+  .wc__testimonials {
+    padding: 7.0625rem 1.5rem 3rem;
+  }
+
+  .wc__testimonials-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .wc__testimonials-title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  .wc__testimonials-decoration {
+    width: 200px;
+  }
+
+  .wc__testimonials-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 320px));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .wc__package-body {
+    padding: 2rem 1.5rem;
+  }
+
+  .wc__testimonials-button {
+    font-size: 1.1rem;
+    padding: 0.875rem 2.5rem;
+    width: auto;
+    max-width: none;
   }
 }

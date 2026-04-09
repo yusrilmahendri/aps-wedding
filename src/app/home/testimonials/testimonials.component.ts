@@ -36,7 +36,10 @@ export class TestimonialsComponent implements OnInit {
   getPaketUndangan() {
     this.dashboardSvc.list(DashboardServiceType.MNL_MD_PACK_INVITATION,).subscribe(res => {
       const allPackages: PaketUndangan[] = res?.data ?? [];
-      this.paketList = allPackages.filter((paket: PaketUndangan) => paket.id !== 1);
+      this.paketList = allPackages.filter((paket: PaketUndangan) =>
+        paket.jenis_paket !== 'Paket Trial' &&
+        !paket.name_paket.toLowerCase().includes('trial')
+      );
       console.log(this.paketList);
     });
   }
