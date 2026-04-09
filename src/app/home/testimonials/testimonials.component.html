@@ -1,61 +1,75 @@
-<div class="section">
-    <div class="rows">
-        <div class="wc__footer-hero">
-            <h2 style="font-family: Poppins; padding-bottom: 10px;">
-                Harga <b style="color: #FF84AD;">Undangan</b> Online?
-            </h2>
-            <img src="../../../assets/love-border.svg" alt="">
-        </div>
-    </div>
-    <div style="padding-bottom: 2rem;padding-top: 30px;" class="container">
-      <div class="card" *ngFor="let paket of paketList">
-    <div class="card__info" [ngStyle]="{
-         'background-color': paket.id === 1 ? 'silver' :
-                 paket.id === 2 ? '#C47D13' :
-                 paket.id === 3 ? '#57B9EE' : '#ccc',
-         'background': paket.id === 1 ? 'silver' :
-              paket.id === 2 ? 'linear-gradient(90deg, #C47D13 0%, rgba(220, 140, 21, 0.7) 100%)' :
-              paket.id === 3 ? 'linear-gradient(90deg, #57B9EE 0%, #73D6FC 50%, #3D86D8 100%)' : ''
-       }">
-      <h2 class="card__name">{{ paket.name_paket.toUpperCase() }}</h2>
+<section class="wc__testimonials">
+    <div class="wc__testimonials-header">
+        <h2 class="wc__testimonials-title">
+            Harga <span class="wc__testimonials-highlight">Undangan</span> Online?
+        </h2>
+        <img class="wc__testimonials-decoration" src="../../../assets/love-border.svg" alt="decoration">
     </div>
 
-    <div class="card__content" style="border-color: var(--color06)">
-      <div class="card__rows">
-        <p class="card__price" style="color: var(--color06)">
-          <b style="font-size: smaller; padding: 1.55px 3px 9.95px 0px;">Rp</b>{{ paket.price |number:'1.0-0':'en-US' }}
-        </p>
-        <p class="card__row" *ngIf="isFeatureEnabled(paket.bebas_pilih_tema)">Bebas Pilih Tema</p>
-        <p class="card__row">Edit Tanpa Batas</p>
-        <p class="card__row" *ngIf="isFeatureEnabled(paket.kirim_wa)">Kirim Undangan via WhatsApp</p>
-        <p class="card__row" *ngIf="isFeatureEnabled(paket.import_data)">Import Data Tamu</p>
-        <p class="card__row" *ngIf="isFeatureEnabled(paket.halaman_buku)">Halaman Buku</p>
-        <p class="card__row" *ngIf="isFeatureEnabled(paket.kirim_hadiah)">Kirim Hadiah</p>
-        <p class="card__row">Buku Tamu</p>
-        <p class="card__row">Amplop Digital</p>
-        <p class="card__row">Galeri Foto</p>
-        <p class="card__row">Background Music</p>
-      </div>
-    </div>
-  </div>
-      </div>
+    <div class="wc__testimonials-grid">
+        <article class="wc__package-card" *ngFor="let paket of paketList" [ngClass]="'wc__package-card--' + paket.id">
+            <div class="wc__package-header">
+                <h3 class="wc__package-name">{{ paket.name_paket }}</h3>
+            </div>
 
-      <div class="container text-center" style="margin-top: 20px; padding-bottom: 20px;">
-        <button class="btn btn-primary" (click)="onRedirectToRegister()"
-            style="
-                background: var(--P-Secondary, #54D9ED);
-                font-family: Poppins;
-                padding: 12px 24px;
-                font-size: 1.2rem;
-                border-radius: 50px;
-                color: aliceblue;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                border: none;
-                transition: transform 0.3s, box-shadow 0.3s;">
+            <div class="wc__package-body">
+                <div class="wc__package-price">
+                    <span class="wc__package-price-currency">Rp</span>
+                    <span class="wc__package-price-amount">{{ paket.price | number:'1.0-0':'en-US' }}</span>
+                </div>
+
+                <ul class="wc__package-features">
+                    <li class="wc__package-feature" *ngIf="isFeatureEnabled(paket.bebas_pilih_tema)">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Bebas Pilih Tema</span>
+                    </li>
+                    <li class="wc__package-feature">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Edit Tanpa Batas</span>
+                    </li>
+                    <li class="wc__package-feature" *ngIf="isFeatureEnabled(paket.kirim_wa)">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Kirim Undangan via WhatsApp</span>
+                    </li>
+                    <li class="wc__package-feature" *ngIf="isFeatureEnabled(paket.import_data)">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Import Data Tamu</span>
+                    </li>
+                    <li class="wc__package-feature" *ngIf="isFeatureEnabled(paket.halaman_buku)">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Halaman Buku</span>
+                    </li>
+                    <li class="wc__package-feature" *ngIf="isFeatureEnabled(paket.kirim_hadiah)">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Kirim Hadiah</span>
+                    </li>
+                    <li class="wc__package-feature">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Buku Tamu</span>
+                    </li>
+                    <li class="wc__package-feature">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Amplop Digital</span>
+                    </li>
+                    <li class="wc__package-feature">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Galeri Foto</span>
+                    </li>
+                    <li class="wc__package-feature">
+                        <span class="wc__package-feature-icon">✓</span>
+                        <span>Background Music</span>
+                    </li>
+                </ul>
+            </div>
+        </article>
+    </div>
+
+    <div class="wc__testimonials-cta">
+        <button class="wc__testimonials-button" (click)="onRedirectToRegister()">
             Daftar Sekarang
         </button>
     </div>
-</div>
+</section>
 
 <ng-container>
     <wc-testemoni-footer></wc-testemoni-footer>
