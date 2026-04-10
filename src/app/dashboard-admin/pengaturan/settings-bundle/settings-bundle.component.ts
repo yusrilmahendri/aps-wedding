@@ -147,7 +147,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          if (res?.data && Array.isArray(res.data) && res.data.length >= 3) {
+          if (res?.data && Array.isArray(res.data) && res.data.length >= 4) {
             this.originalData = [...res.data];
             this.populateFormData(res.data);
           } else {
@@ -167,7 +167,10 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   }
 
   private populateFormData(data: PackageData[]): void {
-    const [trial, silver, gold, platinum] = data;
+    const silver = data.find(p => p.jenis_paket === 'Paket 1');
+    const gold = data.find(p => p.jenis_paket === 'Paket 2');
+    const platinum = data.find(p => p.jenis_paket === 'Paket 3');
+    const trial = data.find(p => p.jenis_paket === 'Paket Trial');
 
     if (trial) {
       this.trialForm.patchValue({
@@ -321,7 +324,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.silverLoading = true;
     const formData = this.prepareFormData(this.silverForm);
-    const packageId = formData.id || 2;
+    const packageId = formData.id || 1;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -348,7 +351,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.goldLoading = true;
     const formData = this.prepareFormData(this.goldForm);
-    const packageId = formData.id || 3;
+    const packageId = formData.id || 2;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -375,7 +378,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.platinumLoading = true;
     const formData = this.prepareFormData(this.platinumForm);
-    const packageId = formData.id || 4;
+    const packageId = formData.id || 3;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -451,13 +454,13 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
 
   resetForm(packageType: 'trial' | 'silver' | 'gold' | 'platinum'): void {
-    const originalPackage = this.originalData.find(pkg => {
-      if (packageType === 'trial') return pkg.id === 1;
-      if (packageType === 'silver') return pkg.id === 2;
-      if (packageType === 'gold') return pkg.id === 3;
-      if (packageType === 'platinum') return pkg.id === 4;
-      return false;
-    });
+    const jenisPaketMap: Record<string, string> = {
+      trial: 'Paket Trial',
+      silver: 'Paket 1',
+      gold: 'Paket 2',
+      platinum: 'Paket 3'
+    };
+    const originalPackage = this.originalData.find(pkg => pkg.jenis_paket === jenisPaketMap[packageType]);
 
     if (originalPackage) {
       const form = packageType === 'trial' ? this.trialForm :
@@ -486,7 +489,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
 
     this.trialLoading = true;
     const formData = this.prepareFormData(this.trialForm);
-    const packageId = formData.id || 1;
+    const packageId = formData.id || 4;
 
     this.dashboardSvc.update(DashboardServiceType.ST_BUNDLE_ADMIN, `/${packageId}`, formData)
       .pipe(
@@ -509,7 +512,7 @@ export class SettingsBundleComponent implements OnInit, OnDestroy {
   }
 
   resetTrialForm(): void {
-    const originalTrial = this.originalData.find(pkg => pkg.id === 1);
+    const originalTrial = this.originalData.find(pkg => pkg.jenis_paket === 'Paket Trial');
     if (originalTrial) {
       this.updateSingleForm(this.trialForm, originalTrial);
     }
